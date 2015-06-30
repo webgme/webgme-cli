@@ -1,0 +1,38 @@
+{
+  "name": "webgme-cli",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "bin": {
+    "webgme-cli": "bin/cli.js"
+  },
+  "directories": {
+    "doc": "doc",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "node node_modules/mocha/bin/mocha --recursive test/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brollb/webgme-cli.git"
+  },
+  "author": "Brian Broll",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/brollb/webgme-cli/issues"
+  },
+  "homepage": "https://github.com/brollb/webgme-cli#readme",
+  "dependencies": {
+    "chai": "^3.0.0",
+    "lodash": "^3.9.3",
+    "minimist": "^1.1.1",
+    "sinon": "^1.15.4",
+    "sinon-chai": "^2.8.0"
+  },
+  "devDependencies": {
+    "lodash": "^3.9.3",
+    "mocha": "^2.2.5",
+    "rimraf": "^2.4.0"
+  }
+}

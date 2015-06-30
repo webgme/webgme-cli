@@ -1,0 +1,7 @@
+usage: webgme [action] [item]
+
+Examples:
+    webgme init MyNewProject
+    webgme new plugin MyNewPlugin
+
+Try 'webgme --help' for more information.
