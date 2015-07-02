@@ -11,8 +11,11 @@ var rm_rf = require('rimraf');
 
 var emitter;
 
-var callWebGME = function(args) {
-    return cli.argv(_.extend({_: ['node', 'cli.js']}, args));
+var callWebGME = function(args, callback) {
+    cli.argv(_.extend({_: ['node', 'cli.js']}, args));
+    if (callback) {
+        setTimeout(callback, 100);
+    }
 };
 
 describe('WebGME-cli', function() {
@@ -95,29 +98,42 @@ describe('WebGME-cli', function() {
                 PROJECT_DIR = path.join(TMP_DIR, 'ExampleProject');
             });
 
-            it('should create a new directory with project name', function() {
-                callWebGME({_: ['node', 'cli.js', 'init', PROJECT_DIR]});
-                assert(fs.existsSync(PROJECT_DIR));
+            it('should create a new directory with project name', function(done) {
+                callWebGME({_: ['node', 'cli.js', 'init', PROJECT_DIR]}, function() {
+                    assert(fs.existsSync(PROJECT_DIR));
+                    done();
+                });
             });
 
-            it('should initialize an npm project', function() {
-                callWebGME({_: ['node', 'cli.js', 'init', PROJECT_DIR]});
-                var packageJSON = path.join(PROJECT_DIR, 'package.json');
-                assert(fs.existsSync(packageJSON));
+            it('should initialize an npm project', function(done) {
+                callWebGME(
+                    {_: ['node', 'cli.js', 'init', PROJECT_DIR]}, 
+                    function() {
+                        var packageJSON = path.join(PROJECT_DIR, 'package.json');
+                        assert(fs.existsSync(packageJSON));
+                        done();
+                    });
             });
 
-            it('should name the npm project appropriately', function() {
-                callWebGME({_: ['node', 'cli.js', 'init', PROJECT_DIR]});
-                var packageJSON = path.join(PROJECT_DIR, 'package.json');
-                var pkg = require(packageJSON);
-                assert.equal(pkg.name, 'ExampleProject'.toLowerCase());
+            it('should name the npm project appropriately', function(done) {
+                callWebGME(
+                    {_: ['node', 'cli.js', 'init', PROJECT_DIR]},
+                    function() {
+                        var packageJSON = path.join(PROJECT_DIR, 'package.json');
+                        var pkg = require(packageJSON); assert.equal(pkg.name, 'ExampleProject'.toLowerCase());
+                        done();
+                    });
             });
 
-            it('should add the webgme as a dependency', function() {
-                callWebGME({_: ['node', 'cli.js', 'init', PROJECT_DIR]});
-                var packageJSON = path.join(PROJECT_DIR, 'package.json');
-                var deps = require(packageJSON).dependencies;
-                assert(deps.hasOwnProperty('webgme'));
+            it('should add the webgme as a dependency', function(done) {
+                callWebGME(
+                    {_: ['node', 'cli.js', 'init', PROJECT_DIR]},
+                    function() {
+                        var packageJSON = path.join(PROJECT_DIR, 'package.json');
+                        var deps = require(packageJSON).dependencies;
+                        assert(deps.hasOwnProperty('webgme'));
+                        done();
+                    });
             });
 
             it.skip('should use the latest release of webgme', function() {

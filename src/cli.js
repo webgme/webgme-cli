@@ -3,10 +3,24 @@
 
 var minimist = require('minimist'),
     path = require('path'),
+    requirejs = require('requirejs'),
     fs = require('fs'),
     EventEmitter = require('events').EventEmitter,
     _ = require('lodash'),
     emitter = new EventEmitter();
+
+// Configure Require JS
+requirejs.config({
+    nodeRequire: require,
+    baseUrl: __dirname,
+    paths: {
+        coreplugins: '../node_modules/webgme/src/plugin/coreplugins',
+        plugin: '../node_modules/webgme/src/plugin',
+        common: '../node_modules/webgme/src/common',
+
+        'plugin/PluginGenerator/PluginGenerator': '../node_modules/webgme/src/plugin/coreplugins/PluginGenerator/',
+    }
+});
 
 var setupEventEmitters = function() { 
     // Add Basic Logging
@@ -47,22 +61,30 @@ var executeCommand = function(args) {
     }
 
     // Commands
+    var called = false;
     if (args._.length) {
-        var commands = buildCommands(),
-            action = args._[0],
-            item = args._[1];
+        // FIXME: Make sure build commands is always executed just in case
+        // they need to generate things like the help messages
+        buildCommands(function(commands) {
+            var action = args._[0],
+                item = args._[1];
 
-        // Search for something matching <cmd> <item>
-        if (commands[action] && commands[action][item]) {
-            return commands[action][item](args);
-        } else if (_.isFunction(commands[action])) {
-            return commands[action](args);
-        }
+            // Search for something matching <cmd> <item>
+            if (commands[action] && commands[action][item]) {
+                called = true;
+                return commands[action][item](args);
+            } else if (_.isFunction(commands[action])) {
+                called = true;
+                return commands[action](args);
+            }
+        });
     }
 
-    // Print usage message
-    var usageMsg = fs.readFileSync(__dirname+'/../doc/usage.txt', 'utf-8');
-    emitter.emit('write', usageMsg);
+    if (!called) {
+        // Print usage message
+        var usageMsg = fs.readFileSync(__dirname+'/../doc/usage.txt', 'utf-8');
+        emitter.emit('write', usageMsg);
+    }
 };
 
 var basicFlags = {
@@ -90,7 +112,7 @@ var basicFlags = {
     }
 };
 
-var buildCommands = function() {
+var buildCommands = function(callback) {
     var cmds = {
         init: function(args) {
             // Create a new project
@@ -128,31 +150,31 @@ var buildCommands = function() {
             return path.join(__dirname,'commands',file);
         });
 
-    var commandDef,
-        itemName,
-        command,
-        commands,
-        commandFn;
+    // Load the item's command definitions
+    requirejs(files, function() {
+        var commandDef,
+            itemName,
+            command,
+            commands,
+            commandFn;
 
-    for (var i = files.length; i--;) {
-        // Load the item's command definitions
-        commandDef = require(files[i])();
+        for (var i = arguments.length; i--;) {
+            commandDef = arguments[i](emitter);
+            itemName = commandDef.name;
+            commands = Object.keys(commandDef.cmds);
+            for (var j = commands.length; j--;) {
+                command = commands[j];
+                commandFn = commandDef.cmds[command];
 
-        itemName = commandDef.name;
-        commands = Object.keys(commandDef.cmds);
-        for (var j = commands.length; j--;) {
-            command = commands[j];
-            commandFn = commandDef.cmds[command];
-
-            // Add the entry to the command table
-            if (!cmds.hasOwnProperty(command)) {
-                cmds[command] = {};
-            } 
-            cmds[command][itemName] = commandFn;
+                // Add the entry to the command table
+                if (!cmds.hasOwnProperty(command)) {
+                    cmds[command] = {};
+                } 
+                cmds[command][itemName] = commandFn;
+            }
         }
-    }
-
-    return cmds;
+        callback(cmds);
+    });
 };
 
 // aliases for flags (eg, -h and --help)
