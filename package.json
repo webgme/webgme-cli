@@ -25,11 +25,14 @@
   "homepage": "https://github.com/brollb/webgme-cli#readme",
   "dependencies": {
     "chai": "^3.0.0",
+    "change-case": "^2.3.0",
     "lodash": "^3.9.3",
     "minimist": "^1.1.1",
+    "ramda": "^0.15.1",
     "requirejs": "^2.1.18",
     "sinon": "^1.15.4",
-    "sinon-chai": "^2.8.0"
+    "sinon-chai": "^2.8.0",
+    "webgme": "^0.11.1"
   },
   "devDependencies": {
     "lodash": "^3.9.3",

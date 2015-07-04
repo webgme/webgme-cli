@@ -85,55 +85,48 @@ describe('WebGME-cli', function() {
 
     // Creating a new item from boilerplate
     describe('basic commands', function() {
-        var TMP_DIR = 'test-tmp';
+        var TMP_DIR = path.join(__dirname, '..', 'test-tmp');
+        var PROJECT_DIR = path.join(TMP_DIR, 'ExampleProject');
         before(function(done) {
             // Create tmp directory in project root
-            TMP_DIR = path.join(__dirname, '..', TMP_DIR);
-            fs.mkdir(TMP_DIR, done);
+            if (!fs.existsSync(TMP_DIR)) {
+                fs.mkdir(TMP_DIR, done);
+            } else {
+                rm_rf(TMP_DIR, function() {
+                    fs.mkdir(TMP_DIR, done);
+                });
+            }
         });
 
         describe('init', function() {
-            var PROJECT_DIR;
-            beforeEach(function() {
-                PROJECT_DIR = path.join(TMP_DIR, 'ExampleProject');
+
+            before(function(done) {
+                callWebGME({_: ['node', 'cli.js', 'init', PROJECT_DIR]}, done);
             });
 
-            it('should create a new directory with project name', function(done) {
-                callWebGME({_: ['node', 'cli.js', 'init', PROJECT_DIR]}, function() {
-                    assert(fs.existsSync(PROJECT_DIR));
-                    done();
-                });
+            it('should create a new directory with project name', function() {
+                assert(fs.existsSync(PROJECT_DIR));
             });
 
-            it('should initialize an npm project', function(done) {
-                callWebGME(
-                    {_: ['node', 'cli.js', 'init', PROJECT_DIR]}, 
-                    function() {
-                        var packageJSON = path.join(PROJECT_DIR, 'package.json');
-                        assert(fs.existsSync(packageJSON));
-                        done();
-                    });
+            it('should create a .webgme file in project root', function() {
+                assert(fs.existsSync(path.join(PROJECT_DIR, '.webgme')));
             });
 
-            it('should name the npm project appropriately', function(done) {
-                callWebGME(
-                    {_: ['node', 'cli.js', 'init', PROJECT_DIR]},
-                    function() {
-                        var packageJSON = path.join(PROJECT_DIR, 'package.json');
-                        var pkg = require(packageJSON); assert.equal(pkg.name, 'ExampleProject'.toLowerCase());
-                        done();
-                    });
+            it('should initialize an npm project', function() {
+                var packageJSON = path.join(PROJECT_DIR, 'package.json');
+                assert(fs.existsSync(packageJSON));
             });
 
-            it('should add the webgme as a dependency', function(done) {
-                callWebGME(
-                    {_: ['node', 'cli.js', 'init', PROJECT_DIR]},
-                    function() {
-                        var packageJSON = path.join(PROJECT_DIR, 'package.json');
-                        var deps = require(packageJSON).dependencies;
-                        assert(deps.hasOwnProperty('webgme'));
-                        done();
-                    });
+            it('should name the npm project appropriately', function() {
+                var packageJSON = path.join(PROJECT_DIR, 'package.json');
+                var pkg = require(packageJSON); 
+                assert.equal(pkg.name, 'ExampleProject'.toLowerCase());
+            });
+
+            it('should add the webgme as a dependency', function() {
+                var packageJSON = path.join(PROJECT_DIR, 'package.json');
+                var deps = require(packageJSON).dependencies;
+                assert(deps.hasOwnProperty('webgme'));
             });
 
             it.skip('should use the latest release of webgme', function() {
@@ -146,18 +139,73 @@ describe('WebGME-cli', function() {
                 callWebGME({_: ['node', 'cli.js', 'init']});
             });
 
-            afterEach(function(done) {
-                if (fs.existsSync(PROJECT_DIR)) {
-                    rm_rf(PROJECT_DIR, done);
-                } else {
-                    done();
-                }
-            });
+            describe('Plugin tests', function() {
+                var PLUGIN_NAME = 'MyNewPlugin';
+                var PLUGIN_SRC = path.join(PROJECT_DIR, 'src', 'plugins', PLUGIN_NAME, PLUGIN_NAME+'.js');
+                var PLUGIN_TEST = path.join(PROJECT_DIR, 'test', 'plugins', PLUGIN_NAME, PLUGIN_NAME+'.spec.js');
 
+                describe('new plugin', function() {
+                    before(function(done) {
+                        process.chdir(PROJECT_DIR);
+                        callWebGME({
+                            _: ['node', 'webgme', 'new', 'plugin', PLUGIN_NAME]
+                        }, done);
+                    });
+
+                    it('should create the plugin source file', function() {
+                        assert(fs.existsSync(PLUGIN_SRC));
+                    });
+
+                    it('should create the plugin\'s test file', function() {
+                        assert(fs.existsSync(PLUGIN_TEST));
+                    });
+                });
+
+                describe('rm plugin', function() {
+                    it.skip('should remove plugin src directory', function() {
+                    });
+
+                    it.skip('should remove plugin test directory', function() {
+                    });
+
+                    it.skip('should remove dependent plugin entry', function() {
+                    });
+                });
+
+                describe('update plugin', function() {
+                    it.skip('should pull the most recent plugin version', function() {
+                    });
+                /**
+                 * 
+                 *
+                 * @return {undefined}
+                 */
+                });
+
+                describe('add plugin', function() {
+                    it.skip('should pull the most recent plugin version', function() {
+                    });
+
+                    it.skip('should retrieve the plugin from github', function() {
+                    });
+
+                    it.skip('should retrieve the plugin from local git', function() {
+                    });
+
+                    it.skip('should record the plugin dependency', function() {
+                    });
+
+                });
+
+            });
         });
 
         after(function(done) {
-            rm_rf(TMP_DIR, done);
+            if (fs.existsSync(PROJECT_DIR)) {
+                rm_rf(PROJECT_DIR, done);
+            } else {
+                done();
+            }
         });
     });
 

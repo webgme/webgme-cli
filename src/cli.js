@@ -101,7 +101,7 @@ var basicFlags = {
     },
 
     verbose: function() {
-        emitter.on('log', function(msg) {
+        emitter.on('debug', function(msg) {
             console.log(msg);
         });
 
@@ -130,10 +130,11 @@ var buildCommands = function(callback) {
                 dependencies: {
                     webgme: '0.12.0-beta.1'  // FIXME
                 }
-            };
-
+            }; 
             emitter.emit('info', 'Writing package.json to '+path.join(project, 'package.json'));
             fs.writeFileSync(path.join(project, 'package.json'), JSON.stringify(packageJSON));
+            // Create the project info file
+            fs.writeFileSync(path.join(project, '.webgme'), '');
 
             emitter.emit('write', 'Created project at '+project+'.\n\n'+
                 'Please run \'npm init\' from the within project to finish configuration.');
