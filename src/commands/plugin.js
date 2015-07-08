@@ -88,7 +88,7 @@ define(['fs',
                 componentConfig.components.plugins[config.pluginID] = pluginConfig;
                 utils.saveConfig(componentConfig);
 
-                emitter.emit('write', 'Created new plugin at '+path);
+                emitter.emit('write', 'Created new plugin at '+pluginPath);
             },
 
             share: function(args) {

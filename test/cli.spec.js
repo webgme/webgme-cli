@@ -1,3 +1,4 @@
+/*globals describe,it,before,after*/
 var cli = require('../src/cli');
 var sinon = require('sinon');
 var fs = require('fs');
@@ -12,6 +13,7 @@ var rm_rf = require('rimraf');
 var emitter;
 
 var callWebGME = function(args, callback) {
+    'use strict';
     cli.argv(_.extend({_: ['node', 'cli.js']}, args));
     if (callback) {
         setTimeout(callback, 100);
@@ -175,9 +177,7 @@ describe('WebGME-cli', function() {
                     });
 
                     it('should record the plugin in .webgme file', function() {
-                        // TODO: 
                         var config = require(path.join(PROJECT_DIR,'.webgme.json'));
-                        console.log('config is: ', config);
                         assert.notEqual(config.components.plugins[PLUGIN_NAME], undefined);
                     });
                 });
@@ -196,11 +196,6 @@ describe('WebGME-cli', function() {
                 describe('update plugin', function() {
                     it.skip('should pull the most recent plugin version', function() {
                     });
-                /**
-                 * 
-                 *
-                 * @return {undefined}
-                 */
                 });
 
                 describe('add plugin', function() {
