@@ -1,1 +1,4 @@
-This is not very helpful...
+usage: webgme [action] [item] [options]
+available actions:    <% _.forEach(actions, function(action) { %>
+    <%= action.name %>:<% _.forEach(action.items, function(item) { %>
+        <%= item %><% }); %><% }); %>

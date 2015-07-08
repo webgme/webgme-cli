@@ -37,38 +37,38 @@ var executeCommand = function(args) {
 
     // Remove the first two args
     args._.splice(0,2);
+    buildCommands(function(commands) {
 
-    // Resolve flag aliases to long form
-    var shortFlags = Object.keys(aliases),
-        longFlag,
-        i;
+        // Resolve flag aliases to long form
+        var shortFlags = Object.keys(aliases),
+            longFlag,
+            i;
 
-    for (i = shortFlags.length; i--;) {
-        if (args[shortFlags[i]]) {
-            longFlag = aliases[shortFlags[i]];
-            args[longFlag] = true;
-        }
-    }
-
-    // General flags
-    var flags = Object.keys(basicFlags);
-    for (i = flags.length; i--;) {
-        if (args[flags[i]]) {
-            if (basicFlags[flags[i]](args)) {
-                return;
+        for (i = shortFlags.length; i--;) {
+            if (args[shortFlags[i]]) {
+                longFlag = aliases[shortFlags[i]];
+                args[longFlag] = true;
             }
         }
-    }
 
-    // Commands
-    var called = false;
-    if (args._.length) {
+        // General flags
+        var flags = Object.keys(basicFlags);
+        for (i = flags.length; i--;) {
+            if (args[flags[i]]) {
+                if (basicFlags[flags[i]](commands, args)) {
+                    return;
+                }
+            }
+        }
+
+        // Commands
+        var called = false;
         // FIXME: Make sure build commands is always executed just in case
         // they need to generate things like the help messages
-        buildCommands(function(commands) {
-            var action = args._[0],
-                item = args._[1];
+        var action = args._[0],
+            item = args._[1];
 
+        if (args._.length) {
             // Search for something matching <cmd> <item>
             if (commands[action] && commands[action][item]) {
                 called = true;
@@ -77,14 +77,34 @@ var executeCommand = function(args) {
                 called = true;
                 return commands[action](args);
             }
-        });
-    }
+        }
 
-    if (!called) {
-        // Print usage message
-        var usageMsg = fs.readFileSync(__dirname+'/../doc/usage.txt', 'utf-8');
-        emitter.emit('write', usageMsg);
-    }
+        if (!called) {
+            // Print usage message
+            var usageMsg = fs.readFileSync(__dirname+'/../doc/usage.txt', 'utf-8');
+            emitter.emit('write', usageMsg);
+        }
+    });
+};
+
+/**
+ * Get the default help content from the commands
+ *
+ * @param {Object} commands
+ * @return {Object}
+ */
+var getDefaultHelpContent = function(commands) {
+    var actions = Object.keys(commands);
+    var i = actions.indexOf('init');
+    actions.splice(i,1);
+    return {
+        actions: actions.map(function(name) {
+            return {
+                name: name,
+                items: Object.keys(commands[name])
+            };
+        })
+    };
 };
 
 var basicFlags = {
@@ -94,8 +114,51 @@ var basicFlags = {
         return true;
     },
 
-    help: function() {
-        var helpMsg = fs.readFileSync(__dirname+'/../doc/help.txt', 'utf-8');
+    help: function(commands, args) {
+        // Get the relevant help message, if available. It will be in 
+        // /item/help.action.txt
+        var defaultPath = __dirname+'/../doc/help.txt';
+        var action = '';
+        var item = '';
+        var actionPath = '';
+        var itemPath = '';
+        var helpTemplate;
+        var helpContent;
+        var helpMsg;
+        var path;
+        var useDefault;
+
+        // TODO: Refactor this next portion
+        if (args._.length) {
+            action = args._.shift();
+            actionPath = action+'.';
+        }
+
+        if (args._.length) {
+            item = args._.shift();
+            itemPath = item+'/';
+        }
+
+        path = __dirname+'/../doc/'+itemPath+'help.'+actionPath+'txt';
+        useDefault = !fs.existsSync(path) || action+item === '';
+        if (!useDefault) {  // If path exists TODO
+            // Create the information for the template
+            if (commands[action]) {
+                if (commands[action][item]) {
+                    helpContent = commands[action][item];
+                } else {
+                    helpContent = commands[action];
+                }
+            }
+
+            emitter.emit('info', 'Retrieving help message from '+path);
+        } else {  // Use the default TODO
+            path = defaultPath;
+            helpContent = getDefaultHelpContent(commands);
+        }
+
+        helpTemplate = fs.readFileSync(path, 'utf-8');
+        helpMsg = _.template(helpTemplate)(helpContent);
         emitter.emit('write', helpMsg);
         return true;
     },
@@ -129,12 +192,13 @@ var buildCommands = function(callback) {
                 name: path.basename(args._[1]).toLowerCase(),
                 dependencies: {
                     webgme: '0.12.0-beta.1'  // FIXME
-                }
-            }; 
+                } }; 
             emitter.emit('info', 'Writing package.json to '+path.join(project, 'package.json'));
             fs.writeFileSync(path.join(project, 'package.json'), JSON.stringify(packageJSON));
+
+            var webgmeConfig = {components: {}};
             // Create the project info file
-            fs.writeFileSync(path.join(project, '.webgme'), '');
+            fs.writeFileSync(path.join(project, '.webgme.json'), JSON.stringify(webgmeConfig));
 
             emitter.emit('write', 'Created project at '+project+'.\n\n'+
                 'Please run \'npm init\' from the within project to finish configuration.');

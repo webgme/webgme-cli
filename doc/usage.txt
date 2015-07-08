@@ -1,4 +1,4 @@
-usage: webgme [action] [item]
+usage: webgme <action> <item>
 
 Examples:
     webgme init MyNewProject

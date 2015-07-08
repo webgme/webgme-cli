@@ -1,5 +1,5 @@
 define([], function() {
-    var PROJECT_CONFIG = '.webgme';
+    var PROJECT_CONFIG = '.webgme.json';
     var fs = require('fs');
     var path = require('path');
 
@@ -66,10 +66,21 @@ define([], function() {
         }
     };
 
-    var getConfigFile = function() {
+    var getConfig = function() {
+        var root = getRootPath();
+        var config = fs.readFileSync(path.join(root, PROJECT_CONFIG));
+        return JSON.parse(config);
+    };
+
+    var saveConfig = function(config) {
+        var root = getRootPath();
+        var configText = JSON.stringify(config);
+        fs.writeFileSync(path.join(root, PROJECT_CONFIG), configText);
     };
 
     return {
+        saveConfig: saveConfig,
+        getConfig: getConfig,
         getRootPath: getRootPath,
         saveFilesFromBlobClient: saveFilesFromBlobClient
     };

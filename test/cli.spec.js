@@ -29,11 +29,15 @@ describe('WebGME-cli', function() {
     describe('basic flags', function() {
 
         describe('help', function() {
-            var helpMsg;
+            var helpMsg, newHelpSnippet;
             before(function(done) {
                 fs.readFile(__dirname+'/../doc/help.txt', 'utf-8', function(e, txt) {
-                    helpMsg = txt;
-                    done();
+                    helpMsg = txt.split('\n')[0];
+                    // Load the help msg for new plugins
+                    fs.readFile(__dirname+'/../doc/plugin/help.new.txt', 'utf-8', function(e, txt) {
+                        newHelpSnippet = txt.split('\n')[0];
+                        done();
+                    });
                 });
             });
 
@@ -46,18 +50,28 @@ describe('WebGME-cli', function() {
 
             it('should display help message when given --help', function(done) {
                 emitter.once('write', function(msg) { 
-                    assert.equal(helpMsg, msg);
+                    assert.notEqual(msg.indexOf(helpMsg), -1);
                     done();
                 });
                 callWebGME({help: true});
             });
 
-            it('should display help message when given --h', function(done) {
+            it('should display help message for "new plugin"', function(done) {
                 emitter.once('write', function(msg) { 
-                    assert.equal(helpMsg, msg);
+                    // Since the new help message is a template, I am just checking the usage line
+                    assert.notEqual(msg.indexOf(newHelpSnippet), -1);
                     done();
                 });
-                callWebGME({help: true});
+                callWebGME({_: ['node', 'webgme', 'new', 'plugin'], help: true});
+            });
+
+            it('should display help options for "new plugin"', function(done) {
+                emitter.once('write', function(msg) { 
+                    // Since the new help message is a template, I am just checking the usage line
+                    assert.notEqual(msg.indexOf("plugin-name"), -1);
+                    done();
+                });
+                callWebGME({_: ['node', 'webgme', 'new', 'plugin'], help: true});
             });
 
         });
@@ -109,7 +123,7 @@ describe('WebGME-cli', function() {
             });
 
             it('should create a .webgme file in project root', function() {
-                assert(fs.existsSync(path.join(PROJECT_DIR, '.webgme')));
+                assert(fs.existsSync(path.join(PROJECT_DIR, '.webgme.json')));
             });
 
             it('should initialize an npm project', function() {
@@ -159,6 +173,13 @@ describe('WebGME-cli', function() {
                     it('should create the plugin\'s test file', function() {
                         assert(fs.existsSync(PLUGIN_TEST));
                     });
+
+                    it('should record the plugin in .webgme file', function() {
+                        // TODO: 
+                        var config = require(path.join(PROJECT_DIR,'.webgme.json'));
+                        console.log('config is: ', config);
+                        assert.notEqual(config.components.plugins[PLUGIN_NAME], undefined);
+                    });
                 });
 
                 describe('rm plugin', function() {
@@ -197,6 +218,28 @@ describe('WebGME-cli', function() {
 
                 });
 
+                // Share an item used in the project
+                describe('share', function() {
+                    before(function(done) {
+                        callWebGME({
+                            _: ['node', 'cli.js', 'share', 'plugin', PLUGIN_NAME]
+                            }, done);
+                    });
+
+                    it.skip('should record the name, type info in manifest', function() {
+                        var content = fs.readFileSync(path.join(PROJECT_DIR,'.webgme.json')),
+                            config = JSON.parse(content);
+                        assert(config.sharing.plugins[PLUGIN_NAME]);
+                    });
+
+                    it.skip('should fail if sharing invalid type', function() {
+                    });
+
+                    it.skip('should fail if sharing invalid name', function() {
+                    });
+
+                });
+
             });
         });
 
@@ -207,19 +250,6 @@ describe('WebGME-cli', function() {
                 done();
             }
         });
-    });
-
-    // Share an item used in the project
-    describe('share', function() {
-        it.skip('should fail if sharing invalid type', function() {
-        });
-
-        it.skip('should fail if sharing invalid name', function() {
-        });
-
-        it.skip('should record the name, type info in manifest', function() {
-        });
-
     });
 
     // Importing an existing item into the project
