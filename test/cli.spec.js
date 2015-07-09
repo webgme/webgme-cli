@@ -199,7 +199,30 @@ describe('WebGME-cli', function() {
                 });
 
                 describe('add plugin', function() {
-                    it.skip('should pull the most recent plugin version', function() {
+                    var OTHER_PROJECT = 'brollb/VisualConstraintLanguage';
+                    var OTHER_PLUGIN = 'BlockEditor';
+                    before(function(done) {
+                        process.chdir(PROJECT_DIR);
+                        callWebGME({
+                            _: ['node', 'webgme', 'add', 'plugin', OTHER_PROJECT, OTHER_PLUGIN]
+                            }, done);
+                    });
+
+                    it('should add the project to the package.json', function() {
+                        // FIXME: This fails only when run with all the other tests
+                        var pkg = require(path.join(PROJECT_DIR, 'package.json'));
+                        assert(pkg.dependencies[OTHER_PROJECT.split('/')[1]] === OTHER_PROJECT);
+                        // TODO
+                    });
+
+                    it.skip('should accept project with hash', function() {
+                    });
+
+                    it.skip('should accept url for project', function() {
+                        // Such as bitbucket
+                    });
+
+                    it.skip('should add the plugin to the webgme config', function() {
                     });
 
                     it.skip('should retrieve the plugin from github', function() {
