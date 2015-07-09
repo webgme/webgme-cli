@@ -11,6 +11,7 @@ var _ = require('lodash');
 var rm_rf = require('rimraf');
 
 var emitter;
+var WebGMEConfig = 'config.webgme.js';
 
 var callWebGME = function(args, callback) {
     'use strict';
@@ -148,6 +149,21 @@ describe('WebGME-cli', function() {
             it.skip('should use the latest release of webgme', function() {
             });
 
+            it('should create a webgme config file', function() {
+                var config = path.join(PROJECT_DIR, WebGMEConfig);
+                assert(fs.existsSync(config));
+            });
+
+            it('should create editable (boilerplate) webgme config file', function() {
+                var config = path.join(PROJECT_DIR, 'config.js');
+                assert(fs.existsSync(config));
+            });
+
+            it('should create webgme app.js file', function() {
+                var app = path.join(PROJECT_DIR, 'app.js');
+                assert(fs.existsSync(app));
+            });
+
             it('should throw error if no project name', function(done) {
                 emitter.once('error', function(msg) { 
                     done();
@@ -174,6 +190,9 @@ describe('WebGME-cli', function() {
 
                     it('should create the plugin\'s test file', function() {
                         assert(fs.existsSync(PLUGIN_TEST));
+                    });
+
+                    it.skip('should add the plugin path to the config file', function() {
                     });
 
                     it('should record the plugin in .webgme file', function() {

@@ -175,6 +175,19 @@ var basicFlags = {
     }
 };
 
+var createWebGMEFiles = function(project) {
+    // Create config file
+    var webgmeConfigTemplate = fs.readFileSync(path.join(__dirname, 'res', 'config.template.js'));
+    var webgmeConfig = _.template(webgmeConfigTemplate)(/*TODO: Add content for the template*/);
+    fs.writeFileSync(path.join(project, 'config.webgme.js'), JSON.stringify(webgmeConfig));
+
+    // Create editable config file
+    // TODO
+
+    // Create app.js file
+    // TODO
+};
+
 var buildCommands = function(callback) {
     var cmds = {
         init: function(args) {
@@ -191,14 +204,17 @@ var buildCommands = function(callback) {
             var packageJSON = {
                 name: path.basename(args._[1]).toLowerCase(),
                 dependencies: {
-                    webgme: '0.12.0-beta.1'  // FIXME
+                    webgme: '^0.11.1'  // FIXME: Add version as an optional arg
                 } }; 
             emitter.emit('info', 'Writing package.json to '+path.join(project, 'package.json'));
             fs.writeFileSync(path.join(project, 'package.json'), JSON.stringify(packageJSON));
 
-            var webgmeConfig = {components: {}};
+            // Create the webgme files
+            createWebGMEFiles(project);
+
             // Create the project info file
-            fs.writeFileSync(path.join(project, '.webgme.json'), JSON.stringify(webgmeConfig));
+            var webgmeInfo = {components: {}};
+            fs.writeFileSync(path.join(project, '.webgme.json'), JSON.stringify(webgmeInfo));
 
             emitter.emit('write', 'Created project at '+project+'.\n\n'+
                 'Please run \'npm init\' from the within project to finish configuration.');
