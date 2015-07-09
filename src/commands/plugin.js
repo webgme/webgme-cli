@@ -108,9 +108,19 @@ define(['fs',
             },
 
             add: function(args) {
-                console.log('Adding the plugin...');
-                // TODO: Retrieve the plugin from a git repo and add it to
-                // the webgme config file
+                var project = args._[2];
+                var pluginName = args._[3];
+
+                // Add the project to the package.json
+                var pkgPath = path.join(utils.getRootPath(), 'package.json');
+                var pkg = JSON.parse(fs.readFileSync(pkgPath).toString());
+                // TODO: the projectname should match a regex
+                pkg.dependencies[project.split('/')[1]] = project;
+                fs.writeFileSync(pkgPath, JSON.stringify(pkg));
+
+                // Add the plugin to the webgme config
+                // TODO
+
             },
 
             rm: function(args) {
