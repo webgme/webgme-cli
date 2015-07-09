@@ -1,3 +1,4 @@
+/*globals define*/
 /*
  * This file defines the commands and behavior for manipulating WebGME plugins
  */
@@ -11,6 +12,7 @@ define(['fs',
                  path,
                  PluginGenerator) {
 
+    'use strict';
     /*
      * Generate the help messages from the plugin config structure.
      *
