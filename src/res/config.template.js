@@ -5,8 +5,11 @@
 var config = require('webgme/config/config.default'),
     validateConfig = require('webgme/config/validator');
 
+var pluginPaths = [];<% _.forEach(pluginPaths, function(path) { %>
+pluginPaths.push("<%= path %>");<%});%>
+
 // Add the plugin paths
-// TODO
+config.plugin.basePaths.push(pluginPaths);
 
 validateConfig(config);
 module.exports = config;

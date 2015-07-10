@@ -175,17 +175,29 @@ var basicFlags = {
     }
 };
 
+var copyFileToProject = function(project, filename) {
+    var boilerplatePath = path.join(__dirname, 'res', filename),
+        dstPath = path.join(project, filename);
+
+    fs.createReadStream(boilerplatePath)
+        .pipe(fs.createWriteStream(dstPath));
+};
+
+var getWebGMEConfigContent = function() {
+    // TODO
+    return {
+        pluginPaths: ['src/plugins']
+    };
+};
+
 var createWebGMEFiles = function(project) {
     // Create config file
     var webgmeConfigTemplate = fs.readFileSync(path.join(__dirname, 'res', 'config.template.js'));
-    var webgmeConfig = _.template(webgmeConfigTemplate)(/*TODO: Add content for the template*/);
-    fs.writeFileSync(path.join(project, 'config.webgme.js'), JSON.stringify(webgmeConfig));
+    var webgmeConfig = _.template(webgmeConfigTemplate)(getWebGMEConfigContent());
+    fs.writeFileSync(path.join(project, 'config.webgme.js'), webgmeConfig);
 
-    // Create editable config file
-    // TODO
-
-    // Create app.js file
-    // TODO
+    // Create editable config file and app.js
+    ['config.js', 'app.js'].forEach(copyFileToProject.bind(this, project));
 };
 
 var buildCommands = function(callback) {
@@ -201,19 +213,24 @@ var buildCommands = function(callback) {
             fs.mkdirSync(project);
 
             // Create the package.json
-            var packageJSON = {
-                name: path.basename(args._[1]).toLowerCase(),
-                dependencies: {
-                    webgme: '^0.11.1'  // FIXME: Add version as an optional arg
-                } }; 
+            var pkgJsonTemplatePath = path.join(__dirname, 'res', 'package.template.json'),
+                pkgJsonTemplate = _.template(fs.readFileSync(pkgJsonTemplatePath)),
+                pkgContent = {
+                    name: path.basename(args._[1]).toLowerCase()
+                },
+                pkgJson = pkgJsonTemplate(pkgContent);
+
             emitter.emit('info', 'Writing package.json to '+path.join(project, 'package.json'));
-            fs.writeFileSync(path.join(project, 'package.json'), JSON.stringify(packageJSON));
+            fs.writeFileSync(path.join(project, 'package.json'), JSON.stringify(pkgJson));
 
             // Create the webgme files
             createWebGMEFiles(project);
 
             // Create the project info file
-            var webgmeInfo = {components: {}};
+            var webgmeInfo = {
+                components: {},
+                dependencies: {}
+            };
             fs.writeFileSync(path.join(project, '.webgme.json'), JSON.stringify(webgmeInfo));
 
             emitter.emit('write', 'Created project at '+project+'.\n\n'+

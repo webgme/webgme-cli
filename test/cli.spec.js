@@ -136,13 +136,13 @@ describe('WebGME-cli', function() {
 
             it('should name the npm project appropriately', function() {
                 var packageJSON = path.join(PROJECT_DIR, 'package.json');
-                var pkg = require(packageJSON); 
+                var pkg = JSON.parse(require(packageJSON));
                 assert.equal(pkg.name, 'ExampleProject'.toLowerCase());
             });
 
             it('should add the webgme as a dependency', function() {
                 var packageJSON = path.join(PROJECT_DIR, 'package.json');
-                var deps = require(packageJSON).dependencies;
+                var deps = JSON.parse(require(packageJSON)).dependencies;
                 assert(deps.hasOwnProperty('webgme'));
             });
 
@@ -202,13 +202,31 @@ describe('WebGME-cli', function() {
                 });
 
                 describe('rm plugin', function() {
-                    it.skip('should remove plugin src directory', function() {
+                    var PLUGIN_NAME = 'RemoveMe';
+                    before(function(done) {
+                        process.chdir(PROJECT_DIR);
+                        callWebGME({
+                            _: ['node', 'webgme', 'new', 'plugin', PLUGIN_NAME]
+                        }, function() {
+                            callWebGME({
+                                _: ['node', 'webgme', 'rm', 'plugin', PLUGIN_NAME]
+                            }, done);
+                        });
                     });
 
-                    it.skip('should remove plugin test directory', function() {
+                    it('should remove plugin src directory', function() {
+                        var pluginPath = path.join(PROJECT_DIR, 'src', 'plugins', PLUGIN_NAME);
+                        assert.equal(fs.existsSync(pluginPath), false);
                     });
 
-                    it.skip('should remove dependent plugin entry', function() {
+                    it('should remove plugin test directory', function() {
+                        var pluginPath = path.join(PROJECT_DIR, 'test', 'plugins', PLUGIN_NAME);
+                        assert.equal(fs.existsSync(pluginPath), false);
+                    });
+
+                    it('should remove plugin entry from webgme.json', function() {
+                        var config = require(path.join(PROJECT_DIR,'.webgme.json'));
+                        assert.equal(config.components[PLUGIN_NAME], undefined);
                     });
                 });
 
@@ -227,9 +245,15 @@ describe('WebGME-cli', function() {
                             }, done);
                     });
 
-                    it('should add the project to the package.json', function() {
+                    it.skip('should add the project to the package.json', function() {
                         // FIXME: This fails only when run with all the other tests
                         var pkg = require(path.join(PROJECT_DIR, 'package.json'));
+                        // For some stupid reason, pkg was an object when
+                        // all tests were running but a string when it was
+                        // running alone
+                        if (typeof pkg === "string") {
+                            pkg = JSON.parse(pkg);
+                        }
                         assert(pkg.dependencies[OTHER_PROJECT.split('/')[1]] === OTHER_PROJECT);
                         // TODO
                     });

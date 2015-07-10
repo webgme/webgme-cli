@@ -78,10 +78,13 @@ define([], function() {
         fs.writeFileSync(path.join(root, PROJECT_CONFIG), configText);
     };
 
+    var nop = function() {};
+
     return {
         saveConfig: saveConfig,
         getConfig: getConfig,
         getRootPath: getRootPath,
+        nop: nop,
         saveFilesFromBlobClient: saveFilesFromBlobClient
     };
 });

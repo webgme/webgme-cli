@@ -1,0 +1,9 @@
+{
+  "name": "<%= name %>",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "webgme": "^0.11.1"
+  }
+}

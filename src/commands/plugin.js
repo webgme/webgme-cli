@@ -5,10 +5,12 @@
 
 define(['fs', 
         'ramda',
+        'rimraf',
         'path',
         'commands/shim/PluginGenerator'], 
         function(fs,
                  R,
+                 rm_rf,
                  path,
                  PluginGenerator) {
 
@@ -70,11 +72,6 @@ define(['fs',
         return config;
     };
 
-    var defaultPlugin = {
-        sharing: false,
-        dependencies: []
-    };
-
     return function(emitter) {
         var commands = {
             new: function(args) {
@@ -82,29 +79,19 @@ define(['fs',
                 var config = _.extend(getConfig(args), {pluginID: args._[2]});
                 var pluginGenerator = new PluginGenerator(emitter, config);
                 pluginGenerator.main();
-                var pluginPath = path.join('src', 'plugins', config.pluginID);
+                var srcPluginPath = path.join('src', 'plugins', config.pluginID);
+                var testPluginPath = path.join('test', 'plugins', config.pluginID);
 
                 // Store the plugin info in the .webgme.json file
-                var pluginConfig = _.extend({path: pluginPath}, defaultPlugin);
+                var pluginConfig = {
+                    srcPath: srcPluginPath,
+                    testPath: testPluginPath
+                };
                 var componentConfig = utils.getConfig();
                 componentConfig.components.plugins[config.pluginID] = pluginConfig;
                 utils.saveConfig(componentConfig);
 
-                emitter.emit('write', 'Created new plugin at '+pluginPath);
-            },
-
-            share: function(args) {
-                // Check args
-                if (args._.length < 3) {
-                    // TODO: Change this to a usage message
-                    return emitter.emit('error', 'Missing plugin name');
-                }
-
-                // TODO: Get the plugin name
-                var pluginName = args._[2];
-
-                // Add entry to webgme config file
-                // TODO
+                emitter.emit('write', 'Created new plugin at '+srcPluginPath);
             },
 
             add: function(args) {
@@ -113,19 +100,35 @@ define(['fs',
 
                 // Add the project to the package.json
                 var pkgPath = path.join(utils.getRootPath(), 'package.json');
-                var pkg = JSON.parse(fs.readFileSync(pkgPath).toString());
+                var pkgContent = fs.readFileSync(pkgPath).toString();
+                var pkg = JSON.parse(JSON.parse(pkgContent));  // FIXME
                 // TODO: the projectname should match a regex
                 pkg.dependencies[project.split('/')[1]] = project;
                 fs.writeFileSync(pkgPath, JSON.stringify(pkg));
 
-                // Add the plugin to the webgme config
+                // Add the plugin to the webgme config plugin paths
                 // TODO
 
             },
 
             rm: function(args) {
-                console.log('Removing the plugin...');
+                // TODO: Check args
+                var plugin = args._[2];
+                var config = utils.getConfig();
+
                 // TODO: Remove the plugin directories from src, test
+                var paths = Object.keys(config.components.plugins[plugin]);
+                paths.forEach(function(pathType) {
+                    var p = config.components.plugins[plugin][pathType];
+                    // Remove p recursively
+                    emitter.emit('info', 'Removing '+p);
+                    rm_rf(p, utils.nop);
+                });
+
+                // Remove entry from the config
+                delete config.components.plugins[plugin];
+                utils.saveConfig(config);
+                emitter.emit('write', 'Removed the '+plugin+'!');
             },
 
             update: function(args) {
@@ -142,12 +145,16 @@ define(['fs',
 
             // Check for plugins entry in .webgme
             var config = utils.getConfig();
-            if (config.components.plugins === undefined) {
-                config.components.plugins = {};
-                utils.saveConfig(config);
-            }
+            var entries = Object.keys(config);
+            entries.forEach(function(entry) {
+                if (config[entry].plugins === undefined) {
+                    config[entry].plugins = {};
+                }
+            });
+            utils.saveConfig(config);
             commands[action](args);
         };
+
         var pluginInfo = {
             name: 'plugin',
             cmds: {}
