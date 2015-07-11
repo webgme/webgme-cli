@@ -221,7 +221,7 @@ var buildCommands = function(callback) {
                 pkgJson = pkgJsonTemplate(pkgContent);
 
             emitter.emit('info', 'Writing package.json to '+path.join(project, 'package.json'));
-            fs.writeFileSync(path.join(project, 'package.json'), JSON.stringify(pkgJson));
+            fs.writeFileSync(path.join(project, 'package.json'), pkgJson);
 
             // Create the webgme files
             createWebGMEFiles(project);

@@ -5,11 +5,17 @@
 var config = require('webgme/config/config.default'),
     validateConfig = require('webgme/config/validator');
 
-var pluginPaths = [];<% _.forEach(pluginPaths, function(path) { %>
-pluginPaths.push("<%= path %>");<%});%>
+// FIXME: This needs to be restructured...
+// The paths can be loaded from the .webgme.json
+//
+// The extra settings (such as enabling executors) need to be
+// figured out
 
-// Add the plugin paths
-config.plugin.basePaths.push(pluginPaths);
+// This is a hack :/
+<% if (typeof plugins === "undefined") plugins = []; %>
+
+<% _.forEach(plugins, function(path) { %>
+config.plugin.basePaths.push("<%= path %>");<%});%>
 
 validateConfig(config);
 module.exports = config;

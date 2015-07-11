@@ -1,7 +1,15 @@
-define([], function() {
-    var PROJECT_CONFIG = '.webgme.json';
-    var fs = require('fs');
-    var path = require('path');
+define(['lodash', 
+        'fs',
+        'path',
+        'module',
+        'ramda'], function(_, 
+                           fs,
+                           path,
+                           module,
+                           R) {
+
+    var PROJECT_CONFIG = '.webgme.json',
+        __dirname = path.dirname(module.uri);
 
     var getRootPath = function() {
         // Walk back from current path until you find a .webgme file
@@ -66,6 +74,7 @@ define([], function() {
         }
     };
 
+    /* * * * * * * Config Settings * * * * * * * */
     var getConfig = function() {
         var root = getRootPath();
         var config = fs.readFileSync(path.join(root, PROJECT_CONFIG));
@@ -78,6 +87,70 @@ define([], function() {
         fs.writeFileSync(path.join(root, PROJECT_CONFIG), configText);
     };
 
+    /**
+     * Update the WebGME config based on the paths in the .webgme.json. 
+     * It will pass the name of the 
+     *
+     * @return {undefined}
+     */
+    var updateWebGMEConfig = function() {
+        var content = getWebGMEConfigContent(),
+            templatePath = path.join(__dirname, 'res', 'config.template.js'),
+            template = _.template(fs.readFileSync(templatePath)),
+            configPath = path.join(getRootPath(), 'config.webgme.js');
+
+        fs.writeFileSync(configPath, template(content));
+    };
+
+    /**
+     * Get the paths from a config (sub) object such as "components" or 
+     * "dependencies"
+     *
+     * @param {Object} config
+     * @return {String[]}
+     */
+    var getPathsFromConfigGroup = function(config) {
+        return R.mapObj(function(componentType) {
+            return R.values(componentType).map(function(component) {
+                return path.dirname(component.srcPath || component.path);
+            });
+        }, config);
+    };
+
+    var getWebGMEConfigContent = function() {
+        var arrays,
+            config = getConfig(),
+            paths = {},
+            configGroupPaths = ['components', 'dependencies']
+                .map(function(type) {
+                    return getPathsFromConfigGroup(config[type]);
+                }
+            );
+
+        // Merge the arrays for each componentType
+        var componentTypes = Object.keys(configGroupPaths[0]);
+        for (var i = componentTypes.length; i--;) {
+            // Get all paths for the component type (eg, plugins)
+            arrays = configGroupPaths.map(function(group) {
+                return group[componentTypes[i]];
+            });
+            // Merge all paths
+            paths[componentTypes[i]] = arrays.reduce(R.concat);
+        }
+
+        return paths;
+    };
+
+    var loadConfig = function(project) {
+        var configPath,
+            config;
+
+        configPath = path.join(getRootPath(), 'node_modules', 
+            project, '.webgme.json');
+        config = fs.readFileSync(configPath);
+        return JSON.parse(config);
+    };
+
     var nop = function() {};
 
     return {
@@ -85,6 +158,8 @@ define([], function() {
         getConfig: getConfig,
         getRootPath: getRootPath,
         nop: nop,
+        loadConfig: loadConfig,
+        updateWebGMEConfig: updateWebGMEConfig,
         saveFilesFromBlobClient: saveFilesFromBlobClient
     };
 });

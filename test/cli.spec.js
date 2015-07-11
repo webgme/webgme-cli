@@ -136,13 +136,13 @@ describe('WebGME-cli', function() {
 
             it('should name the npm project appropriately', function() {
                 var packageJSON = path.join(PROJECT_DIR, 'package.json');
-                var pkg = JSON.parse(require(packageJSON));
+                var pkg = require(packageJSON);
                 assert.equal(pkg.name, 'ExampleProject'.toLowerCase());
             });
 
             it('should add the webgme as a dependency', function() {
                 var packageJSON = path.join(PROJECT_DIR, 'package.json');
-                var deps = JSON.parse(require(packageJSON)).dependencies;
+                var deps = require(packageJSON).dependencies;
                 assert(deps.hasOwnProperty('webgme'));
             });
 
@@ -172,9 +172,10 @@ describe('WebGME-cli', function() {
             });
 
             describe('Plugin tests', function() {
-                var PLUGIN_NAME = 'MyNewPlugin';
-                var PLUGIN_SRC = path.join(PROJECT_DIR, 'src', 'plugins', PLUGIN_NAME, PLUGIN_NAME+'.js');
-                var PLUGIN_TEST = path.join(PROJECT_DIR, 'test', 'plugins', PLUGIN_NAME, PLUGIN_NAME+'.spec.js');
+                var PLUGIN_NAME = 'MyNewPlugin',
+                    PluginBasePath = path.join(PROJECT_DIR, 'src', 'plugins'),
+                    PLUGIN_SRC = path.join(PluginBasePath, PLUGIN_NAME, PLUGIN_NAME+'.js'),
+                    PLUGIN_TEST = path.join(PROJECT_DIR, 'test', 'plugins', PLUGIN_NAME, PLUGIN_NAME+'.spec.js');
 
                 describe('new plugin', function() {
                     before(function(done) {
@@ -192,7 +193,11 @@ describe('WebGME-cli', function() {
                         assert(fs.existsSync(PLUGIN_TEST));
                     });
 
-                    it.skip('should add the plugin path to the config file', function() {
+                    it('should add the plugin (relative) path to the config file', function() {
+                        var config = require(path.join(PROJECT_DIR, 'config.webgme.js'));
+                        // check that basePath has been added!
+                        var relativeBase = PluginBasePath.replace(PROJECT_DIR+path.sep, '');
+                        assert.notEqual(config.plugin.basePaths.indexOf(relativeBase), -1);
                     });
 
                     it('should record the plugin in .webgme file', function() {
@@ -230,12 +235,9 @@ describe('WebGME-cli', function() {
                     });
                 });
 
-                describe('update plugin', function() {
-                    it.skip('should pull the most recent plugin version', function() {
-                    });
-                });
-
                 describe('add plugin', function() {
+                    // FIXME: Change this to an actual repo on github
+                    // so it can pass
                     var OTHER_PROJECT = 'brollb/VisualConstraintLanguage';
                     var OTHER_PLUGIN = 'BlockEditor';
                     before(function(done) {
@@ -258,6 +260,15 @@ describe('WebGME-cli', function() {
                         // TODO
                     });
 
+                    it.skip('should add the project to the .webgme.json', function() {
+                        var config = require(path.join(PROJECT_DIR,'.webgme.json'));
+                        console.log('config:', config.dependencies);
+                        assert.notEqual(config.dependencies[OTHER_PLUGIN], undefined);
+                    });
+
+                    it.skip('should add the path to the webgme config', function() {
+                    });
+
                     it.skip('should accept project with hash', function() {
                     });
 
@@ -265,42 +276,7 @@ describe('WebGME-cli', function() {
                         // Such as bitbucket
                     });
 
-                    it.skip('should add the plugin to the webgme config', function() {
-                    });
-
-                    it.skip('should retrieve the plugin from github', function() {
-                    });
-
-                    it.skip('should retrieve the plugin from local git', function() {
-                    });
-
-                    it.skip('should record the plugin dependency', function() {
-                    });
-
                 });
-
-                // Share an item used in the project
-                describe('share', function() {
-                    before(function(done) {
-                        callWebGME({
-                            _: ['node', 'cli.js', 'share', 'plugin', PLUGIN_NAME]
-                            }, done);
-                    });
-
-                    it.skip('should record the name, type info in manifest', function() {
-                        var content = fs.readFileSync(path.join(PROJECT_DIR,'.webgme.json')),
-                            config = JSON.parse(content);
-                        assert(config.sharing.plugins[PLUGIN_NAME]);
-                    });
-
-                    it.skip('should fail if sharing invalid type', function() {
-                    });
-
-                    it.skip('should fail if sharing invalid name', function() {
-                    });
-
-                });
-
             });
         });
 
@@ -311,17 +287,5 @@ describe('WebGME-cli', function() {
                 done();
             }
         });
-    });
-
-    // Importing an existing item into the project
-    describe('add', function() {
-        it.skip('should add ', function() {
-        });
-    });
-
-    describe('update', function() {
-    });
-
-    describe('rm', function() {
     });
 });

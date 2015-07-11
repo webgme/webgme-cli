@@ -5,11 +5,13 @@
 
 define(['fs', 
         'ramda',
+        'child_process',
         'rimraf',
         'path',
         'commands/shim/PluginGenerator'], 
         function(fs,
                  R,
+                 childProcess,
                  rm_rf,
                  path,
                  PluginGenerator) {
@@ -24,6 +26,7 @@ define(['fs',
     var _ = require('lodash');
 
     var utils = require('./utils');
+    var spawn = childProcess.spawn;
     var rawConfig = PluginGenerator.prototype.getConfigStructure();
     var configFlagByType = {
         boolean: function(config) {
@@ -79,44 +82,91 @@ define(['fs',
                 var config = _.extend(getConfig(args), {pluginID: args._[2]});
                 var pluginGenerator = new PluginGenerator(emitter, config);
                 pluginGenerator.main();
-                var srcPluginPath = path.join('src', 'plugins', config.pluginID);
-                var testPluginPath = path.join('test', 'plugins', config.pluginID);
+
+                // Get the src, test paths
+                var paths = R.mapObjIndexed(function(empty, type) {
+                    return path.join(type, 'plugins', config.pluginID);
+                }, {src: null, test: null});
 
                 // Store the plugin info in the .webgme.json file
                 var pluginConfig = {
-                    srcPath: srcPluginPath,
-                    testPath: testPluginPath
+                    srcPath: paths.src,
+                    testPath: paths.test
                 };
                 var componentConfig = utils.getConfig();
                 componentConfig.components.plugins[config.pluginID] = pluginConfig;
                 utils.saveConfig(componentConfig);
 
-                emitter.emit('write', 'Created new plugin at '+srcPluginPath);
+                utils.updateWebGMEConfig();
+                emitter.emit('write', 'Created new plugin at '+paths.src);
+
             },
 
             add: function(args) {
-                var project = args._[2];
-                var pluginName = args._[3];
+                var project,
+                    pluginName,
+                    pkgPath,
+                    pkgContent,
+                    pkg,
+                    job;
 
+                if (args._.length < 4) {
+                    return emitter.emit('error', 
+                        'Usage: webgme add plugin [project] [plugin]');
+                }
+                project = args._[2];
+                pluginName = args._[3];
                 // Add the project to the package.json
-                var pkgPath = path.join(utils.getRootPath(), 'package.json');
-                var pkgContent = fs.readFileSync(pkgPath).toString();
-                var pkg = JSON.parse(JSON.parse(pkgContent));  // FIXME
-                // TODO: the projectname should match a regex
-                pkg.dependencies[project.split('/')[1]] = project;
-                fs.writeFileSync(pkgPath, JSON.stringify(pkg));
+                // FIXME: Change this to support hashes
+                var pkgProject = project.split('/').pop();
 
                 // Add the plugin to the webgme config plugin paths
-                // TODO
+                // FIXME: Call this without --save then later save it
+                job = spawn('npm', ['install', project, '--save'],
+                    {cwd: utils.getRootPath()}); 
 
+                job.on('close', function(code) {
+                    if (code === 0) {  // Success!
+                        // Look up the pluginPath
+                        var otherConfig,
+                            pluginPath,
+                            config = utils.getConfig();
+
+                        // Try to load the config of the new project
+                        try {
+                            otherConfig = utils.loadConfig(pkgProject);
+                        } catch (e) {
+                            emitter.emit('error', 'Did not recognize the project as a WebGME project');
+                        }
+
+                        // Verify that the plugin exists in the project
+                        if (otherConfig.components[pluginName] === undefined) {
+                            return emitter.emit('error', 'Project does not contain the plugin');
+                        }
+                        pluginPath = otherConfig.components[pluginName].srcPath;
+                        config.dependencies[pluginName] = {
+                            project: pkgProject,
+                            path: pluginPath
+                        };
+                        utils.saveConfig(config);
+
+                        // Update the webgme config file from 
+                        // the cli's config
+                        utils.updateWebGMEConfig();
+
+                    } else {
+                        emitter.emit('error', 'Could not find project!');
+                    }
+                });
             },
 
             rm: function(args) {
                 // TODO: Check args
+                // TODO: Add removing added plugins (remove entry from webgme.json and regen)
                 var plugin = args._[2];
                 var config = utils.getConfig();
 
-                // TODO: Remove the plugin directories from src, test
+                // Remove the plugin directories from src, test
                 var paths = Object.keys(config.components.plugins[plugin]);
                 paths.forEach(function(pathType) {
                     var p = config.components.plugins[plugin][pathType];
@@ -132,6 +182,8 @@ define(['fs',
             },
 
             update: function(args) {
+                // The version is determined by the package.json version 
+                // of the project
                 console.log('Updating the plugin...');
                 // TODO
             }
