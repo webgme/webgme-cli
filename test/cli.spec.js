@@ -30,6 +30,24 @@ describe('WebGME-cli', function() {
         // sinon.spy(emitter, 'on');
     });
 
+    describe('usage message', function() {
+        var usageMsg;
+        before(function(done) {
+            fs.readFile(__dirname+'/../doc/usage.txt', 'utf-8', function(e, txt) {
+                usageMsg = txt;
+                done();
+            });
+        });
+
+        it('should display the usage message if given invalid args', function(done) {
+            emitter.once('write', function(msg) {
+                assert.equal(msg, usageMsg);
+                done();
+            });
+            callWebGME({_: ['node', 'webgme', 'INVALID', 'THING']});
+        });
+    });
+
     describe('basic flags', function() {
 
         describe('help', function() {
@@ -46,31 +64,58 @@ describe('WebGME-cli', function() {
             });
 
             it('should log to console when given --help', function(done) {
-                emitter.once('write', function(msg) { 
+                emitter.once('write', function(msg) {
                     done();
                 });
                 callWebGME({help: true});
             });
 
             it('should display help message when given --help', function(done) {
-                emitter.once('write', function(msg) { 
+                emitter.once('write', function(msg) {
                     assert.notEqual(msg.indexOf(helpMsg), -1);
                     done();
                 });
                 callWebGME({help: true});
             });
 
-            it('should display help message for "new plugin"', function(done) {
-                emitter.once('write', function(msg) { 
-                    // Since the new help message is a template, I am just checking the usage line
-                    assert.notEqual(msg.indexOf(newHelpSnippet), -1);
+            it('should display help message when given -h', function(done) {
+                emitter.once('write', function(msg) {
+                    assert.notEqual(msg.indexOf(helpMsg), -1);
                     done();
                 });
-                callWebGME({_: ['node', 'webgme', 'new', 'plugin'], help: true});
+                callWebGME({h: true});
+            });
+
+            describe('custom help messages', function() {
+                var getMessage = function(type, action, item) {
+                    item += item.length ? '/' : '';
+                    action = action.length ? '.'+action : '';
+                    return fs.readFileSync(__dirname+'/../doc/'+item+type+action+'.txt', 'utf-8');
+                };
+
+                it('should display help message for init', function(done) {
+                    emitter.once('write', function(msg) {
+                        // Since the new help message is a template, I am just checking the usage line
+                        var helpSnippet = getMessage('help', 'init', '').split('\n')[0];
+                        assert.notEqual(msg.indexOf(helpSnippet), -1);
+                        done();
+                    });
+                    callWebGME({_: ['node', 'webgme', 'init'], help: true});
+                });
+
+                it('should display help message for "new plugin"', function(done) {
+                    emitter.once('write', function(msg) {
+                        // Since the new help message is a template, I am just checking the usage line
+                        newHelpSnippet = getMessage('help', 'new', 'plugin').split('\n')[0];
+                        assert.notEqual(msg.indexOf(newHelpSnippet), -1);
+                        done();
+                    });
+                    callWebGME({_: ['node', 'webgme', 'new', 'plugin'], help: true});
+                });
             });
 
             it.skip('should display options for "new plugin --help"', function(done) {
-                emitter.once('write', function(msg) { 
+                emitter.once('write', function(msg) {
                     // Since the new help message is a template, I am just checking the usage line
                     console.log('msg:', msg);
                     assert.notEqual(msg.indexOf("plugin-name"), -1);
@@ -88,7 +133,7 @@ describe('WebGME-cli', function() {
             });
 
             it('should display correct version', function(done) {
-                emitter.once('write', function(msg) { 
+                emitter.once('write', function(msg) {
                     assert.equal('v'+version, msg);
                     done();
                 });
@@ -167,7 +212,7 @@ describe('WebGME-cli', function() {
             });
 
             it('should throw error if no project name', function(done) {
-                emitter.once('error', function(msg) { 
+                emitter.once('error', function(msg) {
                     done();
                 });
                 callWebGME({_: ['node', 'cli.js', 'init']});

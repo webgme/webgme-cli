@@ -76,10 +76,10 @@ WebGMEComponentManager.prototype.BasicFlags = {
         if (!useDefault) {  // If path exists TODO
             // Create the information for the template
             if (this.baseManager[action]) {
-                if (this.componentManagers[item][action]) {
-                    helpContent = this.componentManagers[item][action];
+                if (this.componentManagers[item] && this.componentManagers[item][action]) {
+                    helpContent = _.clone(this.componentManagers[item][action]);
                 } else {
-                    helpContent = this.baseManager[action];
+                    helpContent = _.clone(this.baseManager[action]);
                 }
             }
 
@@ -111,6 +111,7 @@ WebGMEComponentManager.prototype.BasicFlags = {
 
 WebGMEComponentManager.prototype.invokeFromCommandLine = function(argv) {
     // Clean the args
+    console.error('invoking from the command line');
     var args = minimist(argv);
     this.setupEventEmitters();
     this.executeCommand(args);

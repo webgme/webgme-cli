@@ -1,0 +1,3 @@
+usage: webgme init [project-name]
+
+Try 'webgme --help' for more information.
