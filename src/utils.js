@@ -141,14 +141,9 @@ define(['lodash',
         return paths;
     };
 
-    var loadConfig = function(project) {
-        var configPath,
-            config;
-
-        configPath = path.join(getRootPath(), 'node_modules', 
+    var getConfigPath = function(project) {
+        return path.join(getRootPath(), 'node_modules', 
             project, '.webgme.json');
-        config = fs.readFileSync(configPath);
-        return JSON.parse(config);
     };
 
     var nop = function() {};

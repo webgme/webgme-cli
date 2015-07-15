@@ -75,12 +75,11 @@ WebGMEComponentManager.prototype.BasicFlags = {
         useDefault = !fs.existsSync(path) || action+item === '';
         if (!useDefault) {  // If path exists TODO
             // Create the information for the template
+            if (this.componentManagers[item] && this.componentManagers[item][action]) {
+                helpContent = _.clone(this.componentManagers[item][action]);
+            }
             if (this.baseManager[action]) {
-                if (this.componentManagers[item] && this.componentManagers[item][action]) {
-                    helpContent = _.clone(this.componentManagers[item][action]);
-                } else {
-                    helpContent = _.clone(this.baseManager[action]);
-                }
+                helpContent = _.clone(this.baseManager[action]);
             }
 
             this.emitter.emit('info', 'Retrieving help message from '+path);
@@ -97,21 +96,14 @@ WebGMEComponentManager.prototype.BasicFlags = {
     },
 
     verbose: function() {
-        this.emitter.on('debug', function(msg) {
-            console.log(msg);
-        });
-
-        this.emitter.on('info', function(msg) {
-            console.log(msg);
-        });
-
+        this.emitter.on('debug', console.log);
+        this.emitter.on('info', console.log);
     }
 };
 
 
 WebGMEComponentManager.prototype.invokeFromCommandLine = function(argv) {
     // Clean the args
-    console.error('invoking from the command line');
     var args = minimist(argv);
     this.setupEventEmitters();
     this.executeCommand(args);
@@ -119,10 +111,7 @@ WebGMEComponentManager.prototype.invokeFromCommandLine = function(argv) {
 
 WebGMEComponentManager.prototype.setupEventEmitters = function() { 
     // Add Basic Logging
-    this.emitter.on('write', function(msg) {
-        console.log(msg);
-    });
-
+    this.emitter.on('write', console.log);
     this.emitter.on('error', function(msg) {
         console.error(msg);
         process.exit(1);

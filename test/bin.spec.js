@@ -24,4 +24,32 @@ describe('WebGME bin script', function() {
             done();
         });
     });
+
+    it.skip('should exit with code 1 when encounters error', function(done) {
+        //TODO
+    });
+});
+
+var WebGMEComponentManager = require('../src/WebGMEComponentManager');
+    webgmeManager = new WebGMEComponentManager(),
+    fs = require('fs'),
+    emitter = webgmeManager.emitter;
+
+describe('WebGME command line parsing', function() {
+    before(function(done) {
+        fs.readFile(__dirname+'/../doc/help.txt', 'utf-8', 
+            function(e, txt) {
+                helpMsg = txt.split('\n')[0];
+                done();
+            }
+        );
+    });
+
+    it('should correctly handle command line args', function(done) {
+        emitter.once('write', function(msg) {
+            assert.notEqual(msg.indexOf(helpMsg), -1);
+            done();
+        });
+        webgmeManager.invokeFromCommandLine('node webgme -h -v'.split(' '));
+    });
 });

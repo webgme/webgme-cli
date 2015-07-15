@@ -114,10 +114,9 @@ describe('WebGME-cli', function() {
                 });
             });
 
-            it.skip('should display options for "new plugin --help"', function(done) {
+            it('should display options for "new plugin --help"', function(done) {
                 emitter.once('write', function(msg) {
                     // Since the new help message is a template, I am just checking the usage line
-                    console.log('msg:', msg);
                     assert.notEqual(msg.indexOf("plugin-name"), -1);
                     done();
                 });
@@ -285,44 +284,42 @@ describe('WebGME-cli', function() {
                 describe('add plugin', function() {
                     // FIXME: Change this to an actual repo on github
                     // so it can pass
-                    var OTHER_PROJECT = 'brollb/VisualConstraintLanguage';
-                    var OTHER_PLUGIN = 'BlockEditor';
-                    before(function(done) {
-                        process.chdir(PROJECT_DIR);
-                        callWebGME({
-                            _: ['node', 'webgme', 'add', 'plugin', OTHER_PROJECT, OTHER_PLUGIN]
+                    describe('projects created with webgme-cli', function() {
+                        // TODO: Need an example repo for this
+                    });
+
+                    describe.only('projects NOT created with webgme-cli', function() {
+                        var OTHER_PROJECT = 'brollb/VisualConstraintLanguage';
+                        var OTHER_PLUGIN = 'CodeGenerator';
+                        before(function(done) {
+                            process.chdir(PROJECT_DIR);
+                            callWebGME({
+                                _: ['node', 'webgme', 'add', 'plugin', OTHER_PROJECT, OTHER_PLUGIN]
                             }, done);
-                    });
+                        });
 
-                    it.skip('should add the project to the package.json', function() {
-                        // FIXME: This fails only when run with all the other tests
-                        var pkg = require(path.join(PROJECT_DIR, 'package.json'));
-                        // For some stupid reason, pkg was an object when
-                        // all tests were running but a string when it was
-                        // running alone
-                        if (typeof pkg === "string") {
-                            pkg = JSON.parse(pkg);
-                        }
-                        assert(pkg.dependencies[OTHER_PROJECT.split('/')[1]] === OTHER_PROJECT);
-                        // TODO
-                    });
+                        it('should add the project to the package.json', function() {
+                            // FIXME: This fails only when run with all the other tests
+                            var pkg = require(path.join(PROJECT_DIR, 'package.json'));
+                            // For some stupid reason, pkg was an object when
+                            // all tests were running but a string when it was
+                            // running alone
+                            if (typeof pkg === "string") {
+                                pkg = JSON.parse(pkg);
+                            }
+                            assert(pkg.dependencies[OTHER_PROJECT.split('/')[1]] === OTHER_PROJECT);
+                            // TODO
+                        });
 
-                    it.skip('should add the project to the .webgme.json', function() {
-                        var config = require(path.join(PROJECT_DIR,'.webgme.json'));
-                        console.log('config:', config.dependencies);
-                        assert.notEqual(config.dependencies[OTHER_PLUGIN], undefined);
-                    });
+                        it.skip('should add the project to the .webgme.json', function() {
+                            var config = require(path.join(PROJECT_DIR,'.webgme.json'));
+                            console.log('config:', config.dependencies);
+                            assert.notEqual(config.dependencies[OTHER_PLUGIN], undefined);
+                        });
 
-                    it.skip('should add the path to the webgme config', function() {
+                        it.skip('should add the path to the webgme config', function() {
+                        });
                     });
-
-                    it.skip('should accept project with hash', function() {
-                    });
-
-                    it.skip('should accept url for project', function() {
-                        // Such as bitbucket
-                    });
-
                 });
             });
         });
