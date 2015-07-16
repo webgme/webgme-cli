@@ -110,11 +110,8 @@ define(['lodash',
      * @return {String[]}
      */
     var getPathsFromConfigGroup = function(config) {
-        console.log('configGroup:', config);
-        // FIXME: Something is going wrong here
         return R.mapObj(function(componentType) {
             return R.values(componentType).map(function(component) {
-                console.log('component:', component);
                 return path.dirname(component.srcPath || component.path);
             });
         }, config);
@@ -131,21 +128,14 @@ define(['lodash',
             );
 
         // Merge the arrays for each componentType
-        console.log('raw config:', config);
-        var componentTypes = Object.keys(configGroupPaths[0]);
-        console.log('types:', componentTypes);
-        console.log('configGroupPaths:', configGroupPaths);
-        for (var i = componentTypes.length; i--;) {
-            // Get all paths for the component type (eg, plugins)
+        Object.keys(configGroupPaths[0]).forEach(function(type) {
             arrays = configGroupPaths.map(function(group) {
-                return group[componentTypes[i]];
+                return group[type];
             });
             // Merge all paths
-            console.log('arrays:', arrays);
-            paths[componentTypes[i]] = arrays.reduce(R.concat);
-        }
+            paths[type] = arrays.reduce(R.concat);
+        });
 
-        console.log('webgmeconfig content:', paths);
         return paths;
     };
 
@@ -175,6 +165,25 @@ define(['lodash',
         return validPaths.length ? validPaths[0] : null;
     };
 
+    /**
+     * Connect the emitter to the given log type.
+     *
+     * @param {EventEmitter} emitter
+     * @param {String} type
+     * @param {String} data
+     * @return {undefined}
+     */
+    var logStream = function(emitter, type, data) {
+        var msg = data.toString(),
+            len = msg.length,
+            i = msg.lastIndexOf('\n');
+
+        if (i === len-1) {
+            msg = msg.substring(0, len-1);
+        }
+        emitter.emit(type, msg);
+    };
+
     var nop = function() {};
 
     return {
@@ -186,6 +195,7 @@ define(['lodash',
         getPathContaining: getPathContaining,
         getConfigPath: getConfigPath,
         updateWebGMEConfig: updateWebGMEConfig,
-        saveFilesFromBlobClient: saveFilesFromBlobClient
+        saveFilesFromBlobClient: saveFilesFromBlobClient,
+        logStream: logStream
     };
 });

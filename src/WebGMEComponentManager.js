@@ -106,7 +106,7 @@ WebGMEComponentManager.prototype.invokeFromCommandLine = function(argv) {
     // Clean the args
     var args = minimist(argv);
     this.setupEventEmitters();
-    this.executeCommand(args);
+    this.executeCommand(args, function(){/*callback is nop unless testing or library*/});
 };
 
 WebGMEComponentManager.prototype.setupEventEmitters = function() { 
@@ -132,7 +132,7 @@ WebGMEComponentManager.prototype._resolveAliases = function(args) {
     return args;
 };
 
-WebGMEComponentManager.prototype.executeCommand = function(args) {
+WebGMEComponentManager.prototype.executeCommand = function(args, callback) {
 
     // Remove the first two args
     args._.splice(0,2);
@@ -152,10 +152,11 @@ WebGMEComponentManager.prototype.executeCommand = function(args) {
         }
 
         // Pass the argument to the respective manager
-        if (!this._invokeComponentManager(args)) {
+        if (!this._invokeComponentManager(args, callback)) {
             // If not handled, print usage message
             var usageMsg = fs.readFileSync(__dirname+'/../doc/usage.txt', 'utf-8');
             this.emitter.emit('write', usageMsg);
+            callback();
         }
     }.bind(this));
 };
@@ -166,7 +167,7 @@ WebGMEComponentManager.prototype.executeCommand = function(args) {
  * @param {CommandLineArgs} args
  * @return {Boolean} True if component manager invoked
  */
-WebGMEComponentManager.prototype._invokeComponentManager = function(args) {
+WebGMEComponentManager.prototype._invokeComponentManager = function(args, callback) {
     var action,
         item;
 
@@ -176,7 +177,7 @@ WebGMEComponentManager.prototype._invokeComponentManager = function(args) {
             .replace(/^[_]*/, '');  // Don't allow the user to invoke private methods
         // Check if it is a base command
         if (this.baseManager[action]) {
-            this.baseManager[action](args);
+            this.baseManager[action](args, callback);
             return true;
         }
 
@@ -184,7 +185,7 @@ WebGMEComponentManager.prototype._invokeComponentManager = function(args) {
             item = args._[1];
             // Otherwise, pass it to the respective component manager
             if (this.componentManagers[item]) {
-                this.componentManagers[item][action](args);
+                this.componentManagers[item][action](args, callback);
                 return true;
             }
         }

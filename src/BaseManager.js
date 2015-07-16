@@ -8,7 +8,7 @@ var BaseManager = function(emitter) {
     this._emitter = emitter;
 };
 
-BaseManager.prototype.init = function (args) {
+BaseManager.prototype.init = function (args, callback) {
     // Create a new project
     if (args._.length < 2) {
         return this._emitter.emit('error', 'Usage: webgme init [project name]');
@@ -41,7 +41,7 @@ BaseManager.prototype.init = function (args) {
 
     this._emitter.emit('write', 'Created project at '+project+'.\n\n'+
     'Please run \'npm init\' from the within project to finish configuration.');
-
+    callback();
 };
 
 BaseManager.prototype._createWebGMEFiles = function(project) {

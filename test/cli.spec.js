@@ -16,10 +16,7 @@ var webgmeManager = new WebGMEComponentManager();
 
 var callWebGME = function(args, callback) {
     'use strict';
-    webgmeManager.executeCommand(_.extend({_: ['node', 'cli.js']}, args));
-    if (callback) {
-        setTimeout(callback, 100);
-    }
+    webgmeManager.executeCommand(_.extend({_: ['node', 'cli.js']}, args), callback);
 };
 
 describe('WebGME-cli', function() {
@@ -288,17 +285,15 @@ describe('WebGME-cli', function() {
                         // TODO: Need an example repo for this
                     });
 
-                    describe.only('projects NOT created with webgme-cli', function() {
+                    describe.skip('projects NOT created with webgme-cli', function() {
                         var OTHER_PROJECT = 'brollb/VisualConstraintLanguage';
                         var OTHER_PLUGIN = 'CodeGenerator';
                         before(function(done) {
-                            this.timeout(15000);
-                            // FIXME: Figure out how to set this up - should have a callback on 
-                            // command completion
+                            //this.timeout(35000);
                             process.chdir(PROJECT_DIR);
                             callWebGME({
                                 _: ['node', 'webgme', 'add', 'plugin', OTHER_PLUGIN, OTHER_PROJECT]
-                            }, setTimeout.bind(this, done, 10000));
+                            }, done);
                         });
 
                         it('should add the project to the package.json', function() {

@@ -82,7 +82,7 @@ define(['fs',
         });
     };
 
-    PluginManager.prototype._preprocess = function(action, args) {
+    PluginManager.prototype._preprocess = function(action, args, callback) {
         // Check for project directory
         var projectHome = utils.getRootPath();
         if (projectHome === null) {
@@ -98,7 +98,7 @@ define(['fs',
             }
         });
         utils.saveConfig(config);
-        PluginManager.prototype[action].call(this, args);
+        PluginManager.prototype[action].call(this, args, callback);
     };
 
     /**
@@ -107,7 +107,7 @@ define(['fs',
      * @param args
      * @return {undefined}
      */
-    PluginManager.prototype.new = function(args) {
+    PluginManager.prototype.new = function(args, callback) {
         // Set the config options from the command line flags
         var config = _.extend(this._getConfig(args), {pluginID: args._[2]});
         var pluginGenerator = new PluginGenerator(this._emitter, config);
@@ -129,20 +129,20 @@ define(['fs',
 
         utils.updateWebGMEConfig();
         this._emitter.emit('write', 'Created new plugin at '+paths.src);
-
+        callback();
     };
 
     PluginManager.prototype.new.options = PluginManager.prototype._getNewOptions();
 
-    PluginManager.prototype.add = function(args) {
+    PluginManager.prototype.add = function(args, callback) {
         var project,
             pluginName,
             pkgPath,
             pkgContent,
+            projectRoot = utils.getRootPath(),
             pkg,
             job;
 
-        console.log('Calling add plugin');
         if (args._.length < 4) {
             return this._emitter.emit('error', 
             'Usage: webgme add plugin [plugin] [project]');
@@ -156,25 +156,19 @@ define(['fs',
         // Add the plugin to the webgme config plugin paths
         // FIXME: Call this without --save then later save it
         job = spawn('npm', ['install', project, '--save'],
-            {cwd: utils.getRootPath()}); 
+            {cwd: projectRoot}); 
 
         this._emitter.emit('info', 'npm install '+project+' --save');
-        job.stdout.on('data', function(data) {
-            // FIXME: Remove the extra newlines
-            this._emitter.emit('info', data.toString());
-        }.bind(this));
+        job.stdout.on('data', utils.logStream.bind(null, this._emitter, 'info'));
+        job.stderr.on('data', utils.logStream.bind(null, this._emitter, 'info'));
 
-        job.stderr.on('data', function(data) {
-            // FIXME: Remove the extra newlines
-            this._emitter.emit('info', data.toString());
-        }.bind(this));
         job.on('close', function(code) {
             console.log('info', 'npm exited with: '+code);
             this._emitter.emit('info', 'npm exited with: '+code);
             if (code === 0) {  // Success!
                 // Look up the pluginPath by trying to load the config of 
                 // the new project or find the plugin through the plugin 
-                // paths defined in the config.js or config.json TODO
+                // paths defined in the config.js
                 var otherConfig,
                     pluginPath = null,
                     config = utils.getConfig(),
@@ -190,10 +184,10 @@ define(['fs',
                     otherConfig = nodeRequire(gmeConfigPath);
                     pluginPath = utils.getPathContaining(otherConfig.plugin.basePaths.map(
                     function(p) {
-                        // FIXME: Make this relative
                         return path.join(path.dirname(gmeConfigPath), p);
                     }
                     ), pluginName);
+                    pluginPath = path.join(pluginPath,pluginName);
                 } else {
                     this._emitter.emit('error', 'Did not recognize the project as a WebGME project');
                 }
@@ -202,16 +196,17 @@ define(['fs',
                 if (pluginPath === null) {
                     return this._emitter.emit('error', 'Project does not contain the plugin');
                 }
+                pluginPath = path.relative(projectRoot, pluginPath);
                 config.dependencies.plugins[pluginName] = {
                     project: pkgProject,
                     path: pluginPath
                 };
                 utils.saveConfig(config);
-                console.log('config is: ', config);
 
                 // Update the webgme config file from 
                 // the cli's config
                 utils.updateWebGMEConfig();
+                callback();
 
             } else {
                 this._emitter.emit('error', 'Could not find project!');
@@ -219,7 +214,7 @@ define(['fs',
         }.bind(this));
     };
 
-    PluginManager.prototype.rm = function(args) {
+    PluginManager.prototype.rm = function(args, callback) {
         // TODO: Check args
         // TODO: Add removing added plugins (remove entry from webgme.json and regen)
         var plugin = args._[2];
@@ -238,6 +233,7 @@ define(['fs',
         delete config.components.plugins[plugin];
         utils.saveConfig(config);
         this._emitter.emit('write', 'Removed the '+plugin+'!');
+        callback();
     };
 
     /**
