@@ -292,21 +292,18 @@ describe('WebGME-cli', function() {
                         var OTHER_PROJECT = 'brollb/VisualConstraintLanguage';
                         var OTHER_PLUGIN = 'CodeGenerator';
                         before(function(done) {
+                            this.timeout(15000);
+                            // FIXME: Figure out how to set this up - should have a callback on 
+                            // command completion
                             process.chdir(PROJECT_DIR);
                             callWebGME({
-                                _: ['node', 'webgme', 'add', 'plugin', OTHER_PROJECT, OTHER_PLUGIN]
-                            }, done);
+                                _: ['node', 'webgme', 'add', 'plugin', OTHER_PLUGIN, OTHER_PROJECT]
+                            }, setTimeout.bind(this, done, 10000));
                         });
 
                         it('should add the project to the package.json', function() {
                             // FIXME: This fails only when run with all the other tests
                             var pkg = require(path.join(PROJECT_DIR, 'package.json'));
-                            // For some stupid reason, pkg was an object when
-                            // all tests were running but a string when it was
-                            // running alone
-                            if (typeof pkg === "string") {
-                                pkg = JSON.parse(pkg);
-                            }
                             assert(pkg.dependencies[OTHER_PROJECT.split('/')[1]] === OTHER_PROJECT);
                             // TODO
                         });

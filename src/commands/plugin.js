@@ -28,6 +28,7 @@ define(['fs',
 
     'use strict';
     var spawn = childProcess.spawn;
+    var nodeRequire = require.nodeRequire;
     var RAW_CONFIG = PluginGenerator.prototype.getConfigStructure();
     var CONFIG_FLAG_BY_TYPE = {
         boolean: function(config) {
@@ -141,6 +142,7 @@ define(['fs',
             pkg,
             job;
 
+        console.log('Calling add plugin');
         if (args._.length < 4) {
             return this._emitter.emit('error', 
             'Usage: webgme add plugin [plugin] [project]');
@@ -167,6 +169,7 @@ define(['fs',
             this._emitter.emit('info', data.toString());
         }.bind(this));
         job.on('close', function(code) {
+            console.log('info', 'npm exited with: '+code);
             this._emitter.emit('info', 'npm exited with: '+code);
             if (code === 0) {  // Success!
                 // Look up the pluginPath by trying to load the config of 
@@ -176,8 +179,7 @@ define(['fs',
                     pluginPath = null,
                     config = utils.getConfig(),
                     gmeCliConfigPath = utils.getConfigPath(pkgProject),
-                    gmeConfigPath = path.join(utils.getRootPath(),
-                        'node_modules', pkgProject, 'config.js');
+                    gmeConfigPath = utils.getGMEConfigPath(pkgProject);
 
                 if (fs.existsSync(gmeCliConfigPath)) {
                     otherConfig = require(gmeCliConfigPath);
@@ -185,8 +187,13 @@ define(['fs',
                         pluginPath = otherConfig.components[pluginName].srcPath;
                     }
                 } else if (fs.existsSync(gmeConfigPath)) {
-                    otherConfig = require(gmeConfigPath);
-                    // TODO search for the plugin name in all the paths
+                    otherConfig = nodeRequire(gmeConfigPath);
+                    pluginPath = utils.getPathContaining(otherConfig.plugin.basePaths.map(
+                    function(p) {
+                        // FIXME: Make this relative
+                        return path.join(path.dirname(gmeConfigPath), p);
+                    }
+                    ), pluginName);
                 } else {
                     this._emitter.emit('error', 'Did not recognize the project as a WebGME project');
                 }
@@ -195,11 +202,12 @@ define(['fs',
                 if (pluginPath === null) {
                     return this._emitter.emit('error', 'Project does not contain the plugin');
                 }
-                config.dependencies[pluginName] = {
+                config.dependencies.plugins[pluginName] = {
                     project: pkgProject,
                     path: pluginPath
                 };
                 utils.saveConfig(config);
+                console.log('config is: ', config);
 
                 // Update the webgme config file from 
                 // the cli's config

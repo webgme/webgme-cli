@@ -110,8 +110,11 @@ define(['lodash',
      * @return {String[]}
      */
     var getPathsFromConfigGroup = function(config) {
+        console.log('configGroup:', config);
+        // FIXME: Something is going wrong here
         return R.mapObj(function(componentType) {
             return R.values(componentType).map(function(component) {
+                console.log('component:', component);
                 return path.dirname(component.srcPath || component.path);
             });
         }, config);
@@ -128,22 +131,48 @@ define(['lodash',
             );
 
         // Merge the arrays for each componentType
+        console.log('raw config:', config);
         var componentTypes = Object.keys(configGroupPaths[0]);
+        console.log('types:', componentTypes);
+        console.log('configGroupPaths:', configGroupPaths);
         for (var i = componentTypes.length; i--;) {
             // Get all paths for the component type (eg, plugins)
             arrays = configGroupPaths.map(function(group) {
                 return group[componentTypes[i]];
             });
             // Merge all paths
+            console.log('arrays:', arrays);
             paths[componentTypes[i]] = arrays.reduce(R.concat);
         }
 
+        console.log('webgmeconfig content:', paths);
         return paths;
     };
 
     var getConfigPath = function(project) {
         return path.join(getRootPath(), 'node_modules', 
             project, '.webgme.json');
+    };
+
+    var getGMEConfigPath = function(project) {
+        var gmeConfigPath = path.join(getRootPath(), 'node_modules', 
+            project, 'config.js');
+
+        return gmeConfigPath;
+    };
+
+    /**
+     * Find the first path containing the given item.
+     *
+     * @param {String[]} pathType
+     * @param {String} item
+     * @return {String} path containing the item
+     */
+    var getPathContaining = function(paths, item) {
+        var validPaths = paths.filter(function(p) {
+            return fs.readdirSync(p).indexOf(item) !== -1;
+        });
+        return validPaths.length ? validPaths[0] : null;
     };
 
     var nop = function() {};
@@ -153,7 +182,9 @@ define(['lodash',
         getConfig: getConfig,
         getRootPath: getRootPath,
         nop: nop,
-        loadConfig: loadConfig,
+        getGMEConfigPath: getGMEConfigPath,
+        getPathContaining: getPathContaining,
+        getConfigPath: getConfigPath,
         updateWebGMEConfig: updateWebGMEConfig,
         saveFilesFromBlobClient: saveFilesFromBlobClient
     };
