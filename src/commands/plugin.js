@@ -216,23 +216,33 @@ define(['fs',
 
     PluginManager.prototype.rm = function(args, callback) {
         // TODO: Check args
-        // TODO: Add removing added plugins (remove entry from webgme.json and regen)
         var plugin = args._[2];
         var config = utils.getConfig();
+        var type = config.components.plugins[plugin] ? 'components' : 'dependencies';
 
-        // Remove the plugin directories from src, test
-        var paths = Object.keys(config.components.plugins[plugin]);
-        paths.forEach(function(pathType) {
-            var p = config.components.plugins[plugin][pathType];
-            // Remove p recursively
-            this._emitter.emit('info', 'Removing '+p);
-            rm_rf(p, utils.nop);
-        }, this);
+        console.log('type is', type);
+        if (type === 'components') {
+            console.log('removing files');
+            // Remove the plugin directories from src, test
+            var paths = Object.keys(config[type].plugins[plugin]);
+            paths.forEach(function(pathType) {
+                var p = config[type].plugins[plugin][pathType];
+                // Remove p recursively
+                console.log('Removing '+p);
+                this._emitter.emit('info', 'Removing '+p);
+                rm_rf(p, utils.nop);
+            }, this);
+        }
 
         // Remove entry from the config
-        delete config.components.plugins[plugin];
+        delete config[type].plugins[plugin];
+        console.log('updated config:', config);
         utils.saveConfig(config);
+        console.log('before webgme updated config:', utils.getConfig());
+        utils.updateWebGMEConfig();
+
         this._emitter.emit('write', 'Removed the '+plugin+'!');
+        console.log('final updated config:', utils.getConfig());
         callback();
     };
 

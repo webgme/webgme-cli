@@ -222,7 +222,7 @@ describe('WebGME-cli', function() {
 
                 describe('new plugin', function() {
                     before(function(done) {
-                        process.chdir(PROJECT_DIR);
+                        process.chdir(PROJECT_DIR);  // Start in different directory
                         callWebGME({
                             _: ['node', 'webgme', 'new', 'plugin', PLUGIN_NAME]
                         }, done);
@@ -274,22 +274,25 @@ describe('WebGME-cli', function() {
 
                     it('should remove plugin entry from webgme.json', function() {
                         var config = require(path.join(PROJECT_DIR,'.webgme.json'));
-                        assert.equal(config.components[PLUGIN_NAME], undefined);
+                        assert.equal(config.components.plugins[PLUGIN_NAME], undefined);
                     });
                 });
 
-                describe('add plugin', function() {
+                // TODO: Fix these tests
+                describe.only('add plugin', function() {
+                    var OTHER_PROJECT;
+                    var OTHER_PLUGIN;
                     // FIXME: Change this to an actual repo on github
                     // so it can pass
                     describe('projects created with webgme-cli', function() {
                         // TODO: Need an example repo for this
                     });
 
-                    describe.skip('projects NOT created with webgme-cli', function() {
-                        var OTHER_PROJECT = 'brollb/VisualConstraintLanguage';
-                        var OTHER_PLUGIN = 'CodeGenerator';
+                    describe('projects NOT created with webgme-cli', function() {
+                        OTHER_PROJECT = 'brollb/VisualConstraintLanguage';
+                        OTHER_PLUGIN = 'CodeGenerator';
                         before(function(done) {
-                            //this.timeout(35000);
+                            this.timeout(120000);  // This one is slow bc it uses npm
                             process.chdir(PROJECT_DIR);
                             callWebGME({
                                 _: ['node', 'webgme', 'add', 'plugin', OTHER_PLUGIN, OTHER_PROJECT]
@@ -297,19 +300,50 @@ describe('WebGME-cli', function() {
                         });
 
                         it('should add the project to the package.json', function() {
-                            // FIXME: This fails only when run with all the other tests
                             var pkg = require(path.join(PROJECT_DIR, 'package.json'));
+                            console.log('package.json:', pkg);
                             assert(pkg.dependencies[OTHER_PROJECT.split('/')[1]] === OTHER_PROJECT);
+                        });
+
+                        it('should add the project to the .webgme.json', function() {
+                            var config = require(path.join(PROJECT_DIR,'.webgme.json'));
+                            assert.notEqual(config.dependencies.plugins[OTHER_PLUGIN], undefined);
+                        });
+
+                        it('should add the path to the webgme config', function() {
+                            var config = require(path.join(PROJECT_DIR,'config.webgme.js')),
+                                paths = config.plugin.basePaths.join(';');
+                            assert.notEqual(paths.indexOf(OTHER_PROJECT.split('/')[1]), -1);
+                        });
+                    });
+
+                    // This needs to act on the added plugin from before
+                    describe('rm dependency plugin', function() {
+                        before(function(done) {
+                            process.chdir(PROJECT_DIR);
+                            callWebGME({
+                                _: ['node', 'webgme', 'rm', 'plugin', OTHER_PLUGIN]
+                            }, done);
+                        });
+
+                        it('should remove the path from the webgme config', function() {
+                            var config = require(path.join(PROJECT_DIR,'config.webgme.js')),
+                                paths = config.plugin.basePaths.join(';');
+                            assert.equal(paths.indexOf(OTHER_PLUGIN), -1);
+                        });
+
+                        it('should remove plugin entry from webgme.json', function() {
+                            var config = require(path.join(PROJECT_DIR,'.webgme.json'));
+                            console.log('last config:', config);
+                            assert.equal(config.dependencies.plugins[OTHER_PLUGIN], undefined);
+                        });
+
+                        it.skip('should remove project from package.json', function() {
                             // TODO
                         });
 
-                        it.skip('should add the project to the .webgme.json', function() {
-                            var config = require(path.join(PROJECT_DIR,'.webgme.json'));
-                            console.log('config:', config.dependencies);
-                            assert.notEqual(config.dependencies[OTHER_PLUGIN], undefined);
-                        });
-
-                        it.skip('should add the path to the webgme config', function() {
+                        it.skip('should not remove project from package.json if used', function() {
+                            // TODO
                         });
                     });
                 });

@@ -13,16 +13,13 @@ define(['lodash',
 
     var getRootPath = function() {
         // Walk back from current path until you find a .webgme file
-        var abspath = path.resolve('.'),
-            dirs;
+        var abspath = path.resolve('.');
 
         while (abspath.length > 1) {
             if (isProjectRoot(abspath)) {
                 return abspath;
             }
-            dirs = abspath.split(path.sep);
-            dirs.pop();
-            abspath = dirs.join(path.sep);
+            abspath = path.dirname(abspath);
         }
         return null;
     };
@@ -99,6 +96,7 @@ define(['lodash',
             template = _.template(fs.readFileSync(templatePath)),
             configPath = path.join(getRootPath(), 'config.webgme.js');
 
+        console.log('before writing file:', getConfig());
         fs.writeFileSync(configPath, template(content));
     };
 
