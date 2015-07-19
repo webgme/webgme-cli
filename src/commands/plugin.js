@@ -163,7 +163,6 @@ define(['fs',
         job.stderr.on('data', utils.logStream.bind(null, this._emitter, 'info'));
 
         job.on('close', function(code) {
-            console.log('info', 'npm exited with: '+code);
             this._emitter.emit('info', 'npm exited with: '+code);
             if (code === 0) {  // Success!
                 // Look up the pluginPath by trying to load the config of 
@@ -172,13 +171,13 @@ define(['fs',
                 var otherConfig,
                     pluginPath = null,
                     config = utils.getConfig(),
-                    gmeCliConfigPath = utils.getConfigPath(pkgProject),
-                    gmeConfigPath = utils.getGMEConfigPath(pkgProject);
+                    gmeCliConfigPath = utils.getConfigPath(pkgProject.toLowerCase()),
+                    gmeConfigPath = utils.getGMEConfigPath(pkgProject.toLowerCase());
 
                 if (fs.existsSync(gmeCliConfigPath)) {
-                    otherConfig = require(gmeCliConfigPath);
-                    if (otherConfig.components[pluginName]) {
-                        pluginPath = otherConfig.components[pluginName].srcPath;
+                    otherConfig = JSON.parse(fs.readFileSync(gmeCliConfigPath, 'utf-8'));
+                    if (otherConfig.components.plugins[pluginName]) {
+                        pluginPath = otherConfig.components.plugins[pluginName].srcPath;
                     }
                 } else if (fs.existsSync(gmeConfigPath)) {
                     otherConfig = nodeRequire(gmeConfigPath);
@@ -216,34 +215,53 @@ define(['fs',
 
     PluginManager.prototype.rm = function(args, callback) {
         // TODO: Check args
-        var plugin = args._[2];
-        var config = utils.getConfig();
-        var type = config.components.plugins[plugin] ? 'components' : 'dependencies';
+        var plugin = args._[2],
+            config = utils.getConfig(),
+            type = config.components.plugins[plugin] ? 
+                'components' : 'dependencies';
 
-        console.log('type is', type);
+        // Remove from config files
+        this._removeFromConfig(plugin, type);
+
+        // Remove any actual files
         if (type === 'components') {
-            console.log('removing files');
             // Remove the plugin directories from src, test
-            var paths = Object.keys(config[type].plugins[plugin]);
+            var paths = Object.keys(config[type].plugins[plugin]),
+                remaining = paths.length,
+                finished = function() {
+                    if (--remaining === 0) {
+                        return callback();
+                    }
+                };
             paths.forEach(function(pathType) {
                 var p = config[type].plugins[plugin][pathType];
                 // Remove p recursively
-                console.log('Removing '+p);
                 this._emitter.emit('info', 'Removing '+p);
-                rm_rf(p, utils.nop);
+                rm_rf(p, finished);
             }, this);
+        } else {
+            callback();
         }
+    };
 
+    PluginManager.prototype._removeFromConfig = function(plugin, type) {
+        var config = utils.getConfig();
         // Remove entry from the config
         delete config[type].plugins[plugin];
-        console.log('updated config:', config);
         utils.saveConfig(config);
-        console.log('before webgme updated config:', utils.getConfig());
         utils.updateWebGMEConfig();
 
         this._emitter.emit('write', 'Removed the '+plugin+'!');
-        console.log('final updated config:', utils.getConfig());
-        callback();
+    };
+
+    PluginManager.prototype.enable = function(args, callback) {
+        // TODO: Add enabling plugins for projects
+        this._emitter.emit('error', 'Enabling plugins is currently not supported in the WebGME commandline interface.\nPlease enable the plugin using the WebGME.');
+    };
+
+    PluginManager.prototype.disable = function(args, callback) {
+        // TODO: Add disabling plugins for projects
+        this._emitter.emit('error', 'Disabling plugins is currently not supported in the WebGME commandline interface.\nPlease disable the plugin using the WebGME.');
     };
 
     /**

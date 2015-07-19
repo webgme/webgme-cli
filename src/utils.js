@@ -96,7 +96,6 @@ define(['lodash',
             template = _.template(fs.readFileSync(templatePath)),
             configPath = path.join(getRootPath(), 'config.webgme.js');
 
-        console.log('before writing file:', getConfig());
         fs.writeFileSync(configPath, template(content));
     };
 
