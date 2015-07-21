@@ -3,6 +3,7 @@
   "scripts": {
     "start": "node app.js"
   },
+  "version": "1.0.0",
   "dependencies": {
     "webgme": "^0.11.1"
   }

@@ -12,7 +12,7 @@
   },
   "scripts": {
     "test": "node node_modules/mocha/bin/mocha test/*.js",
-    "test-cover": "node node_modules/istanbul/lib/cli.js --hook-run-in-context cover node_modules/mocha/bin/_mocha -- -R spec --recursive test/"
+    "test-cover": "node node_modules/istanbul/lib/cli.js --hook-run-in-context cover node_modules/mocha/bin/_mocha -- -R spec test/*.js"
   },
   "repository": {
     "type": "git",

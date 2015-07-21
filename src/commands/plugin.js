@@ -152,6 +152,8 @@ define(['fs',
         // Add the project to the package.json
         // FIXME: Change this to support hashes
         var pkgProject = project.split('/').pop();
+        this._emitter.emit('info', 
+            'Adding '+pluginName+' from '+pkgProject);
 
         // Add the plugin to the webgme config plugin paths
         // FIXME: Call this without --save then later save it
@@ -174,19 +176,26 @@ define(['fs',
                     gmeCliConfigPath = utils.getConfigPath(pkgProject.toLowerCase()),
                     gmeConfigPath = utils.getGMEConfigPath(pkgProject.toLowerCase());
 
+                console.log('Checking: '+gmeCliConfigPath);
                 if (fs.existsSync(gmeCliConfigPath)) {
+                console.log('Is a CLI project!');
                     otherConfig = JSON.parse(fs.readFileSync(gmeCliConfigPath, 'utf-8'));
                     if (otherConfig.components.plugins[pluginName]) {
                         pluginPath = otherConfig.components.plugins[pluginName].srcPath;
                     }
                 } else if (fs.existsSync(gmeConfigPath)) {
+                console.log('Not a CLI project!');
                     otherConfig = nodeRequire(gmeConfigPath);
                     pluginPath = utils.getPathContaining(otherConfig.plugin.basePaths.map(
                     function(p) {
-                        return path.join(path.dirname(gmeConfigPath), p);
+                        if (!path.isAbsolute(p)) {
+                            return path.join(path.dirname(gmeConfigPath), p);
+                        }
+                        return p;
                     }
                     ), pluginName);
-                    pluginPath = path.join(pluginPath,pluginName);
+                    pluginPath = pluginPath !== null ? 
+                        path.join(pluginPath,pluginName) : null;
                 } else {
                     this._emitter.emit('error', 'Did not recognize the project as a WebGME project');
                 }
