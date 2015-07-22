@@ -6,7 +6,7 @@ var config = require('./config.webgme.js'),
 // Add/overwrite any additional settings here
 // config.server.port = 8080;
 // config.mongo.uri = mongodb://127.0.0.1:27017/webgme_my_app;
-config.plugin.basePaths.push('src/plugins');
+config.plugin.basePaths.push('plugins');
 
 validateConfig(config);
 module.exports = config;
