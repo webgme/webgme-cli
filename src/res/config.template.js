@@ -17,5 +17,11 @@ var config = require('webgme/config/config.default'),
 <% _.forEach(plugin, function(path) { %>
 config.plugin.basePaths.push("<%= path %>");<%});%>
 
+<% if (typeof addon === "undefined") {%>
+<% addon = []; %>
+<% } else { %>config.addOn.enable = true<%}%>
+<% _.forEach(addon, function(path) { %>
+config.addOn.basePaths.push("<%= path %>");<%});%>
+
 validateConfig(config);
 module.exports = config;

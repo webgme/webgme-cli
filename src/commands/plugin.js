@@ -89,15 +89,6 @@ define(['fs',
             return this._emitter.emit('error', 'Could not find a project in current or any parent directories');
         }
 
-        // Check for plugins entry in .webgme
-        var config = utils.getConfig();
-        var entries = Object.keys(config);
-        entries.forEach(function(entry) {
-            if (config[entry][this._name] === undefined) {
-                config[entry][this._name] = {};
-            }
-        }, this);
-        utils.saveConfig(config);
         PluginManager.prototype[action].call(this, args, callback);
     };
 
@@ -123,11 +114,7 @@ define(['fs',
             srcPath: paths.src,
             testPath: paths.test
         };
-        var componentConfig = utils.getConfig();
-        componentConfig.components[this._name][config.pluginID] = pluginConfig;
-        utils.saveConfig(componentConfig);
-
-        utils.updateWebGMEConfig();
+        this._register(config.pluginID, pluginConfig);
         this._emitter.emit('write', 'Created new plugin at '+paths.src);
         callback();
     };

@@ -8,13 +8,21 @@
  */
 
 define(['rimraf',
+        'path',
+        'fs',
+        'module',
         'commands/../utils'], function(rm_rf,
+                                       path,
+                                       fs,
+                                       module,
                                        utils) {
     'use strict';
 
+    var __dirname = path.dirname(module.uri);
     var ComponentManager = function(name, emitter) {
         this._emitter = emitter;
         this._name = name;
+        this._prepareWebGmeConfig();
     };
 
     // TODO: Add methods for creating new objects, etc
@@ -57,6 +65,72 @@ define(['rimraf',
         utils.updateWebGMEConfig();
 
         this._emitter.emit('write', 'Removed the '+plugin+'!');
+    };
+
+    /**
+     * Get a resource from component's directory (ie, src/res/[name]).
+     *
+     * @param {String} name
+     * @return {String}
+     */
+    ComponentManager.prototype._getResource = function(name) {
+        var resourcePath = path.join(__dirname,'..','res',this._name,name);
+        return fs.readFileSync(resourcePath, 'utf-8');
+    };
+
+    /**
+     * Save a file to src/<type>/<name>/<name>.js
+     *
+     * @param {Object} opts
+     * @return {undefined}
+     */
+    ComponentManager.prototype._saveFile = function(opts) {
+        var type = opts.type || 'src',
+            name = opts.name,
+            filePath = path.join(utils.getRootPath(), type, this._name, 
+                name, name+'.js');
+        if (fs.existsSync(filePath)) {
+            return this._emitter.emit('error', filePath+' already exists');
+        }
+        // Create the directories
+        utils.saveFile({name: filePath, content: opts.content});
+        return filePath;
+    };
+
+    /**
+     * Add the names for components and dependencies
+     * for this given component type
+     *
+     * @return {undefined}
+     */
+    ComponentManager.prototype._prepareWebGmeConfig = function() {
+        // Check for project directory
+        var projectHome = utils.getRootPath();
+        if (projectHome !== null) {
+            // Check for plugins entry in .webgme
+            var config = utils.getConfig();
+            var entries = Object.keys(config);
+            entries.forEach(function(entry) {
+                if (config[entry][this._name] === undefined) {
+                    config[entry][this._name] = {};
+                }
+            }, this);
+            utils.saveConfig(config);
+        }
+    };
+
+    /**
+     * Register the given component in the webgme-cli config
+     *
+     * @param {String} name
+     * @param {Object} content
+     * @return {undefined}
+     */
+    ComponentManager.prototype._register = function(name, content) {
+        var config = utils.getConfig();
+        config.components[this._name][name] = content;
+        utils.saveConfig(config);
+        utils.updateWebGMEConfig();
     };
 
     return ComponentManager;

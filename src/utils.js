@@ -29,7 +29,7 @@ define(['lodash',
         files = fs.readdirSync(abspath);
         return files.filter(function(file) {
             return file === PROJECT_CONFIG;
-        });
+        }).length > 0;
     };
 
     /**
@@ -197,6 +197,7 @@ define(['lodash',
         getConfigPath: getConfigPath,
         updateWebGMEConfig: updateWebGMEConfig,
         saveFilesFromBlobClient: saveFilesFromBlobClient,
+        saveFile: saveFile,
         logStream: logStream
     };
 });
