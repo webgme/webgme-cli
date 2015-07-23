@@ -12,9 +12,9 @@ var config = require('webgme/config/config.default'),
 // figured out
 
 // This is a hack :/
-<% if (typeof plugins === "undefined") plugins = []; %>
+<% if (typeof plugin === "undefined") plugin = []; %>
 
-<% _.forEach(plugins, function(path) { %>
+<% _.forEach(plugin, function(path) { %>
 config.plugin.basePaths.push("<%= path %>");<%});%>
 
 validateConfig(config);

@@ -241,7 +241,7 @@ WebGMEComponentManager.prototype.createManagers = function(callback) {
         for (var i = arguments.length; i--;) {
             // TODO: Update this for a manager
             componentManager = new arguments[i](this.emitter);
-            itemName = path.basename(files[i]).split('.js')[0];
+            itemName = componentManager._name;
 
             // Add the entry to the command table
             this.componentManagers[itemName] = componentManager;

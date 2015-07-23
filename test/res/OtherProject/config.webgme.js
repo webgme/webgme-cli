@@ -15,7 +15,7 @@ var config = require('webgme/config/config.default'),
 
 
 
-config.plugin.basePaths.push("src/plugins");
+config.plugin.basePaths.push("src/plugin");
 
 validateConfig(config);
 module.exports = config;
