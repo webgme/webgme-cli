@@ -26,6 +26,10 @@ define(['lodash',
 
     var isProjectRoot = function(abspath) {
         // Check for .webgme file
+        if (!fs.existsSync(abspath)) {
+            return null;
+        }
+
         files = fs.readdirSync(abspath);
         return files.filter(function(file) {
             return file === PROJECT_CONFIG;
@@ -156,12 +160,9 @@ define(['lodash',
      * @return {String} path containing the item
      */
     var getPathContaining = function(paths, item) {
-        console.log('Checking:', paths.reduce(function(a,b) {
-            return a+'\n'+b;
-        }));
         var validPaths = paths.filter(function(p) {
-            console.log(p,'contains:', fs.readdirSync(p));
-            return fs.readdirSync(p).indexOf(item) !== -1;
+            return fs.existsSync(p) && fs.readdirSync(p).indexOf(item) + 
+                fs.readdirSync(p).indexOf(item+'.js') !== -2;
         });
         return validPaths.length ? validPaths[0] : null;
     };

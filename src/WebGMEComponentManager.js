@@ -67,7 +67,7 @@ WebGMEComponentManager.prototype.BasicFlags = {
         }
 
         if (args._.length) {
-            item = args._.shift();
+            item = args._.shift().toLowerCase();
             itemPath = item+'/';
         }
 
@@ -182,7 +182,7 @@ WebGMEComponentManager.prototype._invokeComponentManager = function(args, callba
         }
 
         if (args._.length > 1) {
-            item = args._[1];
+            item = args._[1].toLowerCase();
             // Otherwise, pass it to the respective component manager
             if (this.componentManagers[item]) {
                 this.componentManagers[item][action](args, callback);
@@ -241,7 +241,7 @@ WebGMEComponentManager.prototype.createManagers = function(callback) {
         for (var i = arguments.length; i--;) {
             // TODO: Update this for a manager
             componentManager = new arguments[i](this.emitter);
-            itemName = componentManager._name;
+            itemName = componentManager._name.toLowerCase();
 
             // Add the entry to the command table
             this.componentManagers[itemName] = componentManager;

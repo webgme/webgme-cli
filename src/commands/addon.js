@@ -4,7 +4,7 @@ define(['lodash',
                                                utils,
                                                ComponentManager) {
     var AddOnManager = function(emitter) {
-        ComponentManager.call(this, 'addon', emitter);
+        ComponentManager.call(this, 'addOn', emitter);
         // FIXME: THis next part should be cleaner
         this.new = AddOnManager.prototype.new;
     };
@@ -27,6 +27,10 @@ define(['lodash',
         this._register(id, {srcPath: filePath});
         callback();
     };
+
+    // TODO: Verify that we are in a project and that the component exists
+    AddOnManager.prototype.rm = ComponentManager.prototype.rm;
+    AddOnManager.prototype.add = ComponentManager.prototype.add;
 
     return AddOnManager;
 });

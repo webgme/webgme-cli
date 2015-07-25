@@ -11,35 +11,39 @@ define(['rimraf',
         'path',
         'fs',
         'module',
+        'child_process',
         'commands/../utils'], function(rm_rf,
                                        path,
                                        fs,
                                        module,
+                                       childProcess,
                                        utils) {
     'use strict';
 
-    var __dirname = path.dirname(module.uri);
+    var spawn = childProcess.spawn,
+        nodeRequire = require.nodeRequire,
+        __dirname = path.dirname(module.uri);
     var ComponentManager = function(name, emitter) {
         this._emitter = emitter;
         this._name = name;
         this._prepareWebGmeConfig();
     };
 
-    // TODO: Add methods for creating new objects, etc
+    // TODO: Add method for adding component
     ComponentManager.prototype.rm = function(args, callback) {
         // TODO: Check args
-        var plugin = args._[2],
+        var name = args._[2],
             config = utils.getConfig(),
-            type = config.components[this._name][plugin] ? 
+            type = config.components[this._name][name] !== undefined ? 
                 'components' : 'dependencies';
 
         // Remove from config files
-        this._removeFromConfig(plugin, type);
+        this._removeFromConfig(name, type);
 
         // Remove any actual files
         if (type === 'components') {
-            // Remove the plugin directories from src, test
-            var paths = Object.keys(config[type][this._name][plugin]),
+            // Remove the name directories from src, test
+            var paths = Object.keys(config[type][this._name][name]),
                 remaining = paths.length,
                 finished = function() {
                     if (--remaining === 0) {
@@ -47,14 +51,103 @@ define(['rimraf',
                     }
                 };
             paths.forEach(function(pathType) {
-                var p = config[type][this._name][plugin][pathType];
+                var pathItems = config[type][this._name][name][pathType].split(path.sep),
+                    componentPath;
                 // Remove p recursively
-                this._emitter.emit('info', 'Removing '+p);
-                rm_rf(p, finished);
+                pathItems.pop();
+                componentPath = pathItems.join(path.sep);
+                this._emitter.emit('info', 'Removing '+componentPath);
+                rm_rf(componentPath, finished);
             }, this);
         } else {
             callback();
         }
+    };
+
+    ComponentManager.prototype.add = function(args, callback) {
+        var project,
+            componentName,
+            pkgPath,
+            pkgContent,
+            projectRoot = utils.getRootPath(),
+            pkg,
+            job;
+
+        if (args._.length < 4) {
+            return this._emitter.emit('error', 
+            'Usage: webgme add '+this._name+' ['+this._name+'] [project]');
+        }
+        componentName = args._[2];
+        project = args._[3];
+        // Add the project to the package.json
+        // FIXME: Change this to support hashes
+        var pkgProject = project.split('/').pop();
+        this._emitter.emit('info', 
+            'Adding '+componentName+' from '+pkgProject);
+
+        // Add the component to the webgme config component paths
+        // FIXME: Call this without --save then later save it
+        job = spawn('npm', ['install', project, '--save'],
+            {cwd: projectRoot}); 
+
+        this._emitter.emit('info', 'npm install '+project+' --save');
+        job.stdout.on('data', utils.logStream.bind(null, this._emitter, 'info'));
+        job.stderr.on('data', utils.logStream.bind(null, this._emitter, 'info'));
+
+        job.on('close', function(code) {
+            this._emitter.emit('info', 'npm exited with: '+code);
+            if (code === 0) {  // Success!
+                // Look up the componentPath by trying to load the config of 
+                // the new project or find the component through the component 
+                // paths defined in the config.js
+                var otherConfig,
+                    componentPath = null,
+                    config = utils.getConfig(),
+                    gmeCliConfigPath = utils.getConfigPath(pkgProject.toLowerCase()),
+                    gmeConfigPath = utils.getGMEConfigPath(pkgProject.toLowerCase());
+
+                if (fs.existsSync(gmeCliConfigPath)) {
+                    otherConfig = JSON.parse(fs.readFileSync(gmeCliConfigPath, 'utf-8'));
+                    if (otherConfig.components[this._name][componentName]) {
+                        componentPath = otherConfig.components[this._name][componentName].srcPath;
+                    }
+                } else if (fs.existsSync(gmeConfigPath)) {
+                    otherConfig = nodeRequire(gmeConfigPath);
+                    componentPath = utils.getPathContaining(otherConfig[this._name].basePaths.map(
+                    function(p) {
+                        if (!path.isAbsolute(p)) {
+                            return path.join(path.dirname(gmeConfigPath), p);
+                        }
+                        return p;
+                    }
+                    ), componentName);
+                    componentPath = componentPath !== null ? 
+                        path.join(componentPath,componentName) : null;
+                } else {
+                    this._emitter.emit('error', 'Did not recognize the project as a WebGME project');
+                }
+
+                // Verify that the component exists in the project
+                if (componentPath === null) {
+                    this._emitter.emit('error', pkgProject+' does not contain '+componentName);
+                    return callback(pkgProject+' does not contain '+componentName);
+                }
+                componentPath = path.relative(projectRoot, componentPath);
+                config.dependencies[this._name][componentName] = {
+                    project: pkgProject,
+                    path: componentPath
+                };
+                utils.saveConfig(config);
+
+                // Update the webgme config file from 
+                // the cli's config
+                utils.updateWebGMEConfig();
+                callback();
+
+            } else {
+                this._emitter.emit('error', 'Could not find project!');
+            }
+        }.bind(this));
     };
 
     ComponentManager.prototype._removeFromConfig = function(plugin, type) {
@@ -94,7 +187,7 @@ define(['rimraf',
         }
         // Create the directories
         utils.saveFile({name: filePath, content: opts.content});
-        return filePath;
+        return path.relative(utils.getRootPath(), filePath);
     };
 
     /**

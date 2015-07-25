@@ -13,7 +13,8 @@ var config = require('webgme/config/config.default'),
 
 // This is a hack :/
 
-
+config.addOn.enable = true
+config.addOn.basePaths.push("addOn/MockAddOn");
 
 
 validateConfig(config);
