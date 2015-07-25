@@ -5,8 +5,10 @@ define(['lodash',
                                                ComponentManager) {
     var AddOnManager = function(emitter) {
         ComponentManager.call(this, 'addOn', emitter);
-        // FIXME: THis next part should be cleaner
+        // FIXME: This next part should be cleaner
         this.new = AddOnManager.prototype.new;
+        this.add = AddOnManager.prototype.add;
+        this.rm = AddOnManager.prototype.rm;
     };
 
     _.extend(AddOnManager.prototype, ComponentManager.prototype);
@@ -31,6 +33,8 @@ define(['lodash',
     // TODO: Verify that we are in a project and that the component exists
     AddOnManager.prototype.rm = ComponentManager.prototype.rm;
     AddOnManager.prototype.add = ComponentManager.prototype.add;
+
+    // TODO: Add enable/disable commands
 
     return AddOnManager;
 });
