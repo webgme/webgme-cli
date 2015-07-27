@@ -14,7 +14,8 @@ define(['fs',
         'change-case',
         'commands/../utils',
         'commands/ComponentManager',
-        'commands/shim/PluginGenerator'], 
+        'commands/shim/PluginGenerator',
+        'commands/../GmeUtils'], 
         function(fs,
                  R,
                  _,
@@ -24,7 +25,8 @@ define(['fs',
                  changeCase,
                  utils,
                  ComponentManager,
-                 PluginGenerator) {
+                 PluginGenerator,
+                 GmeUtils) {
 
     'use strict';
     var spawn = childProcess.spawn;
@@ -265,6 +267,30 @@ define(['fs',
 
     PluginManager.prototype.enable = function(args, callback) {
         // TODO: Add enabling plugins for projects
+        if (args._.length < 4) {
+            return this._emitter.emit('error',
+            'Usage: webgme enable plugin [plugin] [project]');
+        }
+
+        //var pluginName = args._[2],
+            //project = args._[3],
+            //branch = args.branch || 'master',
+            //gmeConfigPath = utils.getGMEConfigPath(),
+            //gmeConfig = fs.readFileSync(gmeConfigPath, 'utf-8');
+
+        //GmeUtils.getCore(project, branch, gmeConfig,
+        //function(err, rootNode, core) {
+            //if (err) {
+                //this._emitter.emit('error', 'Could not load WebGME project:',err);
+                //return callback(err);
+            //}
+
+            //// FIXME: Test this!
+            //var validPluginList = core.getAttribute(rootNode, 'validPlugins').split(',');
+            //validPluginList.push(rootNode);
+            //core.setAttribute('validPlugins', validPluginList.join(','));
+        //}.bind(this));
+
         this._emitter.emit('error', 'Enabling plugins is currently not supported in the WebGME commandline interface.\nPlease enable the plugin using the WebGME.');
     };
 

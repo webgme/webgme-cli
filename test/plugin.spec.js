@@ -1,3 +1,4 @@
+/*globals it,describe,before,after*/
 var path = require('path'),
     assert = require('assert'),
     fs = require('fs'),
@@ -22,6 +23,8 @@ var PROJECT_DIR = path.join(TMP_DIR, 'ExamplePluginProject');
 var OTHER_PROJECT = __dirname+'/res/OtherProject';
 var OTHER_PLUGIN = 'OtherPlugin';
 describe('Plugin tests', function() {
+    'use strict';
+
     var PLUGIN_NAME = 'MyNewPlugin',
         PluginBasePath = path.join(PROJECT_DIR, 'src', 'plugins'),
         PLUGIN_SRC = path.join(PluginBasePath, PLUGIN_NAME, PLUGIN_NAME+'.js'),
@@ -96,6 +99,7 @@ describe('Plugin tests', function() {
     });
 
     describe('add plugin', function() {
+        var otherProject;
 
         describe('errors', function() {
             it('should not miss plugin or project', function(done) {
@@ -230,16 +234,37 @@ describe('Plugin tests', function() {
         });
     });
 
-    describe('enable plugin', function() {
-        it.skip('should add plugin to project\'s validPlugins', function() {
-        // TODO
+    describe('enable/disable plugin', function() {
+        var pluginName = 'NewPlugin';
+        before(function(done) {
+            callWebGME({
+                _: ['node', 'webgme', 'new', 'plugin', pluginName]
+            }, done);
         });
-    });
 
-    describe('disable plugin', function() {
-        it.skip('should add plugin to project\'s validPlugins', function() {
+        describe('enable plugin', function() {
+            before(function(done) {
+                callWebGME({
+                    _: ['node', 'webgme', 'enable', 'plugin', pluginName]
+                }, done);
+            });
+
+            it.skip('should add plugin to project\'s validPlugins', function() {
+                // TODO
+            });
         });
-        // TODO
+
+        describe('disable plugin', function() {
+            before(function(done) {
+                callWebGME({
+                    _: ['node', 'webgme', 'disable', 'plugin', pluginName]
+                }, done);
+            });
+
+            it.skip('should add plugin to project\'s validPlugins', function() {
+            });
+            // TODO
+        });
     });
 
     after(function(done) {

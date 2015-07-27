@@ -1,18 +1,21 @@
+/*globals define*/
 define(['coreplugins/PluginGenerator/PluginGenerator',
         'plugin/PluginBase',
         'commands/shim/blobClient',
         'commands/shim/logger',
+        'lodash',
+        'path',
+        'commands/../utils',
         'ramda'], function(WebGMEPluginGenerator,
                            PluginBase,
                            BlobClient,
                            Logger,
+                           _,
+                           path,
+                           utils,
                            R) {
     'use strict';
     
-    var utils = require('./utils');
-    var path = require('path');
-    var _ = require('lodash');
-
     var PluginGenerator = function(emitter, config) {
         // Load the PluginGenerator from the core plugins
         // Use it to create the boilerplate for the new plugin
