@@ -23,6 +23,7 @@ describe('WebGME-cli', function() {
     'use strict';
 
     before(function() {
+        process.chdir(__dirname);
         emitter = webgmeManager.emitter;
         // sinon.spy(emitter, 'on');
     });
@@ -150,10 +151,16 @@ describe('WebGME-cli', function() {
         before(function(done) {
             // Create tmp directory in project root
             if (!fs.existsSync(TMP_DIR)) {
-                fs.mkdir(TMP_DIR, done);
+                fs.mkdir(TMP_DIR, function() {
+                    process.chdir(TMP_DIR);
+                    done();
+                });
             } else {
                 rm_rf(TMP_DIR, function() {
-                    fs.mkdir(TMP_DIR, done);
+                    fs.mkdir(TMP_DIR, function() {
+                        process.chdir(TMP_DIR);
+                        done();
+                    });
                 });
             }
         });
@@ -161,7 +168,11 @@ describe('WebGME-cli', function() {
         describe('init', function() {
 
             before(function(done) {
-                callWebGME({_: ['node', 'cli.js', 'init', PROJECT_DIR]}, done);
+                process.chdir(TMP_DIR);
+                callWebGME({_: ['node', 'cli.js', 'init', PROJECT_DIR]}, function() {
+                    process.chdir(PROJECT_DIR);
+                    done();
+                });
             });
 
             it('should create a new directory with project name', function() {

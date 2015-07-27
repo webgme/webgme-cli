@@ -1,1 +1,1 @@
-{"components":{"plugins":{"OtherPlugin":{"srcPath":"src/plugins/OtherPlugin","testPath":"test/plugins/OtherPlugin"}}},"dependencies":{"plugins":{}}}
+{"components":{"plugin":{"OtherPlugin":{"srcPath":"src/plugin/OtherPlugin","testPath":"test/plugin/OtherPlugin"}},"addOn":{"OtherAddOn":{"srcPath":"src/addOn/OtherAddOn"}}},"dependencies":{"plugin":{},"addOn":{}}}

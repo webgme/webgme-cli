@@ -54,7 +54,7 @@ define(['fs',
     };
 
     var PluginManager = function(emitter) {
-        ComponentManager.call(this, emitter);
+        ComponentManager.call(this, 'plugin', emitter);
 
         // Add validation for external commands
         var options;
@@ -91,15 +91,6 @@ define(['fs',
             return this._emitter.emit('error', 'Could not find a project in current or any parent directories');
         }
 
-        // Check for plugins entry in .webgme
-        var config = utils.getConfig();
-        var entries = Object.keys(config);
-        entries.forEach(function(entry) {
-            if (config[entry].plugins === undefined) {
-                config[entry].plugins = {};
-            }
-        });
-        utils.saveConfig(config);
         PluginManager.prototype[action].call(this, args, callback);
     };
 
@@ -117,7 +108,7 @@ define(['fs',
 
         // Get the src, test paths
         var paths = R.mapObjIndexed(function(empty, type) {
-            return path.join(type, 'plugins', config.pluginID);
+            return path.join(type, 'plugin', config.pluginID);
         }, {src: null, test: null});
 
         // Store the plugin info in the .webgme.json file
@@ -125,11 +116,7 @@ define(['fs',
             srcPath: paths.src,
             testPath: paths.test
         };
-        var componentConfig = utils.getConfig();
-        componentConfig.components.plugins[config.pluginID] = pluginConfig;
-        utils.saveConfig(componentConfig);
-
-        utils.updateWebGMEConfig();
+        this._register(config.pluginID, pluginConfig);
         this._emitter.emit('write', 'Created new plugin at '+paths.src);
         callback();
     };
@@ -178,15 +165,12 @@ define(['fs',
                     gmeCliConfigPath = utils.getConfigPath(pkgProject.toLowerCase()),
                     gmeConfigPath = utils.getGMEConfigPath(pkgProject.toLowerCase());
 
-                console.log('Checking: '+gmeCliConfigPath);
                 if (fs.existsSync(gmeCliConfigPath)) {
-                console.log('Is a CLI project!');
                     otherConfig = JSON.parse(fs.readFileSync(gmeCliConfigPath, 'utf-8'));
-                    if (otherConfig.components.plugins[pluginName]) {
-                        pluginPath = otherConfig.components.plugins[pluginName].srcPath;
+                    if (otherConfig.components[this._name][pluginName]) {
+                        pluginPath = otherConfig.components[this._name][pluginName].srcPath;
                     }
                 } else if (fs.existsSync(gmeConfigPath)) {
-                console.log('Not a CLI project!');
                     otherConfig = nodeRequire(gmeConfigPath);
                     pluginPath = utils.getPathContaining(otherConfig.plugin.basePaths.map(
                     function(p) {
@@ -204,10 +188,11 @@ define(['fs',
 
                 // Verify that the plugin exists in the project
                 if (pluginPath === null) {
-                    return this._emitter.emit('error', 'Project does not contain the plugin');
+                    this._emitter.emit('error', 'Project does not contain the plugin');
+                    return callback('Project does not contain the plugin');
                 }
                 pluginPath = path.relative(projectRoot, pluginPath);
-                config.dependencies.plugins[pluginName] = {
+                config.dependencies[this._name][pluginName] = {
                     project: pkgProject,
                     path: pluginPath
                 };
@@ -222,47 +207,6 @@ define(['fs',
                 this._emitter.emit('error', 'Could not find project!');
             }
         }.bind(this));
-    };
-
-    PluginManager.prototype.rm = function(args, callback) {
-        // TODO: Check args
-        var plugin = args._[2],
-            config = utils.getConfig(),
-            type = config.components.plugins[plugin] ? 
-                'components' : 'dependencies';
-
-        // Remove from config files
-        this._removeFromConfig(plugin, type);
-
-        // Remove any actual files
-        if (type === 'components') {
-            // Remove the plugin directories from src, test
-            var paths = Object.keys(config[type].plugins[plugin]),
-                remaining = paths.length,
-                finished = function() {
-                    if (--remaining === 0) {
-                        return callback();
-                    }
-                };
-            paths.forEach(function(pathType) {
-                var p = config[type].plugins[plugin][pathType];
-                // Remove p recursively
-                this._emitter.emit('info', 'Removing '+p);
-                rm_rf(p, finished);
-            }, this);
-        } else {
-            callback();
-        }
-    };
-
-    PluginManager.prototype._removeFromConfig = function(plugin, type) {
-        var config = utils.getConfig();
-        // Remove entry from the config
-        delete config[type].plugins[plugin];
-        utils.saveConfig(config);
-        utils.updateWebGMEConfig();
-
-        this._emitter.emit('write', 'Removed the '+plugin+'!');
     };
 
     PluginManager.prototype.enable = function(args, callback) {

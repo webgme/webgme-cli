@@ -57,7 +57,7 @@ BaseManager.prototype._createWebGMEFiles = function(project) {
 BaseManager.prototype._getWebGMEConfigContent = function() {
     // TODO
     return {
-        pluginPaths: ['src/plugins']
+        pluginPaths: ['src/plugin']
     };
 };
 

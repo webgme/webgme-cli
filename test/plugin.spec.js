@@ -26,9 +26,9 @@ describe('Plugin tests', function() {
     'use strict';
 
     var PLUGIN_NAME = 'MyNewPlugin',
-        PluginBasePath = path.join(PROJECT_DIR, 'src', 'plugins'),
+        PluginBasePath = path.join(PROJECT_DIR, 'src', 'plugin'),
         PLUGIN_SRC = path.join(PluginBasePath, PLUGIN_NAME, PLUGIN_NAME+'.js'),
-        PLUGIN_TEST = path.join(PROJECT_DIR, 'test', 'plugins', PLUGIN_NAME, PLUGIN_NAME+'.spec.js');
+        PLUGIN_TEST = path.join(PROJECT_DIR, 'test', 'plugin', PLUGIN_NAME, PLUGIN_NAME+'.spec.js');
 
     before(function(done) {
         if (fs.existsSync(PROJECT_DIR)) {
@@ -65,7 +65,7 @@ describe('Plugin tests', function() {
 
         it('should record the plugin in .webgme file', function() {
             var config = require(path.join(PROJECT_DIR,'.webgme.json'));
-            assert.notEqual(config.components.plugins[PLUGIN_NAME], undefined);
+            assert.notEqual(config.components.plugin[PLUGIN_NAME], undefined);
         });
     });
 
@@ -83,18 +83,18 @@ describe('Plugin tests', function() {
         });
 
         it('should remove plugin src directory', function() {
-            var pluginPath = path.join(PROJECT_DIR, 'src', 'plugins', PLUGIN_NAME);
+            var pluginPath = path.join(PROJECT_DIR, 'src', 'plugin', PLUGIN_NAME);
             assert.equal(fs.existsSync(pluginPath), false);
         });
 
         it('should remove plugin test directory', function() {
-            var pluginPath = path.join(PROJECT_DIR, 'test', 'plugins', PLUGIN_NAME);
+            var pluginPath = path.join(PROJECT_DIR, 'test', 'plugin', PLUGIN_NAME);
             assert.equal(fs.existsSync(pluginPath), false);
         });
 
         it('should remove plugin entry from webgme.json', function() {
             var config = require(path.join(PROJECT_DIR,'.webgme.json'));
-            assert.equal(config.components.plugins[PLUGIN_NAME], undefined);
+            assert.equal(config.components.plugin[PLUGIN_NAME], undefined);
         });
     });
 
@@ -134,7 +134,7 @@ describe('Plugin tests', function() {
                 var configPath = path.join(PROJECT_DIR,'.webgme.json'),
                 configText = fs.readFileSync(configPath),
                 config = JSON.parse(configText);
-                assert.notEqual(config.dependencies.plugins[OTHER_PLUGIN], undefined);
+                assert.notEqual(config.dependencies.plugin[OTHER_PLUGIN], undefined);
             });
 
             it('should add the path to the webgme config', function() {
@@ -160,7 +160,7 @@ describe('Plugin tests', function() {
                 it('should remove plugin entry from webgme.json', function() {
                     var configText = fs.readFileSync(path.join(PROJECT_DIR,'.webgme.json')),
                     config = JSON.parse(configText);
-                    assert.equal(config.dependencies.plugins[OTHER_PLUGIN], undefined);
+                    assert.equal(config.dependencies.plugin[OTHER_PLUGIN], undefined);
                 });
 
                 it.skip('should remove project from package.json', function() {
@@ -194,7 +194,7 @@ describe('Plugin tests', function() {
                 var configPath = path.join(PROJECT_DIR,'.webgme.json'),
                 configText = fs.readFileSync(configPath),
                 config = JSON.parse(configText);
-                assert.notEqual(config.dependencies.plugins[OTHER_PLUGIN], undefined);
+                assert.notEqual(config.dependencies.plugin[OTHER_PLUGIN], undefined);
             });
 
             it('should add the path to the webgme config', function() {
@@ -220,7 +220,7 @@ describe('Plugin tests', function() {
                 it('should remove plugin entry from webgme.json', function() {
                     var configText = fs.readFileSync(path.join(PROJECT_DIR,'.webgme.json')),
                     config = JSON.parse(configText);
-                    assert.equal(config.dependencies.plugins[OTHER_PLUGIN], undefined);
+                    assert.equal(config.dependencies.plugin[OTHER_PLUGIN], undefined);
                 });
 
                 it.skip('should remove project from package.json', function() {

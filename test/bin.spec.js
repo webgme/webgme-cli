@@ -5,6 +5,9 @@ var spawn = require('child_process').spawn,
     webgmeBinPath = path.join(__dirname, '..', 'bin', 'webgme');
 
 describe('WebGME bin script', function() {
+    before(function() {
+        process.chdir(__dirname);
+    });
     it('should parse and pass args to WebGMEComponentManager', function(done) {
         var webgmeBin = spawn(webgmeBinPath, ['--help']),
             helpMsg = fs.readFileSync(path.join(__dirname,'..','doc','help.txt'),'utf-8'),
@@ -30,7 +33,7 @@ describe('WebGME bin script', function() {
     });
 });
 
-var WebGMEComponentManager = require('../src/WebGMEComponentManager');
+var WebGMEComponentManager = require('../src/WebGMEComponentManager'),
     webgmeManager = new WebGMEComponentManager(),
     fs = require('fs'),
     emitter = webgmeManager.emitter;
