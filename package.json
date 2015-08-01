@@ -34,10 +34,10 @@
     "requirejs": "^2.1.18",
     "sinon": "^1.15.4",
     "sinon-chai": "^2.8.0",
-    "webgme": "^0.11.1"
+    "webgme": "^0.11.1",
+    "rimraf": "^2.4.0"
   },
   "devDependencies": {
-    "mocha": "^2.2.5",
-    "rimraf": "^2.4.0"
+    "mocha": "^2.2.5"
   }
 }
