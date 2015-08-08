@@ -130,26 +130,25 @@ define(['fs',
             'Usage: webgme enable plugin [plugin] [project]');
         }
 
-        //var pluginName = args._[2],
-            //project = args._[3],
-            //branch = args.branch || 'master',
-            //gmeConfigPath = utils.getGMEConfigPath(),
-            //gmeConfig = fs.readFileSync(gmeConfigPath, 'utf-8');
+        var pluginName = args._[2],
+            project = args._[3],
+            branch = args.branch || 'master',
+            gmeConfigPath = utils.getGMEConfigPath(),
+            gmeConfig = nodeRequire(gmeConfigPath);
 
-        //GmeUtils.getCore(project, branch, gmeConfig,
-        //function(err, rootNode, core) {
-            //if (err) {
-                //this._emitter.emit('error', 'Could not load WebGME project:',err);
-                //return callback(err);
-            //}
+        GmeUtils.addToProject('validPlugins', pluginName, project, branch, gmeConfig,
+        function(err) {
+            if (err) {
+                this._emitter.emit('error', 'Could not load WebGME project:',err);
+                return callback(err);
+            }
 
-            //// FIXME: Test this!
-            //var validPluginList = core.getAttribute(rootNode, 'validPlugins').split(',');
-            //validPluginList.push(rootNode);
-            //core.setAttribute('validPlugins', validPluginList.join(','));
-        //}.bind(this));
+            // FIXME: Test this!
+            this._emitter.emit('log', 'Added '+pluginName+' to '+project);
+            callback(err);
+        }.bind(this));
 
-        this._emitter.emit('error', 'Enabling plugins is currently not supported in the WebGME commandline interface.\nPlease enable the plugin using the WebGME.');
+        //this._emitter.emit('error', 'Enabling plugins is currently not supported in the WebGME commandline interface.\nPlease enable the plugin using the WebGME.');
     };
 
     PluginManager.prototype.disable = function(args, callback) {

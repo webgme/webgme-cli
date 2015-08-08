@@ -19,6 +19,8 @@ var callWebGME = function(args, callback) {
 
 var TMP_DIR = path.join(__dirname, '..', 'test-tmp');
 var PROJECT_DIR = path.join(TMP_DIR, 'ExampleAddOnProject');
+var PROJECT_CONFIG = 'webgme-setup.json';
+var CONFIG_PATH = path.join(PROJECT_DIR,PROJECT_CONFIG);
 var OTHER_PROJECT = __dirname+'/res/OtherProject';
 var OTHER_ADDON = 'OtherAddOn';
 describe('AddOn tests', function() {
@@ -59,13 +61,13 @@ describe('AddOn tests', function() {
             assert.notEqual(configText.indexOf(ADDON_ID), -1);
         });
 
-        it('should record the addOn in .webgme file', function() {
-            var config = require(path.join(PROJECT_DIR,'.webgme.json'));
+        it('should record the addOn in '+PROJECT_CONFIG+' file', function() {
+            var config = require(CONFIG_PATH);
             assert.notEqual(config.components.addOn[ADDON_ID], undefined);
         });
 
-        it('should record relative path in .webgme file', function() {
-            var config = require(path.join(PROJECT_DIR,'.webgme.json')),
+        it('should record relative path in '+PROJECT_CONFIG+' file', function() {
+            var config = require(CONFIG_PATH),
                 srcPath = config.components.addOn[ADDON_ID].srcPath;
             assert(!path.isAbsolute(srcPath));
         });
@@ -96,8 +98,8 @@ describe('AddOn tests', function() {
                 assert.equal(configText.indexOf(ADDON_ID), -1);
             });
 
-            it('should remove the addOn from .webgme file', function() {
-                var configPath = path.join(PROJECT_DIR, '.webgme.json'),
+            it('should remove the addOn from '+PROJECT_CONFIG+' file', function() {
+                var configPath = CONFIG_PATH,
                     configContent = fs.readFileSync(configPath),
                     config = JSON.parse(configContent);
                 assert.equal(config.components.addOn[ADDON_ID], undefined);
@@ -125,8 +127,8 @@ describe('AddOn tests', function() {
                 assert.notEqual(pkg.dependencies[depName], undefined);
             });
 
-            it('should add the project to the .webgme.json', function() {
-                var configPath = path.join(PROJECT_DIR,'.webgme.json'),
+            it('should add the project to the '+PROJECT_CONFIG, function() {
+                var configPath = CONFIG_PATH,
                 configText = fs.readFileSync(configPath),
                 config = JSON.parse(configText);
                 assert.notEqual(config.dependencies.addOn[OTHER_ADDON], undefined);
@@ -152,8 +154,8 @@ describe('AddOn tests', function() {
                     assert.equal(configText.indexOf(OTHER_ADDON), -1);
                 });
 
-                it('should remove addOn entry from webgme.json', function() {
-                    var configText = fs.readFileSync(path.join(PROJECT_DIR,'.webgme.json')),
+                it('should remove addOn entry from '+PROJECT_CONFIG, function() {
+                    var configText = fs.readFileSync(CONFIG_PATH),
                     config = JSON.parse(configText);
                     assert.equal(config.dependencies.addOn[OTHER_ADDON], undefined);
                 });
@@ -185,9 +187,8 @@ describe('AddOn tests', function() {
                 assert.notEqual(pkg.dependencies[depName], undefined);
             });
 
-            it('should add the project to the .webgme.json', function() {
-                var configPath = path.join(PROJECT_DIR,'.webgme.json'),
-                configText = fs.readFileSync(configPath),
+            it('should add the project to the '+PROJECT_CONFIG, function() {
+                configText = fs.readFileSync(CONFIG_PATH);
                 config = JSON.parse(configText);
                 assert.notEqual(config.dependencies.addOn[OTHER_ADDON], undefined);
             });
@@ -212,8 +213,8 @@ describe('AddOn tests', function() {
                     assert.equal(configText.indexOf(OTHER_ADDON), -1);
                 });
 
-                it('should remove addOn entry from webgme.json', function() {
-                    var configText = fs.readFileSync(path.join(PROJECT_DIR,'.webgme.json')),
+                it('should remove addOn entry from '+PROJECT_CONFIG, function() {
+                    var configText = fs.readFileSync(CONFIG_PATH),
                     config = JSON.parse(configText);
                     assert.equal(config.dependencies.addOn[OTHER_ADDON], undefined);
                 });

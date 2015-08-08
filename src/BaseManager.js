@@ -37,7 +37,7 @@ BaseManager.prototype.init = function (args, callback) {
         components: {},
         dependencies: {}
     };
-    fs.writeFileSync(path.join(project, '.webgme.json'), JSON.stringify(webgmeInfo));
+    fs.writeFileSync(path.join(project, 'webgme-setup.json'), JSON.stringify(webgmeInfo));
 
     this._emitter.emit('write', 'Created project at '+project+'.\n\n'+
     'Please run \'npm init\' from the within project to finish configuration.');
