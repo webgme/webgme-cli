@@ -15,6 +15,7 @@ define(['fs',
         'commands/../utils',
         'commands/ComponentManager',
         'commands/shim/PluginGenerator',
+        'commands/mixins/Enableable/Enableable',
         'commands/../GmeUtils'], 
         function(fs,
                  R,
@@ -26,6 +27,7 @@ define(['fs',
                  utils,
                  ComponentManager,
                  PluginGenerator,
+                 Enableable,
                  GmeUtils) {
 
     'use strict';
@@ -55,6 +57,7 @@ define(['fs',
 
     var PluginManager = function(emitter) {
         ComponentManager.call(this, 'plugin', emitter);
+        Enableable.call(this, 'validPlugins');
 
         // Add validation for external commands
         var options;
@@ -70,7 +73,8 @@ define(['fs',
         }, this);
     };
 
-    _.extend(PluginManager.prototype, ComponentManager.prototype);
+    _.extend(PluginManager.prototype, ComponentManager.prototype,
+        Enableable.prototype);
 
     /**
      * Functions to create the config flag from the WebGME's 
@@ -122,39 +126,6 @@ define(['fs',
     };
 
     PluginManager.prototype.new.options = PluginManager.prototype._getNewOptions();
-
-    PluginManager.prototype.enable = function(args, callback) {
-        // TODO: Add enabling plugins for projects
-        if (args._.length < 4) {
-            return this._emitter.emit('error',
-            'Usage: webgme enable plugin [plugin] [project]');
-        }
-
-        var pluginName = args._[2],
-            project = args._[3],
-            branch = args.branch || 'master',
-            gmeConfigPath = utils.getGMEConfigPath(),
-            gmeConfig = nodeRequire(gmeConfigPath);
-
-        GmeUtils.addToProject('validPlugins', pluginName, project, branch, gmeConfig,
-        function(err) {
-            if (err) {
-                this._emitter.emit('error', 'Could not load WebGME project:',err);
-                return callback(err);
-            }
-
-            // FIXME: Test this!
-            this._emitter.emit('log', 'Added '+pluginName+' to '+project);
-            callback(err);
-        }.bind(this));
-
-        //this._emitter.emit('error', 'Enabling plugins is currently not supported in the WebGME commandline interface.\nPlease enable the plugin using the WebGME.');
-    };
-
-    PluginManager.prototype.disable = function(args, callback) {
-        // TODO: Add disabling plugins for projects
-        this._emitter.emit('error', 'Disabling plugins is currently not supported in the WebGME commandline interface.\nPlease disable the plugin using the WebGME.');
-    };
 
     /**
      * Get the config for the plugin from the config structure and the command
