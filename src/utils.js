@@ -118,6 +118,14 @@ define(['lodash',
         }, config);
     };
 
+    var unique = function(array) {
+        var duplicates = {};
+        array.forEach(function(key) {
+            duplicates[key] = 1;
+        });
+        return Object.keys(duplicates);
+    };
+
     var getWebGMEConfigContent = function() {
         var arrays,
             config = getConfig(),
@@ -131,7 +139,8 @@ define(['lodash',
         // Merge the arrays for each componentType
         Object.keys(configGroupPaths[0]).forEach(function(type) {
             arrays = configGroupPaths.map(function(group) {
-                return group[type];
+                // Remove duplicates
+                return unique(group[type]);
             });
             // Merge all paths
             paths[type] = arrays.reduce(R.concat);
