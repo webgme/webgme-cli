@@ -64,6 +64,22 @@ describe('Plugin tests', function() {
             var config = require(path.join(PROJECT_DIR,'.webgme.json'));
             assert.notEqual(config.components.plugin[PLUGIN_NAME], undefined);
         });
+
+        describe('test file', function() {
+            var PLUGIN_TEST = path.join(PROJECT_DIR, 'test', 'plugin',
+                PLUGIN_NAME, PLUGIN_NAME+'.spec.js');
+
+            it('should create test file in test/plugin', function() {
+                assert(fs.existsSync(PLUGIN_TEST));
+            });
+
+            it('should have correct path for test fixtures', function() {
+                var testContent = fs.readFileSync(PLUGIN_TEST, 'utf8'),
+                    fixtureRegex = /require\('(.*)'\)/,
+                    result = fixtureRegex.exec(testContent);
+                assert(result[1] === 'webgme/test/_globals')
+            });
+        });
     });
 
     describe('rm plugin', function() {
