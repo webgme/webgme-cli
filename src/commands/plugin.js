@@ -109,7 +109,7 @@ define(['fs',
             return path.join(type, 'plugin', config.pluginID);
         }, {src: null, test: null});
 
-        // Store the plugin info in the .webgme.json file
+        // Store the plugin info in the webgme-setup.json file
         var pluginConfig = {
             srcPath: paths.src,
             testPath: paths.test
