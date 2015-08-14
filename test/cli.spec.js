@@ -180,7 +180,7 @@ describe('WebGME-cli', function() {
             });
 
             it('should create a .webgme file in project root', function() {
-                assert(fs.existsSync(path.join(PROJECT_DIR, '.webgme.json')));
+                assert(fs.existsSync(path.join(PROJECT_DIR, 'webgme-setup.json')));
             });
 
             it('should initialize an npm project', function() {

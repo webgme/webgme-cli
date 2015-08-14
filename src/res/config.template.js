@@ -6,7 +6,7 @@ var config = require('webgme/config/config.default'),
     validateConfig = require('webgme/config/validator');
 
 // FIXME: This needs to be restructured...
-// The paths can be loaded from the .webgme.json
+// The paths can be loaded from the webgme-setup.json
 //
 // The extra settings (such as enabling executors) need to be
 // figured out

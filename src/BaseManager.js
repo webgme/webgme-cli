@@ -4,6 +4,7 @@
 var _ = require('lodash');
 var path = require('path');
 var fs = require('fs');
+var PROJECT_CONFIG = 'webgme-setup.json';
 var BaseManager = function(emitter) {
     this._emitter = emitter;
 };
@@ -37,7 +38,7 @@ BaseManager.prototype.init = function (args, callback) {
         components: {},
         dependencies: {}
     };
-    fs.writeFileSync(path.join(project, '.webgme.json'), JSON.stringify(webgmeInfo));
+    fs.writeFileSync(path.join(project, PROJECT_CONFIG), JSON.stringify(webgmeInfo));
 
     this._emitter.emit('write', 'Created project at '+project+'.\n\n'+
     'Please run \'npm init\' from the within project to finish configuration.');
