@@ -17,10 +17,14 @@ var callWebGME = function(args, callback) {
     webgmeManager.executeCommand(_.extend({_: ['node', 'cli.js']}, args), callback);
 };
 
-var TMP_DIR = path.join(__dirname, '..', 'test-tmp');
-var PROJECT_DIR = path.join(TMP_DIR, 'ExamplePluginProject');
-var OTHER_PROJECT = __dirname+'/res/OtherProject';
-var OTHER_PLUGIN = 'OtherPlugin';
+// Useful constants
+var TMP_DIR = path.join(__dirname, '..', 'test-tmp')
+    PROJECT_DIR = path.join(TMP_DIR, 'ExamplePluginProject'),
+    CONFIG_NAME = 'webgme-setup.json',
+    CONFIG_PATH = path.join(PROJECT_DIR, CONFIG_NAME),
+    OTHER_PROJECT = __dirname+'/res/OtherProject',
+    OTHER_PLUGIN = 'OtherPlugin';
+
 describe('Plugin tests', function() {
     var PLUGIN_NAME = 'MyNewPlugin',
         PluginBasePath = path.join(PROJECT_DIR, 'src', 'plugin'),
@@ -61,7 +65,7 @@ describe('Plugin tests', function() {
         });
 
         it('should record the plugin in .webgme file', function() {
-            var config = require(path.join(PROJECT_DIR,'.webgme.json'));
+            var config = require(CONFIG_PATH);
             assert.notEqual(config.components.plugin[PLUGIN_NAME], undefined);
         });
 
@@ -105,8 +109,8 @@ describe('Plugin tests', function() {
             assert.equal(fs.existsSync(pluginPath), false);
         });
 
-        it('should remove plugin entry from webgme.json', function() {
-            var config = require(path.join(PROJECT_DIR,'.webgme.json'));
+        it('should remove plugin entry from '+CONFIG_NAME, function() {
+            var config = require(CONFIG_PATH);
             assert.equal(config.components.plugin[PLUGIN_NAME], undefined);
         });
     });
@@ -142,10 +146,9 @@ describe('Plugin tests', function() {
                 assert.notEqual(pkg.dependencies[depName], undefined);
             });
 
-            it('should add the project to the .webgme.json', function() {
-                var configPath = path.join(PROJECT_DIR,'.webgme.json'),
-                configText = fs.readFileSync(configPath),
-                config = JSON.parse(configText);
+            it('should add the project to the '+CONFIG_NAME, function() {
+                var configText = fs.readFileSync(CONFIG_PATH),
+                    config = JSON.parse(configText);
                 assert.notEqual(config.dependencies.plugin[OTHER_PLUGIN], undefined);
             });
 
@@ -169,9 +172,9 @@ describe('Plugin tests', function() {
                     assert.equal(paths.indexOf(OTHER_PLUGIN), -1);
                 });
 
-                it('should remove plugin entry from webgme.json', function() {
-                    var configText = fs.readFileSync(path.join(PROJECT_DIR,'.webgme.json')),
-                    config = JSON.parse(configText);
+                it('should remove plugin entry from '+CONFIG_NAME, function() {
+                    var configText = fs.readFileSync(CONFIG_PATH),
+                        config = JSON.parse(configText);
                     assert.equal(config.dependencies.plugin[OTHER_PLUGIN], undefined);
                 });
 
@@ -202,10 +205,9 @@ describe('Plugin tests', function() {
                 assert.notEqual(pkg.dependencies[depName], undefined);
             });
 
-            it('should add the project to the .webgme.json', function() {
-                var configPath = path.join(PROJECT_DIR,'.webgme.json'),
-                configText = fs.readFileSync(configPath),
-                config = JSON.parse(configText);
+            it('should add the project to the '+CONFIG_NAME, function() {
+                var configText = fs.readFileSync(CONFIG_PATH),
+                    config = JSON.parse(configText);
                 assert.notEqual(config.dependencies.plugin[OTHER_PLUGIN], undefined);
             });
 
@@ -229,9 +231,9 @@ describe('Plugin tests', function() {
                     assert.equal(paths.indexOf(OTHER_PLUGIN), -1);
                 });
 
-                it('should remove plugin entry from webgme.json', function() {
-                    var configText = fs.readFileSync(path.join(PROJECT_DIR,'.webgme.json')),
-                    config = JSON.parse(configText);
+                it('should remove plugin entry from '+CONFIG_NAME, function() {
+                    var configText = fs.readFileSync(CONFIG_PATH),
+                        config = JSON.parse(configText);
                     assert.equal(config.dependencies.plugin[OTHER_PLUGIN], undefined);
                 });
 

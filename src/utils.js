@@ -8,7 +8,7 @@ define(['lodash',
                            module,
                            R) {
 
-    var PROJECT_CONFIG = '.webgme.json',
+    var PROJECT_CONFIG = 'webgme-setup.json',
         __dirname = path.dirname(module.uri);
 
     var getRootPath = function() {
@@ -25,7 +25,7 @@ define(['lodash',
     };
 
     var isProjectRoot = function(abspath) {
-        // Check for .webgme file
+        // Check for webgme-setup.json file
         if (!fs.existsSync(abspath)) {
             return null;
         }
@@ -89,7 +89,7 @@ define(['lodash',
     };
 
     /**
-     * Update the WebGME config based on the paths in the .webgme.json. 
+     * Update the WebGME config based on the paths in the PROJECT_CONFIG. 
      * It will pass the name of the 
      *
      * @return {undefined}
@@ -151,7 +151,7 @@ define(['lodash',
 
     var getConfigPath = function(project) {
         return path.join(getRootPath(), 'node_modules', 
-            project, '.webgme.json');
+            project, PROJECT_CONFIG);
     };
 
     var getGMEConfigPath = function(project) {
