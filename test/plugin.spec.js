@@ -1,3 +1,4 @@
+/*globals after,describe,before,it*/
 var path = require('path'),
     assert = require('assert'),
     fs = require('fs'),
@@ -18,14 +19,17 @@ var callWebGME = function(args, callback) {
 };
 
 // Useful constants
-var TMP_DIR = path.join(__dirname, '..', 'test-tmp')
+var TMP_DIR = path.join(__dirname, '..', 'test-tmp'),
     PROJECT_DIR = path.join(TMP_DIR, 'ExamplePluginProject'),
     CONFIG_NAME = 'webgme-setup.json',
     CONFIG_PATH = path.join(PROJECT_DIR, CONFIG_NAME),
     OTHER_PROJECT = __dirname+'/res/OtherProject',
-    OTHER_PLUGIN = 'OtherPlugin';
+    OTHER_PLUGIN = 'OtherPlugin',
+    otherProject;
 
 describe('Plugin tests', function() {
+    'use strict';
+    
     var PLUGIN_NAME = 'MyNewPlugin',
         PluginBasePath = path.join(PROJECT_DIR, 'src', 'plugin'),
         PLUGIN_SRC = path.join(PluginBasePath, PLUGIN_NAME, PLUGIN_NAME+'.js'),
@@ -81,7 +85,18 @@ describe('Plugin tests', function() {
                 var testContent = fs.readFileSync(PLUGIN_TEST, 'utf8'),
                     fixtureRegex = /require\('(.*)'\)/,
                     result = fixtureRegex.exec(testContent);
-                assert(result[1] === 'webgme/test/_globals')
+                assert(result[1] === 'webgme/test/_globals');
+            });
+        });
+
+        describe('list plugins', function() {
+            it('should list the new plugin', function(done) {
+                emitter.once('write', function(msg) {
+                    assert.notEqual(-1, msg.indexOf(PLUGIN_NAME));
+                    done();
+                });
+
+                callWebGME({_: ['node', 'webgme', 'ls', 'plugin']});
             });
         });
     });

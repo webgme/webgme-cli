@@ -1,3 +1,4 @@
+/*globals describe,it,before,after*/
 var path = require('path'),
     assert = require('assert'),
     fs = require('fs'),
@@ -24,9 +25,12 @@ var TMP_DIR = path.join(__dirname, '..', 'test-tmp'),
     CONFIG_PATH = path.join(PROJECT_DIR, CONFIG_NAME),
     PROJECT_DIR = path.join(TMP_DIR, 'ExampleAddOnProject'),
     OTHER_PROJECT = __dirname+'/res/OtherProject',
-    OTHER_ADDON = 'OtherAddOn';
+    OTHER_ADDON = 'OtherAddOn',
+    otherProject;
 
 describe('AddOn tests', function() {
+    'use strict';
+
     var ADDON_ID = 'MyNewAddOn',
         ADDON_NAME = 'NewAddOnName',
         AddOnBasePath = path.join(PROJECT_DIR, 'src', 'addOn'),
@@ -78,6 +82,17 @@ describe('AddOn tests', function() {
         it('should enable addOns in the webgme config', function() {
             var config = require(path.join(PROJECT_DIR, 'config.webgme.js'));
             assert(config.addOn.enable);
+        });
+
+        describe('list addOns', function() {
+            it('should list the new addOn', function(done) {
+                emitter.once('write', function(msg) {
+                    assert.notEqual(-1, msg.indexOf(ADDON_ID));
+                    done();
+                });
+
+                callWebGME({_: ['node', 'webgme', 'ls', 'addOn']});
+            });
         });
 
         describe('rm addOn', function() {
