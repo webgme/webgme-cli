@@ -1,14 +1,19 @@
+/*globals define*/
 define(['lodash',
         'commands/../utils',
         'commands/ComponentManager'], function(_,
                                                utils,
                                                ComponentManager) {
+    'use strict';
+    
     var AddOnManager = function(emitter) {
         ComponentManager.call(this, 'addOn', emitter);
-        // FIXME: This next part should be cleaner
+
+        // Copy actions over from ComponentManager
+        ['ls', 'add', 'rm'].forEach(function(action) {
+            this[action] = ComponentManager.prototype[action];
+        }, this);
         this.new = AddOnManager.prototype.new;
-        this.add = AddOnManager.prototype.add;
-        this.rm = AddOnManager.prototype.rm;
     };
 
     _.extend(AddOnManager.prototype, ComponentManager.prototype);
@@ -31,9 +36,6 @@ define(['lodash',
     };
 
     // TODO: Verify that we are in a project and that the component exists
-    AddOnManager.prototype.rm = ComponentManager.prototype.rm;
-    AddOnManager.prototype.add = ComponentManager.prototype.add;
-
     // TODO: Add enable/disable commands
 
     return AddOnManager;
