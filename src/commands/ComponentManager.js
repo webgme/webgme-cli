@@ -213,7 +213,7 @@ define(['rimraf',
     };
 
     /**
-     * Register the given component in the webgme-cli config
+     * Register the given component in the webgme-setup-tool config
      *
      * @param {String} name
      * @param {Object} content

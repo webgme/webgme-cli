@@ -1,3 +1,4 @@
+/*globals describe,it,before,beforeEach,after*/
 var path = require('path'),
     assert = require('assert'),
     fs = require('fs'),
@@ -24,9 +25,12 @@ var TMP_DIR = path.join(__dirname, '..', 'test-tmp'),
     CONFIG_PATH = path.join(PROJECT_DIR, CONFIG_NAME),
     PROJECT_DIR = path.join(TMP_DIR, 'ExampleAddOnProject'),
     OTHER_PROJECT = __dirname+'/res/OtherProject',
-    OTHER_ADDON = 'OtherAddOn';
+    OTHER_ADDON = 'OtherAddOn',
+    otherProject;
 
 describe('AddOn tests', function() {
+    'use strict';
+    
     var ADDON_ID = 'MyNewAddOn',
         ADDON_NAME = 'NewAddOnName',
         AddOnBasePath = path.join(PROJECT_DIR, 'src', 'addOn'),
@@ -111,7 +115,7 @@ describe('AddOn tests', function() {
 
     describe('add addOn', function() {
 
-        describe('projects NOT created with webgme-cli', function() {
+        describe('projects NOT created with webgme-setup-tool', function() {
             before(function(done) {
                 this.timeout(10000);
                 process.chdir(PROJECT_DIR);
@@ -172,7 +176,7 @@ describe('AddOn tests', function() {
             });
         });
 
-        describe('projects created with webgme-cli', function() {
+        describe('projects created with webgme-setup-tool', function() {
             otherProject = __dirname+'/res/OtherProject';
             before(function(done) {
                 this.timeout(5000);

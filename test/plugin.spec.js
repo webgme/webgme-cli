@@ -1,3 +1,4 @@
+/*globals describe,it,before,beforeEach,after*/
 var path = require('path'),
     assert = require('assert'),
     fs = require('fs'),
@@ -18,14 +19,17 @@ var callWebGME = function(args, callback) {
 };
 
 // Useful constants
-var TMP_DIR = path.join(__dirname, '..', 'test-tmp')
+var TMP_DIR = path.join(__dirname, '..', 'test-tmp'),
     PROJECT_DIR = path.join(TMP_DIR, 'ExamplePluginProject'),
     CONFIG_NAME = 'webgme-setup.json',
     CONFIG_PATH = path.join(PROJECT_DIR, CONFIG_NAME),
     OTHER_PROJECT = __dirname+'/res/OtherProject',
-    OTHER_PLUGIN = 'OtherPlugin';
+    OTHER_PLUGIN = 'OtherPlugin',
+    otherProject;
 
 describe('Plugin tests', function() {
+    'use strict';
+    
     var PLUGIN_NAME = 'MyNewPlugin',
         PluginBasePath = path.join(PROJECT_DIR, 'src', 'plugin'),
         PLUGIN_SRC = path.join(PluginBasePath, PLUGIN_NAME, PLUGIN_NAME+'.js'),
@@ -81,7 +85,7 @@ describe('Plugin tests', function() {
                 var testContent = fs.readFileSync(PLUGIN_TEST, 'utf8'),
                     fixtureRegex = /require\('(.*)'\)/,
                     result = fixtureRegex.exec(testContent);
-                assert(result[1] === 'webgme/test/_globals')
+                assert(result[1] === 'webgme/test/_globals');
             });
         });
     });
@@ -129,7 +133,7 @@ describe('Plugin tests', function() {
             });
         });
 
-        describe('projects NOT created with webgme-cli', function() {
+        describe('projects NOT created with webgme-setup-tool', function() {
             otherProject = __dirname+'/res/NonCliProj';
             before(function(done) {
                 this.timeout(10000);
@@ -188,7 +192,7 @@ describe('Plugin tests', function() {
             });
         });
 
-        describe('projects created with webgme-cli', function() {
+        describe('projects created with webgme-setup-tool', function() {
             otherProject = __dirname+'/res/OtherProject';
             before(function(done) {
                 this.timeout(5000);
