@@ -1,3 +1,4 @@
+/*globals define*/
 /*
  * This is the basic structure for component managers
  *
@@ -23,10 +24,28 @@ define(['rimraf',
     var spawn = childProcess.spawn,
         nodeRequire = require.nodeRequire,
         __dirname = path.dirname(module.uri);
+
     var ComponentManager = function(name, emitter) {
         this._emitter = emitter;
         this._name = name;
         this._prepareWebGmeConfig();
+    };
+
+    /**
+     * List the currently recognized components.
+     *
+     * @param args
+     * @param callback
+     * @return {undefined}
+     */
+    ComponentManager.prototype.ls = function(args, callback) {
+        var config = utils.getConfig(),
+            plugins = Object.keys(config.components[this._name]).join(' ') || '<none>',
+            deps = Object.keys(config.dependencies[this._name]).join(' ') || '<none>';
+
+        this._emitter.emit('write', 'Detected '+this._name+'s: '+plugins+
+            '\nThird party '+this._name+'s: '+deps);
+        callback(null);
     };
 
     // TODO: Add method for adding component

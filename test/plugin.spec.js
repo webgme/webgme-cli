@@ -88,6 +88,17 @@ describe('Plugin tests', function() {
                 assert(result[1] === 'webgme/test/_globals');
             });
         });
+
+        describe('list plugins', function() {
+            it('should list the new plugin', function(done) {
+                emitter.once('write', function(msg) {
+                    assert.notEqual(-1, msg.indexOf(PLUGIN_NAME));
+                    done();
+                });
+
+                callWebGME({_: ['node', 'webgme', 'ls', 'plugin']});
+            });
+        });
     });
 
     describe('rm plugin', function() {
