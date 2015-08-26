@@ -121,16 +121,6 @@ define(['fs',
 
     PluginManager.prototype.new.options = PluginManager.prototype._getNewOptions();
 
-    PluginManager.prototype.enable = function(args, callback) {
-        // TODO: Add enabling plugins for projects
-        this._emitter.emit('error', 'Enabling plugins is currently not supported in the WebGME commandline interface.\nPlease enable the plugin using the WebGME.');
-    };
-
-    PluginManager.prototype.disable = function(args, callback) {
-        // TODO: Add disabling plugins for projects
-        this._emitter.emit('error', 'Disabling plugins is currently not supported in the WebGME commandline interface.\nPlease disable the plugin using the WebGME.');
-    };
-
     /**
      * Get the config for the plugin from the config structure and the command
      * line arguments.

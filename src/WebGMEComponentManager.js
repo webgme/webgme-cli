@@ -209,7 +209,7 @@ WebGMEComponentManager.prototype.getDefaultHelpContent = function() {
                 items: Object.keys(self.componentManagers[name])
                     .filter(function(action) {
                         return action.indexOf('_') !== 0;
-                    })
+                    }).sort()
             };
         })
     };
