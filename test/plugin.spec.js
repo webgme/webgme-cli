@@ -18,13 +18,18 @@ var callWebGME = function(args, callback) {
     webgmeManager.executeCommand(_.extend({_: ['node', 'cli.js']}, args), callback);
 };
 
-var TMP_DIR = path.join(__dirname, '..', 'test-tmp');
-var PROJECT_DIR = path.join(TMP_DIR, 'ExamplePluginProject');
-var OTHER_PROJECT = __dirname+'/res/OtherProject';
-var OTHER_PLUGIN = 'OtherPlugin';
+// Useful constants
+var TMP_DIR = path.join(__dirname, '..', 'test-tmp'),
+    PROJECT_DIR = path.join(TMP_DIR, 'ExamplePluginProject'),
+    CONFIG_NAME = 'webgme-setup.json',
+    CONFIG_PATH = path.join(PROJECT_DIR, CONFIG_NAME),
+    OTHER_PROJECT = __dirname+'/res/OtherProject',
+    OTHER_PLUGIN = 'OtherPlugin',
+    otherProject;
+
 describe('Plugin tests', function() {
     'use strict';
-
+    
     var PLUGIN_NAME = 'MyNewPlugin',
         PluginBasePath = path.join(PROJECT_DIR, 'src', 'plugin'),
         PLUGIN_SRC = path.join(PluginBasePath, PLUGIN_NAME, PLUGIN_NAME+'.js'),
@@ -64,8 +69,35 @@ describe('Plugin tests', function() {
         });
 
         it('should record the plugin in .webgme file', function() {
-            var config = require(path.join(PROJECT_DIR,'webgme-setup.json'));
+            var config = require(CONFIG_PATH);
             assert.notEqual(config.components.plugin[PLUGIN_NAME], undefined);
+        });
+
+        describe('test file', function() {
+            var PLUGIN_TEST = path.join(PROJECT_DIR, 'test', 'plugin',
+                PLUGIN_NAME, PLUGIN_NAME+'.spec.js');
+
+            it('should create test file in test/plugin', function() {
+                assert(fs.existsSync(PLUGIN_TEST));
+            });
+
+            it('should have correct path for test fixtures', function() {
+                var testContent = fs.readFileSync(PLUGIN_TEST, 'utf8'),
+                    fixtureRegex = /require\('(.*)'\)/,
+                    result = fixtureRegex.exec(testContent);
+                assert(result[1] === 'webgme/test/_globals');
+            });
+        });
+
+        describe('list plugins', function() {
+            it('should list the new plugin', function(done) {
+                emitter.once('write', function(msg) {
+                    assert.notEqual(-1, msg.indexOf(PLUGIN_NAME));
+                    done();
+                });
+
+                callWebGME({_: ['node', 'webgme', 'ls', 'plugin']});
+            });
         });
     });
 
@@ -92,28 +124,28 @@ describe('Plugin tests', function() {
             assert.equal(fs.existsSync(pluginPath), false);
         });
 
-        it('should remove plugin entry from webgme.json', function() {
-            var config = require(path.join(PROJECT_DIR,'webgme-setup.json'));
+        it('should remove plugin entry from '+CONFIG_NAME, function() {
+            var config = require(CONFIG_PATH);
             assert.equal(config.components.plugin[PLUGIN_NAME], undefined);
         });
     });
 
     describe('add plugin', function() {
-        var otherProject;
 
         describe('errors', function() {
             it('should not miss plugin or project', function(done) {
-                emitter.once('error', done.bind(this, undefined));
+                emitter.once('error', done.bind(this, null));
                 callWebGME({_: ['node', 'webgme', 'add', 'plugin', OTHER_PLUGIN]});
             });
 
-            it('should have plugin from project', function(done) {
-                emitter.once('error', done.bind(this, undefined));
-                callWebGME({_: ['node', 'webgme', 'add', 'plugin', 'blah', OTHER_PROJECT]});
-            });
+            // FIXME
+            //it('should fail if project is missing plugin', function(done) {
+                //emitter.once('error', done.bind(this,null));
+                //callWebGME({_: ['node', 'webgme', 'add', 'plugin', 'blah', OTHER_PROJECT]});
+            //});
         });
 
-        describe('projects NOT created with webgme-cli', function() {
+        describe('projects NOT created with webgme-setup-tool', function() {
             otherProject = __dirname+'/res/NonCliProj';
             before(function(done) {
                 this.timeout(10000);
@@ -130,10 +162,9 @@ describe('Plugin tests', function() {
                 assert.notEqual(pkg.dependencies[depName], undefined);
             });
 
-            it('should add the project to the webgme-setup.json', function() {
-                var configPath = path.join(PROJECT_DIR,'webgme-setup.json'),
-                configText = fs.readFileSync(configPath),
-                config = JSON.parse(configText);
+            it('should add the project to the '+CONFIG_NAME, function() {
+                var configText = fs.readFileSync(CONFIG_PATH),
+                    config = JSON.parse(configText);
                 assert.notEqual(config.dependencies.plugin[OTHER_PLUGIN], undefined);
             });
 
@@ -157,9 +188,9 @@ describe('Plugin tests', function() {
                     assert.equal(paths.indexOf(OTHER_PLUGIN), -1);
                 });
 
-                it('should remove plugin entry from webgme.json', function() {
-                    var configText = fs.readFileSync(path.join(PROJECT_DIR,'webgme-setup.json')),
-                    config = JSON.parse(configText);
+                it('should remove plugin entry from '+CONFIG_NAME, function() {
+                    var configText = fs.readFileSync(CONFIG_PATH),
+                        config = JSON.parse(configText);
                     assert.equal(config.dependencies.plugin[OTHER_PLUGIN], undefined);
                 });
 
@@ -173,7 +204,7 @@ describe('Plugin tests', function() {
             });
         });
 
-        describe('projects created with webgme-cli', function() {
+        describe('projects created with webgme-setup-tool', function() {
             otherProject = __dirname+'/res/OtherProject';
             before(function(done) {
                 this.timeout(5000);
@@ -190,10 +221,9 @@ describe('Plugin tests', function() {
                 assert.notEqual(pkg.dependencies[depName], undefined);
             });
 
-            it('should add the project to the webgme-setup.json', function() {
-                var configPath = path.join(PROJECT_DIR,'webgme-setup.json'),
-                configText = fs.readFileSync(configPath),
-                config = JSON.parse(configText);
+            it('should add the project to the '+CONFIG_NAME, function() {
+                var configText = fs.readFileSync(CONFIG_PATH),
+                    config = JSON.parse(configText);
                 assert.notEqual(config.dependencies.plugin[OTHER_PLUGIN], undefined);
             });
 
@@ -217,9 +247,9 @@ describe('Plugin tests', function() {
                     assert.equal(paths.indexOf(OTHER_PLUGIN), -1);
                 });
 
-                it('should remove plugin entry from webgme.json', function() {
-                    var configText = fs.readFileSync(path.join(PROJECT_DIR,'webgme-setup.json')),
-                    config = JSON.parse(configText);
+                it('should remove plugin entry from '+CONFIG_NAME, function() {
+                    var configText = fs.readFileSync(CONFIG_PATH),
+                        config = JSON.parse(configText);
                     assert.equal(config.dependencies.plugin[OTHER_PLUGIN], undefined);
                 });
 

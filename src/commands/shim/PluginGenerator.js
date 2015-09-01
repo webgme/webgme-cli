@@ -55,6 +55,12 @@ define(['coreplugins/PluginGenerator/PluginGenerator',
             // Fix any file names
             R.values(self.blobClient.artifacts).forEach(function(artifact) {
                 artifact.files.forEach(fixFilePath);
+                // Fix the require path for the unit test
+                var test = artifact.files.filter(function(file) {
+                    return file.name.indexOf('test') === 0;
+                })[0];
+                test.content = test.content.replace('../../../globals', 'webgme/test/_globals');
+
                 artifact.files.forEach(function(file) {
                     self.emitter.emit('info', 'Saving file at '+file.name);
                 });

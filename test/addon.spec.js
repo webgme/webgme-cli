@@ -1,3 +1,4 @@
+/*globals describe,it,before,beforeEach,after*/
 var path = require('path'),
     assert = require('assert'),
     fs = require('fs'),
@@ -17,13 +18,19 @@ var callWebGME = function(args, callback) {
     webgmeManager.executeCommand(_.extend({_: ['node', 'cli.js']}, args), callback);
 };
 
-var TMP_DIR = path.join(__dirname, '..', 'test-tmp');
-var PROJECT_DIR = path.join(TMP_DIR, 'ExampleAddOnProject');
-var PROJECT_CONFIG = 'webgme-setup.json';
-var CONFIG_PATH = path.join(PROJECT_DIR,PROJECT_CONFIG);
-var OTHER_PROJECT = __dirname+'/res/OtherProject';
-var OTHER_ADDON = 'OtherAddOn';
+// Useful Constants
+var TMP_DIR = path.join(__dirname, '..', 'test-tmp'),
+    PROJECT_DIR = path.join(TMP_DIR, 'ExampleAddOnProject'),
+    PROJECT_CONFIG = 'webgme-setup.json',
+    CONFIG_PATH = path.join(PROJECT_DIR, PROJECT_CONFIG),
+    PROJECT_DIR = path.join(TMP_DIR, 'ExampleAddOnProject'),
+    OTHER_PROJECT = __dirname+'/res/OtherProject',
+    OTHER_ADDON = 'OtherAddOn',
+    otherProject;
+
 describe('AddOn tests', function() {
+    'use strict';
+
     var ADDON_ID = 'MyNewAddOn',
         ADDON_NAME = 'NewAddOnName',
         AddOnBasePath = path.join(PROJECT_DIR, 'src', 'addOn'),
@@ -77,6 +84,17 @@ describe('AddOn tests', function() {
             assert(config.addOn.enable);
         });
 
+        describe('list addOns', function() {
+            it('should list the new addOn', function(done) {
+                emitter.once('write', function(msg) {
+                    assert.notEqual(-1, msg.indexOf(ADDON_ID));
+                    done();
+                });
+
+                callWebGME({_: ['node', 'webgme', 'ls', 'addOn']});
+            });
+        });
+
         describe('rm addOn', function() {
             before(function(done) {
                 callWebGME({
@@ -109,7 +127,7 @@ describe('AddOn tests', function() {
 
     describe('add addOn', function() {
 
-        describe('projects NOT created with webgme-cli', function() {
+        describe('projects NOT created with webgme-setup-tool', function() {
             before(function(done) {
                 this.timeout(10000);
                 process.chdir(PROJECT_DIR);
@@ -170,7 +188,7 @@ describe('AddOn tests', function() {
             });
         });
 
-        describe('projects created with webgme-cli', function() {
+        describe('projects created with webgme-setup-tool', function() {
             otherProject = __dirname+'/res/OtherProject';
             before(function(done) {
                 this.timeout(5000);
@@ -188,8 +206,8 @@ describe('AddOn tests', function() {
             });
 
             it('should add the project to the '+PROJECT_CONFIG, function() {
-                configText = fs.readFileSync(CONFIG_PATH);
-                config = JSON.parse(configText);
+                var configText = fs.readFileSync(CONFIG_PATH),
+                    config = JSON.parse(configText);
                 assert.notEqual(config.dependencies.addOn[OTHER_ADDON], undefined);
             });
 
@@ -215,7 +233,7 @@ describe('AddOn tests', function() {
 
                 it('should remove addOn entry from '+PROJECT_CONFIG, function() {
                     var configText = fs.readFileSync(CONFIG_PATH),
-                    config = JSON.parse(configText);
+                        config = JSON.parse(configText);
                     assert.equal(config.dependencies.addOn[OTHER_ADDON], undefined);
                 });
 

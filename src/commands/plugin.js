@@ -15,8 +15,7 @@ define(['fs',
         'commands/../utils',
         'commands/ComponentManager',
         'commands/shim/PluginGenerator',
-        'commands/mixins/Enableable/Enableable',
-        'commands/../GmeUtils'], 
+        'commands/mixins/Enableable/Enableable'], 
         function(fs,
                  R,
                  _,
@@ -27,8 +26,7 @@ define(['fs',
                  utils,
                  ComponentManager,
                  PluginGenerator,
-                 Enableable,
-                 GmeUtils) {
+                 Enableable) {
 
     'use strict';
     var spawn = childProcess.spawn;
@@ -115,7 +113,7 @@ define(['fs',
             return path.join(type, 'plugin', config.pluginID);
         }, {src: null, test: null});
 
-        // Store the plugin info in the .webgme.json file
+        // Store the plugin info in the webgme-setup.json file
         var pluginConfig = {
             srcPath: paths.src,
             testPath: paths.test
