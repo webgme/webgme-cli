@@ -56,7 +56,7 @@ define(['coreplugins/PluginGenerator/PluginGenerator',
                 var test = artifact.files.filter(function(file) {
                     return file.name.indexOf('test') === 0;
                 })[0];
-                test.content = test.content.replace('../../../globals', 'webgme/test/_globals');
+                test.content = test.content.replace('../../../_globals', 'webgme/test/_globals');
 
                 artifact.files.forEach(function(file) {
                     self.emitter.emit('info', 'Saving file at '+file.name);
