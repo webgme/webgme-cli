@@ -196,6 +196,18 @@ define(['lodash',
     };
 
     var nop = function() {};
+    /**
+     * Get the name of the package installed with "npmPackage"
+     *
+     * @param {String} npmPackage
+     * @return {String} name
+     */
+    var getPackageName = function(npmPackage) {
+        // FIXME: It currently assumes everything is a github url. Should support
+        // hashes, packages, etc
+        // Ideally, we could use an npm feature to do this
+        return npmPackage.split('/').pop();
+    };
 
     return {
         saveConfig: saveConfig,
@@ -208,6 +220,7 @@ define(['lodash',
         updateWebGMEConfig: updateWebGMEConfig,
         saveFilesFromBlobClient: saveFilesFromBlobClient,
         saveFile: saveFile,
-        logStream: logStream
+        logStream: logStream,
+        getPackageName: getPackageName
     };
 });

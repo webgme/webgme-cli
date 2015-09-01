@@ -48,7 +48,6 @@ define(['rimraf',
         callback(null);
     };
 
-    // TODO: Add method for adding component
     ComponentManager.prototype.rm = function(args, callback) {
         // TODO: Check args
         var name = args._[2],
@@ -99,8 +98,7 @@ define(['rimraf',
         componentName = args._[2];
         project = args._[3];
         // Add the project to the package.json
-        // FIXME: Change this to support hashes
-        var pkgProject = project.split('/').pop();
+        var pkgProject = utils.getPackageName(project);
         this._emitter.emit('info', 
             'Adding '+componentName+' from '+pkgProject);
 
