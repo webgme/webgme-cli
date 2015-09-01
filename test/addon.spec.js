@@ -48,6 +48,17 @@ describe('AddOn tests', function() {
         }
     });
 
+    describe('new addOn errors', function() {
+        before(function() {
+            process.chdir(PROJECT_DIR);  // Start in different directory
+        });
+
+        it('should fail if no name passed', function(done) {
+            emitter.once('error', done.bind(null, undefined));
+            callWebGME({_: ['node', 'webgme', 'new', 'addOn']});
+        });
+    });
+
     describe('new addOn', function() {
         before(function(done) {
             process.chdir(PROJECT_DIR);  // Start in different directory
