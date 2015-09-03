@@ -1,3 +1,4 @@
+/*globals define*/
 define(['lodash', 
         'fs',
         'path',
@@ -8,11 +9,13 @@ define(['lodash',
                            module,
                            R) {
 
+    'use strict';
+    
     var PROJECT_CONFIG = 'webgme-setup.json',
         __dirname = path.dirname(module.uri);
 
     var getRootPath = function() {
-        // Walk back from current path until you find a .webgme file
+        // Walk back from current path until you find a webgme-setup.json file
         var abspath = path.resolve('.');
 
         while (abspath.length > 1) {
@@ -30,7 +33,7 @@ define(['lodash',
             return null;
         }
 
-        files = fs.readdirSync(abspath);
+        var files = fs.readdirSync(abspath);
         return files.filter(function(file) {
             return file === PROJECT_CONFIG;
         }).length > 0;
@@ -84,7 +87,7 @@ define(['lodash',
 
     var saveConfig = function(config) {
         var root = getRootPath();
-        var configText = JSON.stringify(config);
+        var configText = JSON.stringify(config, null, 2);
         fs.writeFileSync(path.join(root, PROJECT_CONFIG), configText);
     };
 

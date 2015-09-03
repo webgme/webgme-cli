@@ -25,19 +25,19 @@
   },
   "homepage": "https://github.com/brollb/webgme-setup-tool#readme",
   "dependencies": {
-    "chai": "^3.0.0",
     "change-case": "^2.3.0",
-    "istanbul": "^0.3.17",
     "lodash": "^3.9.3",
     "minimist": "^1.1.1",
     "ramda": "^0.15.1",
     "requirejs": "^2.1.18",
     "rimraf": "^2.4.0",
-    "sinon": "^1.15.4",
-    "sinon-chai": "^2.8.0",
     "webgme": "latest"
   },
   "devDependencies": {
+    "istanbul": "^0.3.17",
+    "sinon": "^1.15.4",
+    "sinon-chai": "^2.8.0",
+    "chai": "^3.0.0",
     "mocha": "^2.2.5"
   }
 }
