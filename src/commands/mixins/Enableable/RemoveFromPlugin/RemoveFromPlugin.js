@@ -21,7 +21,6 @@ define([
     var RemoveFromPlugin = function () {
         // Call base class' constructor.
         PluginBase.call(this);
-        this.metaTypes = MetaTypes;
     };
 
     // Prototypal inheritance from PluginBase.
@@ -83,19 +82,21 @@ define([
             index,
             attributes;
 
-        self.updateMETA(self.metaTypes);
         if (!currentConfig.field) {
             self.result.setSuccess(false);
+            self.logger.info('No field provided');
             return callback('No field provided', self.result);
         }
 
         // Add to root node's "field" attribute
-        attributes = self.core.getAttribute(self.rootNode, field).split(' ');
+        attributes = self.core.getRegistry(self.rootNode, field).split(' ');
+        self.logger.info('Current values for '+field+':', attributes);
         index = attributes.indexOf(attribute);
-        if (index === -1) {
+        if (index !== -1) {
             attributes.splice(index,1);
+            self.logger.info('Setting '+field+' to '+attributes.join(' '));
         }
-        self.core.setAttribute(self.rootNode, field, attributes.join(' '));
+        self.core.setRegistry(self.rootNode, field, attributes.join(' '));
 
         // This will save the changes. If you don't want to save;
         // exclude self.save and call callback directly from this scope.

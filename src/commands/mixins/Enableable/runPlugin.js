@@ -59,13 +59,13 @@ runPlugin = function(gmeConfig, pluginConfig, projectOptions, callback) {
         .then(function () {
             logger.info('Database is opened.');
 
-            return storage.openProject({projectName: projectOptions.project});
+            return storage.openProject({projectId: projectOptions.project});
         })
         .then(function (dbProject) {
             logger.info('Project is opened.');
             project = new Project(dbProject, storage, logger, gmeConfig);
             return storage.getBranchHash({
-                projectName: projectOptions.project,
+                projectId: projectOptions.project,
                 branchName: projectOptions.branch
             });
         })

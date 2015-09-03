@@ -35,8 +35,9 @@ define([
                 'Usage: webgme '+action+' '+this._name+' ['+this._name+'] [project]');
         }
 
-        var componentName = args._[2],
-            project = args._[3],
+        var componentName = args._[2],  // TODO: verify that the plugin exists
+            user = args.user || 'guest',
+            project = user+'+'+args._[3],
             branch = args.branch || 'master',
             gmeConfigPath = utils.getGMEConfigPath(),
             gmeConfig = nodeRequire(gmeConfigPath),
@@ -44,7 +45,6 @@ define([
             pluginConfig;
 
         // Add the AddToRootPlugin
-        console.log('adding dirname:', __dirname);
         gmeConfig[this._name].basePaths.push(__dirname);
         // Create plugin config
         pluginConfig = {field: this._field, attribute: componentName};
@@ -80,7 +80,7 @@ define([
             }
 
             // FIXME: Test this!
-            this._emitter.emit('log', 'Added '+pluginName+' to '+project);
+            this._emitter.emit('log', 'Added '+args._[2]+' to '+args._[3]);
             callback(err);
         }.bind(this));
     };

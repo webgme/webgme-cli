@@ -87,12 +87,12 @@ define([
         }
 
         // Add to root node's "field" attribute
-        attributes = (self.core.getAttribute(self.rootNode, field) || '').split(' ');
+        attributes = (self.core.getRegistry(self.rootNode, field) || '').split(' ');
         if (attributes.indexOf(attribute) === -1) {
             attributes.push(attribute);
+            self.logger.info('Setting '+field+' to '+attributes.join(' '));
         }
-        self.logger.info('Setting '+field+' to '+attributes.join(' '));
-        self.core.setAttribute(this.rootNode, field, attributes.join(' '));
+        self.core.setRegistry(this.rootNode, field, attributes.join(' '));
 
         // This will save the changes. If you don't want to save;
         // exclude self.save and call callback directly from this scope.
