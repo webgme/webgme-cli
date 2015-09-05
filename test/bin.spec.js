@@ -1,3 +1,4 @@
+// This tests the program as a child process to check the bin script
 var spawn = require('child_process').spawn,
     path = require('path'),
     fs = require('fs'),

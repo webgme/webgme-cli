@@ -73,6 +73,23 @@ describe('Plugin tests', function() {
             assert.notEqual(config.components.plugin[PLUGIN_NAME], undefined);
         });
 
+        describe('options', function() {
+            var NoMetaPlugin = 'NoMetaForMe';
+            before(function(done) {
+                process.chdir(PROJECT_DIR);  // Start in different directory
+                callWebGME({
+                    _: ['node', 'webgme', 'new', 'plugin', NoMetaPlugin],
+                    'meta': false
+                }, done);
+            });
+            it('should not create meta.js file', function() {
+                var metaPath = path.join(PROJECT_DIR, 'src', 'plugin', NoMetaPlugin, 'meta.js');
+                assert(!fs.existsSync(metaPath), 'Created meta.js file');
+            });
+
+
+        });
+
         describe('test file', function() {
             var PLUGIN_TEST = path.join(PROJECT_DIR, 'test', 'plugin',
                 PLUGIN_NAME, PLUGIN_NAME+'.spec.js');
