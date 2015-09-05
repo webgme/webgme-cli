@@ -1,11 +1,9 @@
 define(['coreplugins/PluginGenerator/PluginGenerator',
         'plugin/PluginBase',
         'commands/shim/blobClient',
-        'commands/shim/logger',
         'ramda'], function(WebGMEPluginGenerator,
                            PluginBase,
                            BlobClient,
-                           Logger,
                            R) {
     'use strict';
     
@@ -13,14 +11,14 @@ define(['coreplugins/PluginGenerator/PluginGenerator',
     var path = require('path');
     var _ = require('lodash');
 
-    var PluginGenerator = function(emitter, config) {
+    var PluginGenerator = function(logger, config) {
         // Load the PluginGenerator from the core plugins
         // Use it to create the boilerplate for the new plugin
         WebGMEPluginGenerator.call(this);
         var blobClient = new BlobClient();
-        this.initialize(new Logger(emitter), blobClient);
+        this.initialize(logger, blobClient);
         this._currentConfig = config;
-        this.emitter = emitter;
+        this.logger = logger;
         this.configure({});
         this.META = {};
     };
@@ -46,7 +44,7 @@ define(['coreplugins/PluginGenerator/PluginGenerator',
         var self = this;
         WebGMEPluginGenerator.prototype.main.call(this, function(e, result) {
             if (e) {
-                return this.emitter.emit('error', e);
+                return this.logger.error(e);
             }
 
             // Fix any file names
@@ -59,7 +57,7 @@ define(['coreplugins/PluginGenerator/PluginGenerator',
                 test.content = test.content.replace('../../../_globals', 'webgme/test/_globals');
 
                 artifact.files.forEach(function(file) {
-                    self.emitter.emit('info', 'Saving file at '+file.name);
+                    self.logger.info('Saving file at '+file.name);
                 });
             });
 
