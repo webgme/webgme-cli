@@ -219,7 +219,7 @@ WebGMEComponentManager.prototype.createManagers = function(callback) {
         .map(function(file) {  // Get file path
             return path.join(__dirname,'commands',file);
         });
-    this.emitter.emit('debug', 'Loading component managers:\n'+files.join('\n'));
+    this.logger.debug('Loading component managers:\n'+files.join('\n'));
 
     // Load the item's command definitions
     requirejs(files, function() {

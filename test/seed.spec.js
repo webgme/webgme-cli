@@ -9,7 +9,7 @@ var path = require('path'),
 var WebGMEComponentManager = require('../src/WebGMEComponentManager');
 var WebGMEConfig = 'config.webgme.js';
 var webgmeManager = new WebGMEComponentManager();
-var emitter = webgmeManager.emitter;
+var emitter = webgmeManager.logger._emitter;
 
 var callWebGME = function(args, callback) {
     'use strict';

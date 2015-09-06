@@ -14,8 +14,8 @@ define(['lodash',
     
     var __dirname = path.dirname(module.uri),
         nodeRequire = require.nodeRequire;
-    var SeedManager = function(emitter) {
-        ComponentManager.call(this, 'seed', emitter);
+    var SeedManager = function(logger) {
+        ComponentManager.call(this, 'seed', logger);
         //this._exportProject = Exporter.run;
         this._webgmeName = 'seedProjects';
 
@@ -37,8 +37,7 @@ define(['lodash',
      */
     SeedManager.prototype.new = function(args, callback) {
         if (args._.length < 3) {
-            return this._emitter.emit('error',
-                'Usage: webgme new '+this._name+' [project] [options]');
+            return this._logger.error('Usage: webgme new '+this._name+' [project] [options]');
         }
         // Lazy load the export dependency. This is done here to prevent slow
         // execution times when this manager is instantiated (as it is on every
@@ -58,14 +57,14 @@ define(['lodash',
 
         // Seeds have their own individual dirs to make sure that
         fs.mkdirSync(fileDir);
-        this._emitter.emit('info', 'About to create a seed from '+source+' of '+
+        this._logger.info('About to create a seed from '+source+' of '+
             projectName);
         this._exportProject({gmeConfig: gmeConfig,
                              projectName: projectName, 
                              source: source, 
                              outFile: filePath})
             .then(function() {
-                this._emitter.emit('write', 'Created '+this._name+' at '+filePath);
+                this._logger.write('Created '+this._name+' at '+filePath);
                 this._register(name, {src: fileDir});
                 //this._register(name, {src: path.relative(__dirname, fileDir)});
                 callback();
