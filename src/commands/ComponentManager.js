@@ -25,8 +25,8 @@ define(['rimraf',
         nodeRequire = require.nodeRequire,
         __dirname = path.dirname(module.uri);
 
-    var ComponentManager = function(name, emitter) {
-        this._emitter = emitter;
+    var ComponentManager = function(name, logger) {
+        this._logger = logger;
         this._name = name;  // Name to be used in cli usage, etc
         this._webgmeName = name;  // Name to be used only in webgme config
         this._prepareWebGmeConfig();
@@ -44,7 +44,7 @@ define(['rimraf',
             plugins = Object.keys(config.components[this._name]).join(' ') || '<none>',
             deps = Object.keys(config.dependencies[this._name]).join(' ') || '<none>';
 
-        this._emitter.emit('write', 'Detected '+this._name+'s: '+plugins+
+        this._logger.write('Detected '+this._name+'s: '+plugins+
             '\nThird party '+this._name+'s: '+deps);
         callback(null);
     };
@@ -75,7 +75,7 @@ define(['rimraf',
                 // Remove p recursively
                 pathItems.pop();
                 componentPath = pathItems.join(path.sep);
-                this._emitter.emit('info', 'Removing '+componentPath);
+                this._logger.info('Removing '+componentPath);
                 rm_rf(componentPath, finished);
             }, this);
         } else {
@@ -94,14 +94,14 @@ define(['rimraf',
             job;
 
         if (args._.length < 4) {
-            return this._emitter.emit('error', 
+            return this._logger.error(
             'Usage: webgme add '+this._name+' ['+this._name+'] [project]');
         }
         componentName = args._[2];
         project = args._[3];
         // Add the project to the package.json
         var pkgProject = utils.getPackageName(project);
-        this._emitter.emit('info', 
+        this._logger.info(
             'Adding '+componentName+' from '+pkgProject);
 
         // Add the component to the webgme config component paths
@@ -109,12 +109,12 @@ define(['rimraf',
         job = spawn('npm', ['install', project, '--save'],
             {cwd: projectRoot}); 
 
-        this._emitter.emit('info', 'npm install '+project+' --save');
-        job.stdout.on('data', utils.logStream.bind(null, this._emitter, 'info'));
-        job.stderr.on('data', utils.logStream.bind(null, this._emitter, 'info'));
+        this._logger.info('npm install '+project+' --save');
+        this._logger.infoStream(job.stdout);
+        this._logger.infoStream(job.stderr);
 
         job.on('close', function(code) {
-            this._emitter.emit('info', 'npm exited with: '+code);
+            this._logger.info('npm exited with: '+code);
             if (code === 0) {  // Success!
                 // Look up the componentPath by trying to load the config of 
                 // the new project or find the component through the component 
@@ -144,12 +144,12 @@ define(['rimraf',
                     componentPath = componentPath !== null ? 
                         path.join(componentPath,componentName) : null;
                 } else {
-                    this._emitter.emit('error', 'Did not recognize the project as a WebGME project');
+                    this._logger.error('Did not recognize the project as a WebGME project');
                 }
 
                 // Verify that the component exists in the project
                 if (!componentPath) {
-                    this._emitter.emit('error', pkgProject+' does not contain '+componentName);
+                    this._logger.error(pkgProject+' does not contain '+componentName);
                     return callback(pkgProject+' does not contain '+componentName);
                 }
                 if (!path.isAbsolute(componentPath)) {
@@ -174,7 +174,7 @@ define(['rimraf',
                 callback();
 
             } else {
-                this._emitter.emit('error', 'Could not find project!');
+                this._logger.error('Could not find project!');
             }
         }.bind(this));
     };
@@ -186,7 +186,7 @@ define(['rimraf',
         utils.saveConfig(config);
         utils.updateWebGMEConfig();
 
-        this._emitter.emit('write', 'Removed the '+plugin+'!');
+        this._logger.write('Removed the '+plugin+'!');
     };
 
     /**
@@ -221,7 +221,7 @@ define(['rimraf',
             name = opts.name,
             filePath = path.join(this._getSaveLocation(type),name,name+'.js');
         if (fs.existsSync(filePath)) {
-            return this._emitter.emit('error', filePath+' already exists');
+            return this._logger.error(filePath+' already exists');
         }
         // Create the directories
         utils.saveFile({name: filePath, content: opts.content});

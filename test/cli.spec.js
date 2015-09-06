@@ -24,7 +24,7 @@ describe('WebGME-cli', function() {
 
     before(function() {
         process.chdir(__dirname);
-        emitter = webgmeManager.emitter;
+        emitter = webgmeManager.logger._emitter;
         // sinon.spy(emitter, 'on');
     });
 

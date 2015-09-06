@@ -37,7 +37,7 @@ describe('WebGME bin script', function() {
 var WebGMEComponentManager = require('../src/WebGMEComponentManager'),
     webgmeManager = new WebGMEComponentManager(),
     fs = require('fs'),
-    emitter = webgmeManager.emitter;
+    emitter = webgmeManager.logger._emitter;
 
 describe('WebGME command line parsing', function() {
     before(function(done) {
