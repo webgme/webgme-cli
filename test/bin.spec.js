@@ -13,6 +13,7 @@ describe('WebGME bin script', function() {
             helpMsg = fs.readFileSync(path.join(__dirname,'..','doc','help.txt'),'utf-8'),
             printedMsg = false;
 
+        this.timeout(3000);  // FIXME: This shouldn't be so slow!
         webgmeBin.stdout.on('data', function(data) {
             printedMsg = true;
             var msg = data.toString();

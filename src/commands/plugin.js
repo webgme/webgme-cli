@@ -111,8 +111,8 @@ define(['fs',
 
         // Store the plugin info in the webgme-setup.json file
         var pluginConfig = {
-            srcPath: paths.src,
-            testPath: paths.test
+            src: paths.src,
+            test: paths.test
         };
         this._register(config.pluginID, pluginConfig);
         this._emitter.emit('write', 'Created new plugin at '+paths.src);

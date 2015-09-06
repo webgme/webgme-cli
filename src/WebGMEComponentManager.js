@@ -133,32 +133,33 @@ WebGMEComponentManager.prototype._resolveAliases = function(args) {
 };
 
 WebGMEComponentManager.prototype.executeCommand = function(args, callback) {
+    this.createManagers(this.executeCommandNoLoad.bind(this, args, callback));
+};
+
+WebGMEComponentManager.prototype.executeCommandNoLoad = function(args, callback) {
 
     // Remove the first two args
     args._.splice(0,2);
-    this.createManagers(function() {
+    // Resolve flag aliases to long form
+    args = this._resolveAliases(args);
 
-        // Resolve flag aliases to long form
-        args = this._resolveAliases(args);
-
-        // General flags (eg, help, etc)
-        var flags = Object.keys(this.BasicFlags);
-        for (i = flags.length; i--;) {
-            if (args[flags[i]]) {
-                if (this.BasicFlags[flags[i]].call(this, this.componentManagers, args)) {
-                    return;
-                }
+    // General flags (eg, help, etc)
+    var flags = Object.keys(this.BasicFlags);
+    for (i = flags.length; i--;) {
+        if (args[flags[i]]) {
+            if (this.BasicFlags[flags[i]].call(this, this.componentManagers, args)) {
+                return;
             }
         }
+    }
 
-        // Pass the argument to the respective manager
-        if (!this._invokeComponentManager(args, callback)) {
-            // If not handled, print usage message
-            var usageMsg = fs.readFileSync(__dirname+'/../doc/usage.txt', 'utf-8');
-            this.emitter.emit('write', usageMsg);
-            callback();
-        }
-    }.bind(this));
+    // Pass the argument to the respective manager
+    if (!this._invokeComponentManager(args, callback)) {
+        // If not handled, print usage message
+        var usageMsg = fs.readFileSync(__dirname+'/../doc/usage.txt', 'utf-8');
+        this.emitter.emit('write', usageMsg);
+        callback();
+    }
 };
 
 /**
@@ -229,6 +230,7 @@ WebGMEComponentManager.prototype.createManagers = function(callback) {
         .map(function(file) {  // Get file path
             return path.join(__dirname,'commands',file);
         });
+    this.emitter.emit('debug', 'Loading component managers:\n'+files.join('\n'));
 
     // Load the item's command definitions
     requirejs(files, function() {
