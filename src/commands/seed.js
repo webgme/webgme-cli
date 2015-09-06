@@ -56,18 +56,26 @@ define(['lodash',
             result;
 
         // Seeds have their own individual dirs to make sure that
-        fs.mkdirSync(fileDir);
+        utils.mkdir(fileDir);
         this._logger.info('About to create a seed from '+source+' of '+
             projectName);
+
         this._exportProject({gmeConfig: gmeConfig,
                              projectName: projectName, 
                              source: source, 
                              outFile: filePath})
             .then(function() {
                 this._logger.write('Created '+this._name+' at '+filePath);
+                // Save the relative file dir
+                fileDir = path.relative(utils.getRootPath(), fileDir);
                 this._register(name, {src: fileDir});
                 //this._register(name, {src: path.relative(__dirname, fileDir)});
                 callback();
+            }.bind(this))
+            .fail(function(err) {
+                this._logger.error('Could not create '+this._name+': '+err);
+                fs.rmdirSync(fileDir);
+                callback(err);
             }.bind(this));
     };
 

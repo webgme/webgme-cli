@@ -51,6 +51,20 @@ describe('Seed tests', function() {
     });
 
     describe('new seed', function() {
+        var passingPromise = {
+                then: function(fn) {
+                    fn();
+                    return {fail: function(){}};
+                }
+            };
+        var failingPromise = {
+                then: function() {
+                    return {fail: function(fn){
+                        return fn();
+                    }};
+                }
+            };
+
         before(function(done) {
             this.timeout(3000);
             webgmeManager.createManagers(done);
@@ -59,11 +73,7 @@ describe('Seed tests', function() {
         it('should call the WebGME export script', function(done) {
             var seedManager = webgmeManager.componentManagers.seed;
             seedManager._exportProject = function() {
-                return {
-                    then: function(fn) {
-                        fn();
-                    }
-                };
+                return passingPromise;
             };
             webgmeManager.executeCommandNoLoad({
                 _: ['node', 'webgme', 'new', 'seed', SEED_NAME]
@@ -83,15 +93,62 @@ describe('Seed tests', function() {
             seedManager._exportProject = function(params) {
                 var args = Object.keys(params);
                 assert(_.difference(args, requiredArgs).length === 0);
-                return {
-                    then: function(fn) {
-                        fn();
-                    }
-                };
+                return passingPromise;
             };
             webgmeManager.executeCommandNoLoad({
                 _: ['node', 'webgme', 'new', 'seed', 'myNewSeed']
             }, function() {
+                done();
+            });
+        });
+
+        it('should save relative path', function(done) {
+            var seedManager = webgmeManager.componentManagers.seed;
+            seedManager._exportProject = function(params) {
+                return passingPromise;
+            };
+            webgmeManager.executeCommandNoLoad({
+                _: ['node', 'webgme', 'new', 'seed', 'myNewSeed2']
+            }, function() {
+                // Check the webgem-setup.json
+                var configContent = fs.readFileSync(CONFIG_PATH,'utf8'),
+                    config = JSON.parse(configContent),
+                    srcPath = config.components.seed.myNewSeed2.src;
+
+                assert(!path.isAbsolute(srcPath));
+                done();
+            });
+        });
+
+        it('should enable seedProjects in config.webgme.js', function(done) {
+            var seedManager = webgmeManager.componentManagers.seed;
+            seedManager._exportProject = function(params) {
+                return passingPromise;
+            };
+            webgmeManager.executeCommandNoLoad({
+                _: ['node', 'webgme', 'new', 'seed', 'myNewSeed3']
+            }, function() {
+                // Check the webgem-setup.json
+                var configPath = path.join(PROJECT_DIR, WebGMEConfig),
+                    config = require(configPath);
+
+                assert(config.seedProjects.enable);
+                done();
+            });
+        });
+
+        it('should not create seed directory on fail', function(done) {
+            var seedName = 'failingSeed',
+                seedManager = webgmeManager.componentManagers.seed;
+            seedManager._exportProject = function(params) {
+                return failingPromise;
+            };
+            webgmeManager.executeCommandNoLoad({
+                _: ['node', 'webgme', 'new', 'seed', seedName]
+            }, function() {
+                // Check the webgem-setup.json
+                var seedPath = path.join(SeedBasePath, seedName);
+                assert(!fs.existsSync(seedPath));
                 done();
             });
         });
@@ -215,9 +272,23 @@ describe('Seed tests', function() {
             it('should add the path to the webgme config', function() {
                 var configPath = path.join(PROJECT_DIR,'config.webgme.js'),
                     config = fs.readFileSync(configPath, 'utf8'),
-                    paths = config.match(/seedProjects.*/g).join(';');
+                    paths = config.match(/seedProjects.*/g).join(';'),
+                    projectName = cliProject.split('/').pop().toLowerCase();
 
-                assert(paths.indexOf(cliProject.split('/').pop()) !== -1);
+                assert(paths.indexOf(projectName) !== -1);
+            });
+
+            it('should add the (relative) path to the webgme config', function() {
+                var configPath = path.join(PROJECT_DIR,'config.webgme.js'),
+                    config = fs.readFileSync(configPath, 'utf8'),
+                    lines = config.match(/seedProjects.*/g),  // One per line
+                    paths = lines.map(function(line) { 
+                        return line.match(/['"]{1}.*['"]{1}/)[0]; 
+                    });
+
+                for (var i = paths.length; i--;) {
+                    assert(!path.isAbsolute(paths[i]), 'Found absolute path: '+paths[i]);
+                }
             });
 
             describe('rm dependency seed', function() {
