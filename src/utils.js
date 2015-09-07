@@ -2,10 +2,12 @@
 define(['lodash', 
         'fs',
         'path',
+        'assert',
         'module',
         'ramda'], function(_, 
                            fs,
                            path,
+                           assert,
                            module,
                            R) {
 
@@ -116,7 +118,7 @@ define(['lodash',
     var getPathsFromConfigGroup = function(config) {
         return R.mapObj(function(componentType) {
             return R.values(componentType).map(function(component) {
-                return path.dirname(component.srcPath || component.path);
+                return component.src || component.path;
             });
         }, config);
     };
@@ -157,9 +159,21 @@ define(['lodash',
             project, PROJECT_CONFIG);
     };
 
+    /**
+     * Get the GME path for the given dependent project or the working project
+     * if unspecified
+     *
+     * @param {String} project
+     * @return {String} path
+     */
     var getGMEConfigPath = function(project) {
-        var gmeConfigPath = path.join(getRootPath(), 'node_modules', 
-            project, 'config.js');
+        var gmeConfigPath,
+            projectPath = '';
+
+        if (project) {
+            projectPath = path.join('node_modules', project);
+        }
+        gmeConfigPath = path.join(getRootPath(), projectPath, 'config.js');
 
         return gmeConfigPath;
     };
@@ -204,6 +218,7 @@ define(['lodash',
         updateWebGMEConfig: updateWebGMEConfig,
         saveFilesFromBlobClient: saveFilesFromBlobClient,
         saveFile: saveFile,
+        mkdir: createDir,
         getPackageName: getPackageName
     };
 });

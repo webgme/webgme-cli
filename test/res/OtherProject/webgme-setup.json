@@ -1,1 +1,1 @@
-{"components":{"plugin":{"OtherPlugin":{"srcPath":"src/plugin/OtherPlugin","testPath":"test/plugin/OtherPlugin"}},"addOn":{"OtherAddOn":{"srcPath":"src/addOn/OtherAddOn"}}},"dependencies":{"plugin":{},"addOn":{}}}
+{"components":{"plugin":{"OtherPlugin":{"src":"src/plugin/OtherPlugin","test":"test/plugin/OtherPlugin"}},"addOn":{"OtherAddOn":{"src":"src/addOn/OtherAddOn"}},"seed":{"OtherSeed":{"src":"src/seed/OtherSeed"},"alreadyExists":{"src":"src/seed/alreadyExists"}}},"dependencies":{"plugin":{},"addOn":{},"seed":{}}}

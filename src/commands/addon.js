@@ -31,7 +31,7 @@ define(['lodash',
 
         var filePath = this._saveFile({name: id, content: addOnSrc});
         this._logger.write('Created addon at '+filePath);
-        this._register(id, {srcPath: filePath});
+        this._register(id, {src: filePath});
         callback();
     };
 

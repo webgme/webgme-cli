@@ -79,14 +79,14 @@ describe('AddOn tests', function() {
             assert.notEqual(configText.indexOf(ADDON_ID), -1);
         });
 
-        it('should record the addOn in .webgme file', function() {
+        it('should record the addOn in webgme-setup file', function() {
             var config = require(CONFIG_PATH);
             assert.notEqual(config.components.addOn[ADDON_ID], undefined);
         });
 
-        it('should record relative path in .webgme file', function() {
+        it('should record relative path in webgme-setup file', function() {
             var config = require(CONFIG_PATH),
-                srcPath = config.components.addOn[ADDON_ID].srcPath;
+                srcPath = config.components.addOn[ADDON_ID].src;
             assert(!path.isAbsolute(srcPath));
         });
 
