@@ -51,6 +51,10 @@ define(['fs',
         }
     };
 
+    var getConfigFlagForArgs = {
+        string: CONFIG_FLAG_BY_TYPE.string
+    };
+
     var PluginManager = function(emitter) {
         ComponentManager.call(this, 'plugin', emitter);
 
@@ -132,17 +136,24 @@ define(['fs',
     PluginManager.prototype._getConfig = function(args) {
         // Determine the commandline flag from the raw config
         var config = {},
-            defaultValue,
             flag,
             type;
 
         for (var i = RAW_CONFIG.length; i--;) {
+            // Retrieve values from plugin generator's config
             type = RAW_CONFIG[i].valueType;
-            defaultValue = RAW_CONFIG[i].value;
-            if (CONFIG_FLAG_BY_TYPE[type]) {
-                flag = CONFIG_FLAG_BY_TYPE[type](RAW_CONFIG[i]);
+            flag = RAW_CONFIG[i].name;
+
+            // Set default
+            config[RAW_CONFIG[i].name] = RAW_CONFIG[i].value;
+
+            // Update if necessary
+            if (getConfigFlagForArgs[type]) {
+                flag = getConfigFlagForArgs[type](RAW_CONFIG[i]);
             }
-            config[RAW_CONFIG[i].name] = args[flag] || defaultValue;
+            if (args.hasOwnProperty(flag)) {
+                config[RAW_CONFIG[i].name] = args[flag];
+            }
         }
         return config;
     };
