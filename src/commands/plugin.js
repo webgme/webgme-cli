@@ -55,8 +55,8 @@ define(['fs',
         string: CONFIG_FLAG_BY_TYPE.string
     };
 
-    var PluginManager = function(emitter) {
-        ComponentManager.call(this, 'plugin', emitter);
+    var PluginManager = function(logger) {
+        ComponentManager.call(this, 'plugin', logger);
 
         // Add validation for external commands
         var options;
@@ -90,7 +90,7 @@ define(['fs',
         // Check for project directory
         var projectHome = utils.getRootPath();
         if (projectHome === null) {
-            return this._emitter.emit('error', 'Could not find a project in current or any parent directories');
+            return this._logger.error('Could not find a project in current or any parent directories');
         }
 
         PluginManager.prototype[action].call(this, args, callback);
@@ -105,7 +105,7 @@ define(['fs',
     PluginManager.prototype.new = function(args, callback) {
         // Set the config options from the command line flags
         var config = _.extend(this._getConfig(args), {pluginID: args._[2]});
-        var pluginGenerator = new PluginGenerator(this._emitter, config);
+        var pluginGenerator = new PluginGenerator(this._logger, config);
         pluginGenerator.main();
 
         // Get the src, test paths
@@ -119,7 +119,7 @@ define(['fs',
             testPath: paths.test
         };
         this._register(config.pluginID, pluginConfig);
-        this._emitter.emit('write', 'Created new plugin at '+paths.src);
+        this._logger.write('Created new plugin at '+paths.src);
         callback();
     };
 

@@ -179,25 +179,6 @@ define(['lodash',
         return validPaths.length ? validPaths[0] : null;
     };
 
-    /**
-     * Connect the emitter to the given log type.
-     *
-     * @param {EventEmitter} emitter
-     * @param {String} type
-     * @param {String} data
-     * @return {undefined}
-     */
-    var logStream = function(emitter, type, data) {
-        var msg = data.toString(),
-            len = msg.length,
-            i = msg.lastIndexOf('\n');
-
-        if (i === len-1) {
-            msg = msg.substring(0, len-1);
-        }
-        emitter.emit(type, msg);
-    };
-
     var nop = function() {};
     /**
      * Get the name of the package installed with "npmPackage"
@@ -223,7 +204,6 @@ define(['lodash',
         updateWebGMEConfig: updateWebGMEConfig,
         saveFilesFromBlobClient: saveFilesFromBlobClient,
         saveFile: saveFile,
-        logStream: logStream,
         getPackageName: getPackageName
     };
 });
