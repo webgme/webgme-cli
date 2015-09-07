@@ -179,6 +179,15 @@ describe('WebGME-cli', function() {
                 assert(fs.existsSync(PROJECT_DIR));
             });
 
+            it('should create a src and test dirs', function() {
+                var res = ['src', 'test']
+                    .map(function(dir) {
+                        return path.join(PROJECT_DIR, dir);
+                    })
+                    .map(fs.existsSync)
+                    .forEach(assert);
+            });
+
             it('should create a .webgme file in project root', function() {
                 assert(fs.existsSync(path.join(PROJECT_DIR, 'webgme-setup.json')));
             });

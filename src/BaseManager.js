@@ -40,9 +40,21 @@ BaseManager.prototype.init = function (args, callback) {
     };
     fs.writeFileSync(path.join(project, PROJECT_CONFIG), JSON.stringify(webgmeInfo,null,2));
 
+    // Create the base directories
+    BaseManager._createBasicFileStructure(project);
+
     this._emitter.emit('write', 'Created project at '+project+'.\n\n'+
     'Please run \'npm init\' from the within project to finish configuration.');
     callback();
+};
+
+BaseManager._createBasicFileStructure = function(project) {
+    var dirs = ['src', 'test'];
+
+        dirs.forEach(function(dir) {
+            var absDir = path.join(project, dir);
+            fs.mkdirSync(absDir);
+        });
 };
 
 BaseManager.prototype._createWebGMEFiles = function(project) {
