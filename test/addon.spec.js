@@ -155,7 +155,7 @@ describe('AddOn tests', function() {
                 assert.notEqual(pkg.dependencies[depName], undefined);
             });
 
-            it('should add the project to the .webgme.json', function() {
+            it('should add the project to the webgme-setup.json', function() {
                 var configPath = CONFIG_PATH,
                 configText = fs.readFileSync(configPath),
                 config = JSON.parse(configText);

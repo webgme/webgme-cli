@@ -1,1 +1,25 @@
-{"components":{"plugin":{"OtherPlugin":{"src":"src/plugin/OtherPlugin","test":"test/plugin/OtherPlugin"}},"addOn":{"OtherAddOn":{"src":"src/addOn/OtherAddOn"}},"seed":{"OtherSeed":{"src":"src/seed/OtherSeed"},"alreadyExists":{"src":"src/seed/alreadyExists"}}},"dependencies":{"plugin":{},"addOn":{},"seed":{}}}
+{
+  "components": {
+    "plugin": {
+      "OtherPlugin": {
+        "src": "src/plugin/OtherPlugin",
+        "test": "test/plugin/OtherPlugin"
+      }
+    },
+    "addOn": {
+      "OtherAddOn": {
+        "src": "src/addOn/OtherAddOn"
+      }
+    },
+    "seed": {
+      "OtherSeed": {
+        "src": "src/seed/OtherSeed"
+      }
+    }
+  },
+  "dependencies": {
+    "plugin": {},
+    "addOn": {},
+    "seed": {}
+  }
+}
