@@ -8,7 +8,7 @@ var path = require('path'),
 var WebGMEComponentManager = require('../src/WebGMEComponentManager');
 var WebGMEConfig = 'config.webgme.js';
 var webgmeManager = new WebGMEComponentManager();
-var emitter = webgmeManager.emitter;
+var emitter = webgmeManager.logger._emitter;
 
 var callWebGME = function(args, callback) {
     'use strict';
@@ -48,6 +48,17 @@ describe('AddOn tests', function() {
         }
     });
 
+    describe('new addOn errors', function() {
+        before(function() {
+            process.chdir(PROJECT_DIR);  // Start in different directory
+        });
+
+        it('should fail if no name passed', function(done) {
+            emitter.once('error', done.bind(null, undefined));
+            callWebGME({_: ['node', 'webgme', 'new', 'addOn']});
+        });
+    });
+
     describe('new addOn', function() {
         before(function(done) {
             process.chdir(PROJECT_DIR);  // Start in different directory
@@ -75,7 +86,7 @@ describe('AddOn tests', function() {
 
         it('should record relative path in '+PROJECT_CONFIG+' file', function() {
             var config = require(CONFIG_PATH),
-                srcPath = config.components.addOn[ADDON_ID].srcPath;
+                srcPath = config.components.addOn[ADDON_ID].src;
             assert(!path.isAbsolute(srcPath));
         });
 

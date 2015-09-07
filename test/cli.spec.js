@@ -24,7 +24,7 @@ describe('WebGME-cli', function() {
 
     before(function() {
         process.chdir(__dirname);
-        emitter = webgmeManager.emitter;
+        emitter = webgmeManager.logger._emitter;
         // sinon.spy(emitter, 'on');
     });
 
@@ -179,6 +179,15 @@ describe('WebGME-cli', function() {
                 assert(fs.existsSync(PROJECT_DIR));
             });
 
+            it('should create a src and test dirs', function() {
+                var res = ['src', 'test']
+                    .map(function(dir) {
+                        return path.join(PROJECT_DIR, dir);
+                    })
+                    .map(fs.existsSync)
+                    .forEach(assert);
+            });
+
             it('should create a .webgme file in project root', function() {
                 assert(fs.existsSync(path.join(PROJECT_DIR, 'webgme-setup.json')));
             });
@@ -225,6 +234,13 @@ describe('WebGME-cli', function() {
                 callWebGME({_: ['node', 'cli.js', 'init']});
             });
 
+            // issue 15
+            it('should pretty printed webgme-setup.json', function() {
+                var config = path.join(PROJECT_DIR, 'webgme-setup.json'),
+                    content = fs.readFileSync(config, 'utf8');
+                // Check that it is printed on multiple lines
+                assert(content.split('\n').length > 3);
+            });
         });
 
         after(function(done) {

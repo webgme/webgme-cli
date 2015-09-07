@@ -1,3 +1,4 @@
+// This tests the program as a child process to check the bin script
 var spawn = require('child_process').spawn,
     path = require('path'),
     fs = require('fs'),
@@ -13,6 +14,7 @@ describe('WebGME bin script', function() {
             helpMsg = fs.readFileSync(path.join(__dirname,'..','doc','help.txt'),'utf-8'),
             printedMsg = false;
 
+        this.timeout(3000);  // FIXME: This shouldn't be so slow!
         webgmeBin.stdout.on('data', function(data) {
             printedMsg = true;
             var msg = data.toString();
@@ -36,7 +38,7 @@ describe('WebGME bin script', function() {
 var WebGMEComponentManager = require('../src/WebGMEComponentManager'),
     webgmeManager = new WebGMEComponentManager(),
     fs = require('fs'),
-    emitter = webgmeManager.emitter;
+    emitter = webgmeManager.logger._emitter;
 
 describe('WebGME command line parsing', function() {
     before(function(done) {

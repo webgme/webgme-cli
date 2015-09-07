@@ -5,18 +5,18 @@ var _ = require('lodash');
 var path = require('path');
 var fs = require('fs');
 var PROJECT_CONFIG = 'webgme-setup.json';
-var BaseManager = function(emitter) {
-    this._emitter = emitter;
+var BaseManager = function(logger) {
+    this._logger = logger;
 };
 
 BaseManager.prototype.init = function (args, callback) {
     // Create a new project
     if (args._.length < 2) {
-        return this._emitter.emit('error', 'Usage: webgme init [project name]');
+        return this._logger.error('Usage: webgme init [project name]');
     }
 
     var project = path.resolve(args._[1]);
-    this._emitter.emit('info', 'Creating new project at '+project);
+    this._logger.info('Creating new project at '+project);
     fs.mkdirSync(project);
 
     // Create the package.json
@@ -27,7 +27,7 @@ BaseManager.prototype.init = function (args, callback) {
         },
         pkgJson = pkgJsonTemplate(pkgContent);
 
-    this._emitter.emit('info', 'Writing package.json to '+path.join(project, 'package.json'));
+    this._logger.info('Writing package.json to '+path.join(project, 'package.json'));
     fs.writeFileSync(path.join(project, 'package.json'), pkgJson);
 
     // Create the webgme files
@@ -38,11 +38,23 @@ BaseManager.prototype.init = function (args, callback) {
         components: {},
         dependencies: {}
     };
-    fs.writeFileSync(path.join(project, PROJECT_CONFIG), JSON.stringify(webgmeInfo));
+    fs.writeFileSync(path.join(project, PROJECT_CONFIG), JSON.stringify(webgmeInfo,null,2));
 
-    this._emitter.emit('write', 'Created project at '+project+'.\n\n'+
+    // Create the base directories
+    BaseManager._createBasicFileStructure(project);
+
+    this._logger.write('Created project at '+project+'.\n\n'+
     'Please run \'npm init\' from the within project to finish configuration.');
     callback();
+};
+
+BaseManager._createBasicFileStructure = function(project) {
+    var dirs = ['src', 'test'];
+
+        dirs.forEach(function(dir) {
+            var absDir = path.join(project, dir);
+            fs.mkdirSync(absDir);
+        });
 };
 
 BaseManager.prototype._createWebGMEFiles = function(project) {

@@ -8,7 +8,7 @@ var path = require('path'),
 var WebGMEComponentManager = require('../src/WebGMEComponentManager');
 var WebGMEConfig = 'config.webgme.js';
 var webgmeManager = new WebGMEComponentManager();
-var emitter = webgmeManager.emitter;
+var emitter = webgmeManager.logger._emitter;
 
 var callWebGME = function(args, callback) {
     'use strict';
@@ -71,6 +71,23 @@ describe('Plugin tests', function() {
         it('should record the plugin in .webgme file', function() {
             var config = require(CONFIG_PATH);
             assert.notEqual(config.components.plugin[PLUGIN_NAME], undefined);
+        });
+
+        describe('options', function() {
+            var NoMetaPlugin = 'NoMetaForMe';
+            before(function(done) {
+                process.chdir(PROJECT_DIR);  // Start in different directory
+                callWebGME({
+                    _: ['node', 'webgme', 'new', 'plugin', NoMetaPlugin],
+                    'meta': false
+                }, done);
+            });
+            it('should not create meta.js file', function() {
+                var metaPath = path.join(PROJECT_DIR, 'src', 'plugin', NoMetaPlugin, 'meta.js');
+                assert(!fs.existsSync(metaPath), 'Created meta.js file');
+            });
+
+
         });
 
         describe('test file', function() {
