@@ -1,3 +1,4 @@
+/*globals define*/
 /*
  * This is for components that can be enabled or disabled by adding values to the 
  * root node
@@ -23,16 +24,15 @@ define([
     var dirs = module.uri.split(path.sep);
     dirs.pop();
     var __dirname = dirs.join(path.sep);
-    var PluginRunner = nodeRequire(__dirname+'/runPlugin');
     var Enableable = function(field) {
         this._field = field;
+        this._pluginRunner = nodeRequire(__dirname+'/runPlugin');
     };
 
     Enableable.prototype._invokePlugin = function(args, action, callback) {
-        // TODO: Add enabling plugins for projects
         if (args._.length < 4) {
-            return this._emitter.emit('error',
-                'Usage: webgme '+action+' '+this._name+' ['+this._name+'] [project]');
+            return this._logger.error('Usage: webgme '+action+' '+
+                this._name+' ['+this._name+'] [project]');
         }
 
         var componentName = args._[2],  // TODO: verify that the plugin exists
@@ -56,18 +56,17 @@ define([
             selectedObjID: '/1'
         };
 
-        PluginRunner.run(gmeConfig, pluginConfig, projectOpts, callback);
+        this._pluginRunner.run(gmeConfig, pluginConfig, projectOpts, callback);
     };
 
     Enableable.prototype.enable = function(args, callback) {
         this._invokePlugin(args, 'enable', function(err, result) {
             if (err) {
-                this._emitter.emit('error', 'Could not load WebGME project:',err);
+                this._logger.error('Could not load WebGME project:',err);
                 return callback(err);
             }
 
-            // FIXME: Test this!
-            this._emitter.emit('log', 'Added '+args._[2]+' to '+args._[3]);
+            this._logger.write('Added '+args._[2]+' to '+args._[3]);
             callback(err);
         }.bind(this));
     };
@@ -75,12 +74,11 @@ define([
     Enableable.prototype.disable = function(args, callback) {
         this._invokePlugin(args, 'disable', function(err, result) {
             if (err) {
-                this._emitter.emit('error', 'Could not load WebGME project:',err);
+                this._logger.error('Could not load WebGME project:',err);
                 return callback(err);
             }
 
-            // FIXME: Test this!
-            this._emitter.emit('log', 'Added '+args._[2]+' to '+args._[3]);
+            this._logger.write('Added '+args._[2]+' to '+args._[3]);
             callback(err);
         }.bind(this));
     };

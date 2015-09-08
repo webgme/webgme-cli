@@ -6,14 +6,14 @@
 'use strict';
 var testFixture = require('../res/globals');
 
-describe('AddToPlugin', function () {
+describe('RemoveFromPlugin', function () {
     var Q = require('q'),
         gmeConfig = testFixture.getGmeConfig(),
         expect = testFixture.expect,
-        logger = testFixture.logger.fork('AddToPlugin'),
+        logger = testFixture.logger.fork('RemoveFromPlugin'),
         PluginCliManager = testFixture.WebGME.PluginCliManager,
         projectName = 'testProject',
-        pluginName = 'AddToPlugin',
+        pluginName = 'RemoveFromPlugin',
         Core = testFixture.requirejs('common/core/core'),
         assert = require('assert'),
         project,
@@ -69,7 +69,7 @@ describe('AddToPlugin', function () {
             })
             .then(function () {
                 var importParam = {
-                    projectSeed: testFixture.path.join(testFixture.SEED_DIR, 'EmptyProject.json'),
+                    projectSeed: testFixture.path.join(testFixture.SEED_DIR, 'EmptyWithTestPlugin.json'),
                     projectName: projectName,
                     branchName: 'master',
                     logger: logger,
@@ -94,7 +94,7 @@ describe('AddToPlugin', function () {
             .nodeify(done);
     });
 
-    it('should add plugin to validPlugins if it does not exist', function (done) {
+    it('should remove plugin from validPlugins', function (done) {
         var context = {
                 project: project,
                 commitHash: commitHash,
@@ -107,12 +107,12 @@ describe('AddToPlugin', function () {
             // Check that 'testPlugin' has been added to 'validPlugins' 
             // on the root node
             var attributes = context.core.getRegistry(rootNode, FIELD).split(' ');
-            assert.notEqual(attributes.indexOf(ATTRIBUTE), -1);
+            assert.equal(attributes.indexOf(ATTRIBUTE), -1);
             done();
         });
     });
 
-    it('should not add plugin to validPlugins if it already exists', function (done) {
+    it('should not remove plugin to validPlugins if it does not exist', function (done) {
         var context = {
                 project: project,
                 commitHash: commitHash,
@@ -126,7 +126,7 @@ describe('AddToPlugin', function () {
         executePluginAndGetCore(context, function (err, rootNode) {
             attributes = context.core.getRegistry(rootNode, FIELD).split(' ');
             count = attributes.length;
-            assert.notEqual(attributes.indexOf(ATTRIBUTE), -1);
+            assert.equal(attributes.indexOf(ATTRIBUTE), -1);
             executePluginAndGetCore(context, function (err, rootNode) {
                 // Check that 'testPlugin' has been added to 'validPlugins' 
                 // on the root node
