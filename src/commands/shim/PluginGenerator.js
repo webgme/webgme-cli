@@ -14,6 +14,7 @@ define(['coreplugins/PluginGenerator/PluginGenerator',
                            R) {
     'use strict';
     
+    var TEST_FIXTURE_DIR = 'webgme/test/_globals';
     var PluginGenerator = function(logger, config) {
         // Load the PluginGenerator from the core plugins
         // Use it to create the boilerplate for the new plugin
@@ -57,7 +58,9 @@ define(['coreplugins/PluginGenerator/PluginGenerator',
                 var test = artifact.files.filter(function(file) {
                     return file.name.indexOf('test') === 0;
                 })[0];
-                test.content = test.content.replace('../../../_globals', 'webgme/test/_globals');
+                if (test) {  // If they are generating test file
+                    test.content = test.content.replace('../../../globals', TEST_FIXTURE_DIR);
+                }
 
                 artifact.files.forEach(function(file) {
                     self.logger.info('Saving file at '+file.name);
