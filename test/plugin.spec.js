@@ -280,43 +280,6 @@ describe('Plugin tests', function() {
             });
         });
     });
-    // TODO: Add tests for showing that the generated tests work
-
-    describe.skip('enable/disable plugin', function() {
-        var pluginName = 'NewPlugin';
-        before(function(done) {
-            callWebGME({
-                _: ['node', 'webgme', 'new', 'plugin', pluginName]
-            }, done);
-        });
-
-        // TODO: I need to set these up with mongo running...
-        describe('enable plugin', function() {
-            before(function(done) {
-                // TODO: Create a project...
-                callWebGME({
-                    _: ['node', 'webgme', 'enable', 'plugin', pluginName]
-                }, done);
-            });
-
-            it.skip('should add plugin to project\'s validPlugins', function() {
-                // TODO: Load the project using GmeUtils and check the root node
-            });
-        });
-
-        describe('disable plugin', function() {
-            before(function(done) {
-                callWebGME({
-                    _: ['node', 'webgme', 'disable', 'plugin', pluginName]
-                }, done);
-            });
-
-            it.skip('should add plugin to project\'s validPlugins', function() {
-                // TODO: Load the project using GmeUtils and check the root node
-            });
-            // TODO
-        });
-    });
 
     after(function(done) {
         if (fs.existsSync(PROJECT_DIR)) {
