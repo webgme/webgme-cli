@@ -51,8 +51,12 @@ define(['fs',
         }
     };
 
-    var PluginManager = function(emitter) {
-        ComponentManager.call(this, 'plugin', emitter);
+    var getConfigFlagForArgs = {
+        string: CONFIG_FLAG_BY_TYPE.string
+    };
+
+    var PluginManager = function(logger) {
+        ComponentManager.call(this, 'plugin', logger);
 
         // Add validation for external commands
         var options;
@@ -86,7 +90,7 @@ define(['fs',
         // Check for project directory
         var projectHome = utils.getRootPath();
         if (projectHome === null) {
-            return this._emitter.emit('error', 'Could not find a project in current or any parent directories');
+            return this._logger.error('Could not find a project in current or any parent directories');
         }
 
         PluginManager.prototype[action].call(this, args, callback);
@@ -101,7 +105,7 @@ define(['fs',
     PluginManager.prototype.new = function(args, callback) {
         // Set the config options from the command line flags
         var config = _.extend(this._getConfig(args), {pluginID: args._[2]});
-        var pluginGenerator = new PluginGenerator(this._emitter, config);
+        var pluginGenerator = new PluginGenerator(this._logger, config);
         pluginGenerator.main();
 
         // Get the src, test paths
@@ -111,11 +115,11 @@ define(['fs',
 
         // Store the plugin info in the webgme-setup.json file
         var pluginConfig = {
-            srcPath: paths.src,
-            testPath: paths.test
+            src: paths.src,
+            test: paths.test
         };
         this._register(config.pluginID, pluginConfig);
-        this._emitter.emit('write', 'Created new plugin at '+paths.src);
+        this._logger.write('Created new plugin at '+paths.src);
         callback();
     };
 
@@ -132,17 +136,24 @@ define(['fs',
     PluginManager.prototype._getConfig = function(args) {
         // Determine the commandline flag from the raw config
         var config = {},
-            defaultValue,
             flag,
             type;
 
         for (var i = RAW_CONFIG.length; i--;) {
+            // Retrieve values from plugin generator's config
             type = RAW_CONFIG[i].valueType;
-            defaultValue = RAW_CONFIG[i].value;
-            if (CONFIG_FLAG_BY_TYPE[type]) {
-                flag = CONFIG_FLAG_BY_TYPE[type](RAW_CONFIG[i]);
+            flag = RAW_CONFIG[i].name;
+
+            // Set default
+            config[RAW_CONFIG[i].name] = RAW_CONFIG[i].value;
+
+            // Update if necessary
+            if (getConfigFlagForArgs[type]) {
+                flag = getConfigFlagForArgs[type](RAW_CONFIG[i]);
             }
-            config[RAW_CONFIG[i].name] = args[flag] || defaultValue;
+            if (args.hasOwnProperty(flag)) {
+                config[RAW_CONFIG[i].name] = args[flag];
+            }
         }
         return config;
     };

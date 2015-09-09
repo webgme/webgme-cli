@@ -6,8 +6,8 @@ define(['lodash',
                                                ComponentManager) {
     'use strict';
     
-    var AddOnManager = function(emitter) {
-        ComponentManager.call(this, 'addOn', emitter);
+    var AddOnManager = function(logger) {
+        ComponentManager.call(this, 'addOn', logger);
 
         // Copy actions over from ComponentManager
         ['ls', 'add', 'rm'].forEach(function(action) {
@@ -20,7 +20,7 @@ define(['lodash',
 
     AddOnManager.prototype.new = function(args, callback) {
         if (args._.length < 3) {
-            this._emitter.emit('error',
+            this._logger.error('error',
                 'Usage: webgme new '+this._name+' [name]');
         }
         var name = args._[2],
@@ -30,8 +30,8 @@ define(['lodash',
             addOnSrc = addOnTemplate(addOnContent);
 
         var filePath = this._saveFile({name: id, content: addOnSrc});
-        this._emitter.emit('write', 'Created addon at '+filePath);
-        this._register(id, {srcPath: filePath});
+        this._logger.write('Created addon at '+filePath);
+        this._register(id, {src: filePath});
         callback();
     };
 

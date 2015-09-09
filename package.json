@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "bin": {
-      "webgme": "./bin/webgme"
+    "webgme": "./bin/webgme"
   },
   "directories": {
     "doc": "doc",
@@ -25,19 +25,22 @@
   },
   "homepage": "https://github.com/brollb/webgme-setup-tool#readme",
   "dependencies": {
-    "chai": "^3.0.0",
     "change-case": "^2.3.0",
-    "istanbul": "^0.3.17",
     "lodash": "^3.9.3",
     "minimist": "^1.1.1",
+    "mongo-uri": "^0.1.2",
+    "otherproject": "file:test/res/OtherProject",
+    "q": "^1.4.1",
     "ramda": "^0.15.1",
     "requirejs": "^2.1.18",
-    "sinon": "^1.15.4",
-    "sinon-chai": "^2.8.0",
-    "webgme": "latest",
-    "rimraf": "^2.4.0"
+    "rimraf": "^2.4.0",
+    "webgme": "latest"
   },
   "devDependencies": {
+    "istanbul": "^0.3.17",
+    "sinon": "^1.15.4",
+    "sinon-chai": "^2.8.0",
+    "chai": "^3.0.0",
     "mocha": "^2.2.5"
   }
 }

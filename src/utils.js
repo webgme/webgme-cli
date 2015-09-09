@@ -1,18 +1,23 @@
+/*globals define*/
 define(['lodash', 
         'fs',
         'path',
+        'assert',
         'module',
         'ramda'], function(_, 
                            fs,
                            path,
+                           assert,
                            module,
                            R) {
 
+    'use strict';
+    
     var PROJECT_CONFIG = 'webgme-setup.json',
         __dirname = path.dirname(module.uri);
 
     var getRootPath = function() {
-        // Walk back from current path until you find a .webgme file
+        // Walk back from current path until you find a webgme-setup.json file
         var abspath = path.resolve('.');
 
         while (abspath.length > 1) {
@@ -30,7 +35,7 @@ define(['lodash',
             return null;
         }
 
-        files = fs.readdirSync(abspath);
+        var files = fs.readdirSync(abspath);
         return files.filter(function(file) {
             return file === PROJECT_CONFIG;
         }).length > 0;
@@ -84,7 +89,7 @@ define(['lodash',
 
     var saveConfig = function(config) {
         var root = getRootPath();
-        var configText = JSON.stringify(config);
+        var configText = JSON.stringify(config, null, 2);
         fs.writeFileSync(path.join(root, PROJECT_CONFIG), configText);
     };
 
@@ -113,7 +118,7 @@ define(['lodash',
     var getPathsFromConfigGroup = function(config) {
         return R.mapObj(function(componentType) {
             return R.values(componentType).map(function(component) {
-                return path.dirname(component.srcPath || component.path);
+                return component.src || component.path;
             });
         }, config);
     };
@@ -154,9 +159,21 @@ define(['lodash',
             project, PROJECT_CONFIG);
     };
 
+    /**
+     * Get the GME path for the given dependent project or the working project
+     * if unspecified
+     *
+     * @param {String} project
+     * @return {String} path
+     */
     var getGMEConfigPath = function(project) {
-        var gmeConfigPath = path.join(getRootPath(), 'node_modules', 
-            project, 'config.js');
+        var gmeConfigPath,
+            projectPath = '';
+
+        if (project) {
+            projectPath = path.join('node_modules', project);
+        }
+        gmeConfigPath = path.join(getRootPath(), projectPath, 'config.js');
 
         return gmeConfigPath;
     };
@@ -176,26 +193,19 @@ define(['lodash',
         return validPaths.length ? validPaths[0] : null;
     };
 
-    /**
-     * Connect the emitter to the given log type.
-     *
-     * @param {EventEmitter} emitter
-     * @param {String} type
-     * @param {String} data
-     * @return {undefined}
-     */
-    var logStream = function(emitter, type, data) {
-        var msg = data.toString(),
-            len = msg.length,
-            i = msg.lastIndexOf('\n');
-
-        if (i === len-1) {
-            msg = msg.substring(0, len-1);
-        }
-        emitter.emit(type, msg);
-    };
-
     var nop = function() {};
+    /**
+     * Get the name of the package installed with "npmPackage"
+     *
+     * @param {String} npmPackage
+     * @return {String} name
+     */
+    var getPackageName = function(npmPackage) {
+        // FIXME: It currently assumes everything is a github url. Should support
+        // hashes, packages, etc
+        // Ideally, we could use an npm feature to do this
+        return npmPackage.split('/').pop();
+    };
 
     return {
         saveConfig: saveConfig,
@@ -208,6 +218,7 @@ define(['lodash',
         updateWebGMEConfig: updateWebGMEConfig,
         saveFilesFromBlobClient: saveFilesFromBlobClient,
         saveFile: saveFile,
-        logStream: logStream
+        mkdir: createDir,
+        getPackageName: getPackageName
     };
 });

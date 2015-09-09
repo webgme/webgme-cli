@@ -5,7 +5,7 @@ var minimist = require('minimist'),
     path = require('path'),
     requirejs = require('requirejs'),
     fs = require('fs'),
-    EventEmitter = require('events').EventEmitter,
+    Logger = require('./Logger'),
     BaseManager = require('./BaseManager'),
     _ = require('lodash');
 
@@ -33,7 +33,7 @@ var SKIP_FILES = ['ComponentManager.js'];
 var EMPTY_HELP_CONTENT = {options: []};
 
 var WebGMEComponentManager = function() {
-    this.emitter = new EventEmitter();
+    this.logger = new Logger();
     this.componentManagers = {};
     this.baseManager = null;
 };
@@ -42,7 +42,7 @@ var WebGMEComponentManager = function() {
 WebGMEComponentManager.prototype.BasicFlags = {
     version: function() {
         var version = require('../package.json').version;
-        this.emitter.emit('write', 'v'+version);
+        this.logger.write('v'+version);
         return true;
     },
 
@@ -82,7 +82,7 @@ WebGMEComponentManager.prototype.BasicFlags = {
                 helpContent = _.clone(this.baseManager[action]);
             }
 
-            this.emitter.emit('info', 'Retrieving help message from '+path);
+            this.logger.info('Retrieving help message from '+path);
         } else {  // Use the default TODO
             path = defaultPath;
             helpContent = this.getDefaultHelpContent();
@@ -91,13 +91,12 @@ WebGMEComponentManager.prototype.BasicFlags = {
         helpTemplate = fs.readFileSync(path, 'utf-8');
         helpContent = _.extend({}, EMPTY_HELP_CONTENT, helpContent);
         helpMsg = _.template(helpTemplate)(helpContent);
-        this.emitter.emit('write', helpMsg);
+        this.logger.write(helpMsg);
         return true;
     },
 
     verbose: function() {
-        this.emitter.on('debug', console.log);
-        this.emitter.on('info', console.log);
+        this.logger.setLogLevel('silly');
     }
 };
 
@@ -105,17 +104,7 @@ WebGMEComponentManager.prototype.BasicFlags = {
 WebGMEComponentManager.prototype.invokeFromCommandLine = function(argv) {
     // Clean the args
     var args = minimist(argv);
-    this.setupEventEmitters();
     this.executeCommand(args, function(){/*callback is nop unless testing or library*/});
-};
-
-WebGMEComponentManager.prototype.setupEventEmitters = function() { 
-    // Add Basic Logging
-    this.emitter.on('write', console.log);
-    this.emitter.on('error', function(msg) {
-        console.error(msg);
-        process.exit(1);
-    });
 };
 
 WebGMEComponentManager.prototype._resolveAliases = function(args) {
@@ -133,32 +122,33 @@ WebGMEComponentManager.prototype._resolveAliases = function(args) {
 };
 
 WebGMEComponentManager.prototype.executeCommand = function(args, callback) {
+    this.createManagers(this.executeCommandNoLoad.bind(this, args, callback));
+};
+
+WebGMEComponentManager.prototype.executeCommandNoLoad = function(args, callback) {
 
     // Remove the first two args
     args._.splice(0,2);
-    this.createManagers(function() {
+    // Resolve flag aliases to long form
+    args = this._resolveAliases(args);
 
-        // Resolve flag aliases to long form
-        args = this._resolveAliases(args);
-
-        // General flags (eg, help, etc)
-        var flags = Object.keys(this.BasicFlags);
-        for (i = flags.length; i--;) {
-            if (args[flags[i]]) {
-                if (this.BasicFlags[flags[i]].call(this, this.componentManagers, args)) {
-                    return;
-                }
+    // General flags (eg, help, etc)
+    var flags = Object.keys(this.BasicFlags);
+    for (i = flags.length; i--;) {
+        if (args[flags[i]]) {
+            if (this.BasicFlags[flags[i]].call(this, this.componentManagers, args)) {
+                return;
             }
         }
+    }
 
-        // Pass the argument to the respective manager
-        if (!this._invokeComponentManager(args, callback)) {
-            // If not handled, print usage message
-            var usageMsg = fs.readFileSync(__dirname+'/../doc/usage.txt', 'utf-8');
-            this.emitter.emit('write', usageMsg);
-            callback();
-        }
-    }.bind(this));
+    // Pass the argument to the respective manager
+    if (!this._invokeComponentManager(args, callback)) {
+        // If not handled, print usage message
+        var usageMsg = fs.readFileSync(__dirname+'/../doc/usage.txt', 'utf-8');
+        this.logger.write(usageMsg);
+        callback();
+    }
 };
 
 /**
@@ -217,7 +207,7 @@ WebGMEComponentManager.prototype.getDefaultHelpContent = function() {
 
 WebGMEComponentManager.prototype.createManagers = function(callback) {
     // Load the base manager
-    this.baseManager = new BaseManager(this.emitter);
+    this.baseManager = new BaseManager(this.logger);
 
     // Load in all files in ./commands and decorate the basicCmds
     var files = fs.readdirSync(path.join(__dirname,'commands'))
@@ -229,6 +219,7 @@ WebGMEComponentManager.prototype.createManagers = function(callback) {
         .map(function(file) {  // Get file path
             return path.join(__dirname,'commands',file);
         });
+    this.logger.debug('Loading component managers:\n'+files.join('\n'));
 
     // Load the item's command definitions
     requirejs(files, function() {
@@ -240,7 +231,7 @@ WebGMEComponentManager.prototype.createManagers = function(callback) {
 
         for (var i = arguments.length; i--;) {
             // TODO: Update this for a manager
-            componentManager = new arguments[i](this.emitter);
+            componentManager = new arguments[i](this.logger);
             itemName = componentManager._name.toLowerCase();
 
             // Add the entry to the command table
