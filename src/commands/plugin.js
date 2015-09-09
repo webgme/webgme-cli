@@ -14,7 +14,8 @@ define(['fs',
         'change-case',
         'commands/../utils',
         'commands/ComponentManager',
-        'commands/shim/PluginGenerator'], 
+        'commands/shim/PluginGenerator',
+        'commands/mixins/Enableable/Enableable'], 
         function(fs,
                  R,
                  _,
@@ -24,7 +25,8 @@ define(['fs',
                  changeCase,
                  utils,
                  ComponentManager,
-                 PluginGenerator) {
+                 PluginGenerator,
+                 Enableable) {
 
     'use strict';
     var spawn = childProcess.spawn;
@@ -57,6 +59,7 @@ define(['fs',
 
     var PluginManager = function(logger) {
         ComponentManager.call(this, 'plugin', logger);
+        Enableable.call(this, 'validPlugins');
 
         // Add validation for external commands
         var options;
@@ -72,7 +75,8 @@ define(['fs',
         }, this);
     };
 
-    _.extend(PluginManager.prototype, ComponentManager.prototype);
+    _.extend(PluginManager.prototype, ComponentManager.prototype,
+        Enableable.prototype);
 
     /**
      * Functions to create the config flag from the WebGME's 

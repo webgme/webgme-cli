@@ -16,10 +16,10 @@ var webgmeManager = new WebGMEComponentManager();
 
 var callWebGME = function(args, callback) {
     'use strict';
-    webgmeManager.executeCommand(_.extend({_: ['node', 'cli.js']}, args), callback);
+    webgmeManager.executeCommand(_.extend({_: ['node', 'webgme']}, args), callback);
 };
 
-describe('WebGME-cli', function() {
+describe('WebGME-setup-tool', function() {
     'use strict';
 
     before(function() {
@@ -169,7 +169,7 @@ describe('WebGME-cli', function() {
 
             before(function(done) {
                 process.chdir(TMP_DIR);
-                callWebGME({_: ['node', 'cli.js', 'init', PROJECT_DIR]}, function() {
+                callWebGME({_: ['node', 'webgme', 'init', PROJECT_DIR]}, function() {
                     process.chdir(PROJECT_DIR);
                     done();
                 });
@@ -177,6 +177,11 @@ describe('WebGME-cli', function() {
 
             it('should create a new directory with project name', function() {
                 assert(fs.existsSync(PROJECT_DIR));
+            });
+
+            it('should create (valid) globals test fixture', function() {
+                var fixturePath = path.join(PROJECT_DIR, 'test', 'globals.js');
+                assert(fs.existsSync(fixturePath));
             });
 
             it('should create a src and test dirs', function() {
@@ -231,7 +236,7 @@ describe('WebGME-cli', function() {
                 emitter.once('error', function(msg) {
                     done();
                 });
-                callWebGME({_: ['node', 'cli.js', 'init']});
+                callWebGME({_: ['node', 'webgme', 'init']});
             });
 
             // issue 15

@@ -12,7 +12,7 @@ define(['lodash',
                            R) {
 
     'use strict';
-    
+
     var PROJECT_CONFIG = 'webgme-setup.json',
         __dirname = path.dirname(module.uri);
 
@@ -94,8 +94,7 @@ define(['lodash',
     };
 
     /**
-     * Update the WebGME config based on the paths in the PROJECT_CONFIG. 
-     * It will pass the name of the 
+     * Update the WebGME config based on the paths in the webgme-setup.json. 
      *
      * @return {undefined}
      */
@@ -208,6 +207,7 @@ define(['lodash',
     };
 
     return {
+        PROJECT_CONFIG: PROJECT_CONFIG,
         saveConfig: saveConfig,
         getConfig: getConfig,
         getRootPath: getRootPath,

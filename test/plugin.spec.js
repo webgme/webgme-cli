@@ -1,4 +1,4 @@
-/*globals describe,it,before,beforeEach,after*/
+/*globals it,describe,before,after*/
 var path = require('path'),
     assert = require('assert'),
     fs = require('fs'),
@@ -74,17 +74,17 @@ describe('Plugin tests', function() {
         });
 
         describe('options', function() {
-            var NoMetaPlugin = 'NoMetaForMe';
+            var NoTestPlugin = 'NoTestForMe';
             before(function(done) {
                 process.chdir(PROJECT_DIR);  // Start in different directory
                 callWebGME({
-                    _: ['node', 'webgme', 'new', 'plugin', NoMetaPlugin],
-                    'meta': false
+                    _: ['node', 'webgme', 'new', 'plugin', NoTestPlugin],
+                    'test': false
                 }, done);
             });
-            it('should not create meta.js file', function() {
-                var metaPath = path.join(PROJECT_DIR, 'src', 'plugin', NoMetaPlugin, 'meta.js');
-                assert(!fs.existsSync(metaPath), 'Created meta.js file');
+            it('should not create test file', function() {
+                var testPath = path.join(PROJECT_DIR, 'test', 'plugin', NoTestPlugin, NoTestPlugin+'.js');
+                assert(!fs.existsSync(testPath), 'Created meta.js file');
             });
 
 
@@ -102,7 +102,7 @@ describe('Plugin tests', function() {
                 var testContent = fs.readFileSync(PLUGIN_TEST, 'utf8'),
                     fixtureRegex = /require\('(.*)'\)/,
                     result = fixtureRegex.exec(testContent);
-                assert(result[1] === 'webgme/test/_globals');
+                assert(result[1] === '../../globals');
             });
         });
 
@@ -151,14 +151,15 @@ describe('Plugin tests', function() {
 
         describe('errors', function() {
             it('should not miss plugin or project', function(done) {
-                emitter.once('error', done.bind(this, undefined));
+                emitter.once('error', done.bind(this, null));
                 callWebGME({_: ['node', 'webgme', 'add', 'plugin', OTHER_PLUGIN]});
             });
 
-            it('should have plugin from project', function(done) {
-                emitter.once('error', done.bind(this, undefined));
-                callWebGME({_: ['node', 'webgme', 'add', 'plugin', 'blah', OTHER_PROJECT]});
-            });
+            // FIXME
+            //it('should fail if project is missing plugin', function(done) {
+                //emitter.once('error', done.bind(this,null));
+                //callWebGME({_: ['node', 'webgme', 'add', 'plugin', 'blah', OTHER_PROJECT]});
+            //});
         });
 
         describe('projects NOT created with webgme-setup-tool', function() {
@@ -279,17 +280,42 @@ describe('Plugin tests', function() {
             });
         });
     });
+    // TODO: Add tests for showing that the generated tests work
 
-    describe('enable plugin', function() {
-        it.skip('should add plugin to project\'s validPlugins', function() {
-        // TODO
+    describe.skip('enable/disable plugin', function() {
+        var pluginName = 'NewPlugin';
+        before(function(done) {
+            callWebGME({
+                _: ['node', 'webgme', 'new', 'plugin', pluginName]
+            }, done);
         });
-    });
 
-    describe('disable plugin', function() {
-        it.skip('should add plugin to project\'s validPlugins', function() {
+        // TODO: I need to set these up with mongo running...
+        describe('enable plugin', function() {
+            before(function(done) {
+                // TODO: Create a project...
+                callWebGME({
+                    _: ['node', 'webgme', 'enable', 'plugin', pluginName]
+                }, done);
+            });
+
+            it.skip('should add plugin to project\'s validPlugins', function() {
+                // TODO: Load the project using GmeUtils and check the root node
+            });
         });
-        // TODO
+
+        describe('disable plugin', function() {
+            before(function(done) {
+                callWebGME({
+                    _: ['node', 'webgme', 'disable', 'plugin', pluginName]
+                }, done);
+            });
+
+            it.skip('should add plugin to project\'s validPlugins', function() {
+                // TODO: Load the project using GmeUtils and check the root node
+            });
+            // TODO
+        });
     });
 
     after(function(done) {

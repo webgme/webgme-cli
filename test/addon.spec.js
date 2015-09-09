@@ -21,8 +21,8 @@ var callWebGME = function(args, callback) {
 // Useful Constants
 var TMP_DIR = path.join(__dirname, '..', 'test-tmp'),
     PROJECT_DIR = path.join(TMP_DIR, 'ExampleAddOnProject'),
-    CONFIG_NAME = 'webgme-setup.json',
-    CONFIG_PATH = path.join(PROJECT_DIR, CONFIG_NAME),
+    PROJECT_CONFIG = 'webgme-setup.json',
+    CONFIG_PATH = path.join(PROJECT_DIR, PROJECT_CONFIG),
     PROJECT_DIR = path.join(TMP_DIR, 'ExampleAddOnProject'),
     OTHER_PROJECT = __dirname+'/res/OtherProject',
     OTHER_ADDON = 'OtherAddOn',
@@ -79,12 +79,12 @@ describe('AddOn tests', function() {
             assert.notEqual(configText.indexOf(ADDON_ID), -1);
         });
 
-        it('should record the addOn in webgme-setup file', function() {
+        it('should record the addOn in '+PROJECT_CONFIG+' file', function() {
             var config = require(CONFIG_PATH);
             assert.notEqual(config.components.addOn[ADDON_ID], undefined);
         });
 
-        it('should record relative path in webgme-setup file', function() {
+        it('should record relative path in '+PROJECT_CONFIG+' file', function() {
             var config = require(CONFIG_PATH),
                 srcPath = config.components.addOn[ADDON_ID].src;
             assert(!path.isAbsolute(srcPath));
@@ -127,8 +127,9 @@ describe('AddOn tests', function() {
                 assert.equal(configText.indexOf(ADDON_ID), -1);
             });
 
-            it('should remove the addOn from .webgme file', function() {
-                var configContent = fs.readFileSync(CONFIG_PATH),
+            it('should remove the addOn from '+PROJECT_CONFIG+' file', function() {
+                var configPath = CONFIG_PATH,
+                    configContent = fs.readFileSync(configPath),
                     config = JSON.parse(configContent);
                 assert.equal(config.components.addOn[ADDON_ID], undefined);
             });
@@ -155,7 +156,7 @@ describe('AddOn tests', function() {
                 assert.notEqual(pkg.dependencies[depName], undefined);
             });
 
-            it('should add the project to the webgme-setup.json', function() {
+            it('should add the project to the '+PROJECT_CONFIG, function() {
                 var configPath = CONFIG_PATH,
                 configText = fs.readFileSync(configPath),
                 config = JSON.parse(configText);
@@ -182,7 +183,7 @@ describe('AddOn tests', function() {
                     assert.equal(configText.indexOf(OTHER_ADDON), -1);
                 });
 
-                it('should remove addOn entry from webgme.json', function() {
+                it('should remove addOn entry from '+PROJECT_CONFIG, function() {
                     var configText = fs.readFileSync(CONFIG_PATH),
                     config = JSON.parse(configText);
                     assert.equal(config.dependencies.addOn[OTHER_ADDON], undefined);
@@ -215,10 +216,9 @@ describe('AddOn tests', function() {
                 assert.notEqual(pkg.dependencies[depName], undefined);
             });
 
-            it('should add the project to the .webgme.json', function() {
-                var configPath = CONFIG_PATH,
-                configText = fs.readFileSync(configPath),
-                config = JSON.parse(configText);
+            it('should add the project to the '+PROJECT_CONFIG, function() {
+                var configText = fs.readFileSync(CONFIG_PATH),
+                    config = JSON.parse(configText);
                 assert.notEqual(config.dependencies.addOn[OTHER_ADDON], undefined);
             });
 
@@ -242,8 +242,8 @@ describe('AddOn tests', function() {
                     assert.equal(configText.indexOf(OTHER_ADDON), -1);
                 });
 
-                it('should remove addOn entry from webgme.json', function() {
-                    var configText = fs.readFileSync(CONFIG_PATH, 'utf8'),
+                it('should remove addOn entry from '+PROJECT_CONFIG, function() {
+                    var configText = fs.readFileSync(CONFIG_PATH),
                         config = JSON.parse(configText);
                     assert.equal(config.dependencies.addOn[OTHER_ADDON], undefined);
                 });

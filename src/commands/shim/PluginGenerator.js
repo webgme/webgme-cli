@@ -1,16 +1,20 @@
+/*globals define*/
 define(['coreplugins/PluginGenerator/PluginGenerator',
         'plugin/PluginBase',
         'commands/shim/blobClient',
+        'lodash',
+        'path',
+        'commands/../utils',
         'ramda'], function(WebGMEPluginGenerator,
                            PluginBase,
                            BlobClient,
+                           _,
+                           path,
+                           utils,
                            R) {
     'use strict';
     
-    var utils = require('./utils');
-    var path = require('path');
-    var _ = require('lodash');
-
+    var TEST_FIXTURE_DIR = '../../globals';
     var PluginGenerator = function(logger, config) {
         // Load the PluginGenerator from the core plugins
         // Use it to create the boilerplate for the new plugin
@@ -39,6 +43,15 @@ define(['coreplugins/PluginGenerator/PluginGenerator',
         file.name = file.name.replace('plugins', 'plugin');
     };
 
+    var fixFixturePath = function(file) {
+        // Get the current path
+        var regex = /testFixture = require\(['"]{1}(.*)['"]{1}\)/,
+            oldPath = file.content.match(regex);
+
+        file.content = file.content.replace(oldPath[1], TEST_FIXTURE_DIR);
+    };
+
+
     // Make the src/plugins test/plugins directories as needed
     PluginGenerator.prototype.main = function() {
         var self = this;
@@ -54,7 +67,9 @@ define(['coreplugins/PluginGenerator/PluginGenerator',
                 var test = artifact.files.filter(function(file) {
                     return file.name.indexOf('test') === 0;
                 })[0];
-                test.content = test.content.replace('../../../_globals', 'webgme/test/_globals');
+                if (test) {  // If they are generating test file
+                    fixFixturePath(test);
+                }
 
                 artifact.files.forEach(function(file) {
                     self.logger.info('Saving file at '+file.name);
