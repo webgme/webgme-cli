@@ -21,15 +21,14 @@
   "author": "Brian Broll",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/brollb/webgme-setup-tool/issues"
+    "url": "https://github.com/webgme/webgme-setup-tool/issues"
   },
-  "homepage": "https://github.com/brollb/webgme-setup-tool#readme",
+  "homepage": "https://github.com/webgme/webgme-setup-tool#readme",
   "dependencies": {
     "change-case": "^2.3.0",
     "lodash": "^3.9.3",
     "minimist": "^1.1.1",
     "mongo-uri": "^0.1.2",
-    "otherproject": "file:test/res/OtherProject",
     "q": "^1.4.1",
     "ramda": "^0.15.1",
     "requirejs": "^2.1.18",
