@@ -37,6 +37,7 @@
     "webgme": "latest"
   },
   "devDependencies": {
+    "q": "^1.4.1",
     "istanbul": "^0.3.17",
     "sinon": "^1.15.4",
     "sinon-chai": "^2.8.0",

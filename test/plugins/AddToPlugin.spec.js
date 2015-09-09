@@ -30,6 +30,7 @@ describe('AddToPlugin', function () {
                 return storage.openDatabase();
             })
             .then(function () {
+                console.log('testFixture.path:',testFixture.path);
                 var importParam = {
                     projectSeed: testFixture.path.join(testFixture.SEED_DIR, 'EmptyProject.json'),
                     projectName: projectName,
@@ -70,7 +71,9 @@ describe('AddToPlugin', function () {
                 core: null
             };
 
+        console.log('Plugin run started');
         manager.executePlugin(pluginName, pluginConfig, context, function (err, pluginResult) {
+            console.log('Plugin run finished');
             expect(err).to.equal(null);
             expect(typeof pluginResult).to.equal('object');
             expect(pluginResult.success).to.equal(true);
@@ -100,11 +103,13 @@ describe('AddToPlugin', function () {
                     // Check that 'testPlugin' has been added to 'validPlugins' 
                     // on the root node
                     console.log('getting', pluginConfig.field);
-                    var attributes = context.core.getRegistry(rootNode, pluginConfig.field).split(' ');
-                    console.log('attributes: "'+ attributes.join(' ')+'"');
+                    var attributes = context.core.getRegistry(rootNode, pluginConfig.field),
+                        attributeList = attributes.split(' ');
+
+                    console.log('attributes: "'+ attributes+'"');
                     console.log('checking for', pluginConfig.attribute);
                     console.log('children', context.core.getChildrenPaths(rootNode));
-                    assert.notEqual(attributes.indexOf(pluginConfig.attribute), -1);
+                    assert.notEqual(attributeList.indexOf(pluginConfig.attribute), -1);
                 })
                 .nodeify(done);
 

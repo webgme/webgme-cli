@@ -102,7 +102,7 @@ describe('Plugin tests', function() {
                 var testContent = fs.readFileSync(PLUGIN_TEST, 'utf8'),
                     fixtureRegex = /require\('(.*)'\)/,
                     result = fixtureRegex.exec(testContent);
-                assert(result[1] === 'webgme/test/_globals');
+                assert(result[1] === '../../globals');
             });
         });
 

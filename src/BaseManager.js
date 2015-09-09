@@ -30,6 +30,9 @@ BaseManager.prototype.init = function (args, callback) {
     this._logger.info('Writing package.json to '+path.join(project, 'package.json'));
     fs.writeFileSync(path.join(project, 'package.json'), pkgJson);
 
+    // Create the base directories
+    BaseManager._createBasicFileStructure(project);
+
     // Create the webgme files
     this._createWebGMEFiles(project);
 
@@ -39,9 +42,6 @@ BaseManager.prototype.init = function (args, callback) {
         dependencies: {}
     };
     fs.writeFileSync(path.join(project, PROJECT_CONFIG), JSON.stringify(webgmeInfo,null,2));
-
-    // Create the base directories
-    BaseManager._createBasicFileStructure(project);
 
     this._logger.write('Created project at '+project+'.\n\n'+
     'Please run \'npm init\' from the within project to finish configuration.');
@@ -64,7 +64,10 @@ BaseManager.prototype._createWebGMEFiles = function(project) {
     fs.writeFileSync(path.join(project, 'config.webgme.js'), webgmeConfig);
 
     // Create editable config file and app.js
-    ['config.js', 'app.js'].forEach(this._copyFileToProject.bind(this, project));
+    ['config.js', 'app.js'].forEach(this._copyFileToProject.bind(this, project, null));
+
+    // Create test fixtures
+    this._copyFileToProject(project, 'test', 'globals.js');
 };
 
 BaseManager.prototype._getWebGMEConfigContent = function() {
@@ -74,12 +77,16 @@ BaseManager.prototype._getWebGMEConfigContent = function() {
     };
 };
 
-BaseManager.prototype._copyFileToProject = function(project, filename) {
-    var boilerplatePath = path.join(__dirname, 'res', filename),
-    dstPath = path.join(project, filename);
+BaseManager.prototype._copyFileToProject = function(project, subPath, filename) {
+    var boilerplatePath,
+        dstPath;
+
+    subPath = subPath || '';
+    boilerplatePath = path.join(__dirname, 'res', filename);
+    dstPath = path.join(project, subPath, filename);
 
     fs.createReadStream(boilerplatePath)
-    .pipe(fs.createWriteStream(dstPath));
+        .pipe(fs.createWriteStream(dstPath));
 };
 
 module.exports = BaseManager;
