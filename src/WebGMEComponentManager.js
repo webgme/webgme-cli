@@ -103,10 +103,11 @@ WebGMEComponentManager.prototype.BasicFlags = {
 };
 
 
-WebGMEComponentManager.prototype.invokeFromCommandLine = function(argv) {
+WebGMEComponentManager.prototype.invokeFromCommandLine = function(argv, callback) {
     // Clean the args
+    callback = callback || function() {}; // callback is nop unless testing or library
     var args = minimist(argv);
-    this.executeCommand(args, function(){/*callback is nop unless testing or library*/});
+    this.executeCommand(args, callback);
 };
 
 WebGMEComponentManager.prototype._resolveAliases = function(args) {

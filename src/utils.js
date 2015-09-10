@@ -106,6 +106,7 @@ define(['lodash',
             template = _.template(fs.readFileSync(templatePath)),
             configPath = path.join(getRootPath(), 'config.webgme.js');
 
+        // Convert paths to use / as path separator
         fs.writeFileSync(configPath, template(content));
     };
 
@@ -148,8 +149,9 @@ define(['lodash',
                 // Remove duplicates
                 return unique(group[type]);
             });
-            // Merge all paths
-            paths[type] = arrays.reduce(R.concat);
+
+            paths[type] = arrays.reduce(R.concat)  // Merge all paths
+                .map(R.replace.bind(R, '\\', '/'));  // Convert to use '/' for path separator
         });
 
         return paths;
