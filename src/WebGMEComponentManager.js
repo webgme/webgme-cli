@@ -1,6 +1,8 @@
 // Load in the other files in the directory and load their commands
 // TODO
 
+'use strict';
+
 var minimist = require('minimist'),
     path = require('path'),
     requirejs = require('requirejs'),
@@ -101,10 +103,11 @@ WebGMEComponentManager.prototype.BasicFlags = {
 };
 
 
-WebGMEComponentManager.prototype.invokeFromCommandLine = function(argv) {
+WebGMEComponentManager.prototype.invokeFromCommandLine = function(argv, callback) {
     // Clean the args
+    callback = callback || function() {}; // callback is nop unless testing or library
     var args = minimist(argv);
-    this.executeCommand(args, function(){/*callback is nop unless testing or library*/});
+    this.executeCommand(args, callback);
 };
 
 WebGMEComponentManager.prototype._resolveAliases = function(args) {
@@ -134,7 +137,7 @@ WebGMEComponentManager.prototype.executeCommandNoLoad = function(args, callback)
 
     // General flags (eg, help, etc)
     var flags = Object.keys(this.BasicFlags);
-    for (i = flags.length; i--;) {
+    for (var i = flags.length; i--;) {
         if (args[flags[i]]) {
             if (this.BasicFlags[flags[i]].call(this, this.componentManagers, args)) {
                 return;
@@ -217,20 +220,20 @@ WebGMEComponentManager.prototype.createManagers = function(callback) {
                 SKIP_FILES.indexOf(path.basename(file)) === -1;
         })
         .map(function(file) {  // Get file path
-            return path.join(__dirname,'commands',file);
+            return 'commands/'+ file.replace(/\.js$/g, '');
         });
     this.logger.debug('Loading component managers:\n'+files.join('\n'));
 
     // Load the item's command definitions
     requirejs(files, function() {
-        var commandDef,
+        var componentManager,
+            commandDef,
             itemName,
             command,
             commands,
             commandFn;
 
         for (var i = arguments.length; i--;) {
-            // TODO: Update this for a manager
             componentManager = new arguments[i](this.logger);
             itemName = componentManager._name.toLowerCase();
 

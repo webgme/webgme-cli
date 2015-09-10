@@ -7,7 +7,7 @@ var path = require('path'),
     _ = require('lodash');
 
 var WebGMEComponentManager = require('../src/WebGMEComponentManager');
-var WebGMEConfig = 'config.webgme.js';
+var WebGMEConfig = path.join('config', 'config.webgme.js');
 var webgmeManager = new WebGMEComponentManager();
 var emitter = webgmeManager.logger._emitter;
 
@@ -28,7 +28,7 @@ var TMP_DIR = path.join(__dirname, '..', 'test-tmp'),
     OTHER_SEED = 'OtherSeed',
     otherProject;
 
-describe('Seed tests', function() {
+describe.only('Seed tests', function() {
     'use strict';
     
     var SEED_NAME = 'MyWebGMEProject',
@@ -146,7 +146,7 @@ describe('Seed tests', function() {
             webgmeManager.executeCommandNoLoad({
                 _: ['node', 'webgme', 'new', 'seed', seedName]
             }, function() {
-                // Check the webgem-setup.json
+                // Check the webgme-setup.json
                 var seedPath = path.join(SeedBasePath, seedName);
                 assert(!fs.existsSync(seedPath));
                 done();

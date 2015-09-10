@@ -25,5 +25,6 @@ var WebGME = testFixture.WebGME,
 WebGME.addToRequireJsPaths(gmeConfig);
 
 testFixture.getGmeConfig = getGmeConfig;
+testFixture.SEED_DIR = __dirname;
 
 module.exports = testFixture;

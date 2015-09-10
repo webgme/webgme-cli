@@ -1,3 +1,4 @@
+/*globals describe,it,before,beforeEach*/
 // This tests the program as a child process to check the bin script
 var spawn = require('child_process').spawn,
     path = require('path'),
@@ -6,6 +7,8 @@ var spawn = require('child_process').spawn,
     webgmeBinPath = path.join(__dirname, '..', 'bin', 'webgme');
 
 describe('WebGME bin script', function() {
+    'use strict';
+
     before(function() {
         process.chdir(__dirname);
     });
@@ -29,10 +32,6 @@ describe('WebGME bin script', function() {
             done();
         });
     });
-
-    it.skip('should exit with code 1 when encounters error', function(done) {
-        //TODO
-    });
 });
 
 var WebGMEComponentManager = require('../src/WebGMEComponentManager'),
@@ -41,6 +40,9 @@ var WebGMEComponentManager = require('../src/WebGMEComponentManager'),
     emitter = webgmeManager.logger._emitter;
 
 describe('WebGME command line parsing', function() {
+    'use strict';
+
+    var helpMsg;
     before(function(done) {
         fs.readFile(__dirname+'/../doc/help.txt', 'utf-8', 
             function(e, txt) {
