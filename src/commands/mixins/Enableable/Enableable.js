@@ -21,12 +21,12 @@ define([
     'use strict';
 
     var nodeRequire = require.nodeRequire;
-    var dirs = module.uri.split(path.sep);
+    var dirs = module.uri.replace(/\\/g, '/').split('/');
     dirs.pop();
     var __dirname = dirs.join(path.sep);
     var Enableable = function(field) {
         this._field = field;
-        this._pluginRunner = nodeRequire(__dirname+'/runPlugin');
+        this._pluginRunner = nodeRequire(path.join(__dirname, 'runPlugin'));
     };
 
     Enableable.prototype._invokePlugin = function(args, action, callback) {

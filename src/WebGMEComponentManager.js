@@ -219,7 +219,7 @@ WebGMEComponentManager.prototype.createManagers = function(callback) {
                 SKIP_FILES.indexOf(path.basename(file)) === -1;
         })
         .map(function(file) {  // Get file path
-            return path.join(__dirname,'commands',file);
+            return 'commands/'+ file.replace(/\.js$/g, '');
         });
     this.logger.debug('Loading component managers:\n'+files.join('\n'));
 

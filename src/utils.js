@@ -18,12 +18,14 @@ define(['lodash',
 
     var getRootPath = function() {
         // Walk back from current path until you find a webgme-setup.json file
-        var abspath = path.resolve('.');
+        var abspath = path.resolve('.'),
+            previousPath;
 
-        while (abspath.length > 1) {
+        while (abspath !== previousPath) {
             if (isProjectRoot(abspath)) {
                 return abspath;
             }
+            previousPath = abspath;
             abspath = path.dirname(abspath);
         }
         return null;
