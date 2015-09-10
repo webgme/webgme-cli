@@ -1,14 +1,14 @@
 /*globals describe,it,before,after*/
-var WebGMEComponentManager = require('../src/WebGMEComponentManager');
-var sinon = require('sinon');
-var fs = require('fs');
-var path = require('path');
-var assert = require('assert');
-var chai = require('chai');
-var expect = chai.expect;
-var sinonChai = require('sinon-chai');
-var _ = require('lodash');
-var rm_rf = require('rimraf');
+var WebGMEComponentManager = require('../src/WebGMEComponentManager'),
+    sinon = require('sinon'),
+    fs = require('fs'),
+    path = require('path'),
+    assert = require('assert'),
+    chai = require('chai'),
+    expect = chai.expect,
+    sinonChai = require('sinon-chai'),
+    _ = require('lodash'),
+    rm_rf = require('rimraf');
 
 var emitter;
 var WebGMEConfig = 'config.webgme.js';
@@ -18,6 +18,9 @@ var callWebGME = function(args, callback) {
     'use strict';
     webgmeManager.executeCommand(_.extend({_: ['node', 'webgme']}, args), callback);
 };
+
+var PROJECT_DIR,
+    TMP_DIR = path.join(__dirname, '..', 'test-tmp');
 
 describe('WebGME-setup-tool', function() {
     'use strict';
@@ -146,8 +149,7 @@ describe('WebGME-setup-tool', function() {
 
     // Creating a new item from boilerplate
     describe('basic commands', function() {
-        var TMP_DIR = path.join(__dirname, '..', 'test-tmp');
-        var PROJECT_DIR = path.join(TMP_DIR, 'ExampleProject');
+        PROJECT_DIR = path.join(TMP_DIR, 'ExampleProject');
         before(function(done) {
             // Create tmp directory in project root
             if (!fs.existsSync(TMP_DIR)) {
@@ -245,6 +247,33 @@ describe('WebGME-setup-tool', function() {
                     content = fs.readFileSync(config, 'utf8');
                 // Check that it is printed on multiple lines
                 assert(content.split('\n').length > 3);
+            });
+        });
+
+        describe('init w/o args', function() {
+            
+            it('should create webgme project in current directory', function(done) {
+                PROJECT_DIR = path.join(TMP_DIR, 'InitNoArgs');
+                fs.mkdirSync(PROJECT_DIR);
+                process.chdir(PROJECT_DIR);
+                callWebGME({_: ['node', 'webgme', 'init']}, function() {
+                    var configPath = path.join(PROJECT_DIR, WebGMEConfig);
+                    assert(fs.existsSync(configPath));
+                    done();
+                });
+            });
+
+            it('should fail if dir is nonempty', function(done) {
+                PROJECT_DIR = path.join(TMP_DIR, 'InitNoArgsFail');
+                fs.mkdirSync(PROJECT_DIR);
+                process.chdir(PROJECT_DIR);
+                fs.writeFileSync(path.join(PROJECT_DIR, 'temp'), 'stuff');
+                callWebGME({_: ['node', 'webgme', 'init']}, function(err) {
+                    var configPath = path.join(PROJECT_DIR, WebGMEConfig);
+                    assert(!fs.existsSync(configPath));
+                    assert(!!err);
+                    done();
+                });
             });
         });
 
