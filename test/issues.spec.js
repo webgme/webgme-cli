@@ -1,3 +1,4 @@
+/*globals describe,it,before,beforeEach,after*/
 var path = require('path'),
     assert = require('assert'),
     fs = require('fs'),
@@ -20,6 +21,7 @@ var callWebGME = function(args, callback) {
 var TMP_DIR = path.join(__dirname, '..', 'test-tmp');
 var PROJECT_DIR = path.join(TMP_DIR, 'IssuesProject');
 describe('Misc Issues', function() {
+    'use strict';
 
     before(function(done) {
         if (fs.existsSync(PROJECT_DIR)) {
@@ -45,7 +47,7 @@ describe('Misc Issues', function() {
         it('should not create duplicate paths in gme config', function() {
             var gmeConfigPath = path.join(PROJECT_DIR, 'config.webgme.js'),
                 gmeConfig = fs.readFileSync(gmeConfigPath, 'utf8'),
-                pluginPaths = /"src\/plugin"/g;
+                pluginPaths = /'src\/plugin'/g;
             assert(gmeConfig.match(pluginPaths).length === 1);
         });
     });

@@ -46,6 +46,12 @@ describe('utils', function() {
                 assert.notEqual(basepath, '');
             });
         });
+
+        it('should use " rather than \' in paths', function() {
+            var config = fs.readFileSync(path.join(WORKING_DIR, 'config.webgme.js'), 'utf8');
+            console.log('config:', config);
+            assert.equal(config.indexOf('"'), -1);
+        });
     });
 
     after(function(done) {
