@@ -52,7 +52,7 @@ define(['lodash',
             name = (args.name || projectName).replace(/\.js(on)?$/,''),
             source = args.source || 'master',  // branch or commit
             fileDir = path.join(this._getSaveLocation(),name),
-            filePath = path.join(fileDir, name+'.js'),
+            filePath = path.join(fileDir, name+'.json'),
             result;
 
         // Seeds have their own individual dirs to make sure that
