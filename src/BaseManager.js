@@ -4,6 +4,7 @@
 var _ = require('lodash'),
     path = require('path'),
     fs = require('fs'),
+    R = require('ramda'),
     mkdir = require('mkdirp'),
     PROJECT_CONFIG = 'webgme-setup.json';
 
@@ -74,16 +75,22 @@ BaseManager._createBasicFileStructure = function(project) {
 };
 
 BaseManager.prototype._createWebGMEFiles = function(project) {
-    // Create config file
+    // Create webgme config info
+    var configDir = path.join(project, 'config');
     var webgmeConfigTemplate = fs.readFileSync(path.join(__dirname, 'res', 'config.template.js'));
     var webgmeConfig = _.template(webgmeConfigTemplate)(this._getWebGMEConfigContent());
-    fs.writeFileSync(path.join(project, 'config.webgme.js'), webgmeConfig);
 
-    // Create editable config file and app.js
-    ['config.js', 'app.js'].forEach(this._copyFileToProject.bind(this, project, null));
+    fs.mkdirSync(configDir);
+    fs.writeFileSync(path.join(configDir, 'config.webgme.js'), webgmeConfig);
+    fs.readdirSync(path.join(__dirname, 'res', 'config'))
+        .map(R.pipe(R.nthArg(0), path.join.bind(path, 'config')))  // Add 'config/' for each
+        .forEach(BaseManager._copyFileToProject.bind(null, project, ''));
+
+    // Create app.js
+    BaseManager._copyFileToProject(project, '', 'app.js');
 
     // Create test fixtures
-    this._copyFileToProject(project, 'test', 'globals.js');
+    BaseManager._copyFileToProject(project, 'test', 'globals.js');
 };
 
 BaseManager.prototype._getWebGMEConfigContent = function() {
@@ -93,7 +100,7 @@ BaseManager.prototype._getWebGMEConfigContent = function() {
     };
 };
 
-BaseManager.prototype._copyFileToProject = function(project, subPath, filename) {
+BaseManager._copyFileToProject = function(project, subPath, filename) {
     var boilerplatePath,
         dstPath;
 

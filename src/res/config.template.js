@@ -15,7 +15,7 @@ var dirname = function(path) {
 var printConfigPaths = function(name, paths) {
   paths = _.uniq(paths);
   return paths.map(function(path) {
-    return 'config.'+name+'.basePaths.push("'+path+'");'
+    return 'config.'+name+'.basePaths.push(\''+path+'\');'
   }).join('\n');
 }; %>
 
