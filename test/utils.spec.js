@@ -36,20 +36,19 @@ describe('utils', function() {
         });
 
         it('should use "/" in webgme.config.js', function() {
-            var config = require(path.join(WORKING_DIR, 'config.js'));
+            var config = require(path.join(WORKING_DIR, 'config'));
             assert.equal(config.plugin.basePaths.join(';').indexOf('\\'), -1);
         });
 
         it('should not have any empty basePaths', function() {
-            var config = require(path.join(WORKING_DIR, 'config.js'));
+            var config = require(path.join(WORKING_DIR, 'config'));
             config.plugin.basePaths.forEach(function(basepath) {
                 assert.notEqual(basepath, '');
             });
         });
 
         it('should use " rather than \' in paths', function() {
-            var config = fs.readFileSync(path.join(WORKING_DIR, 'config.webgme.js'), 'utf8');
-            console.log('config:', config);
+            var config = fs.readFileSync(path.join(WORKING_DIR, 'config', 'config.webgme.js'), 'utf8');
             assert.equal(config.indexOf('"'), -1);
         });
     });

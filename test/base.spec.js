@@ -219,16 +219,6 @@ describe('WebGME-setup-tool', function() {
             it.skip('should use the latest release of webgme', function() {
             });
 
-            it('should create a webgme config file', function() {
-                var config = path.join(PROJECT_DIR, WebGMEConfig);
-                assert(fs.existsSync(config));
-            });
-
-            it('should create editable (boilerplate) webgme config file', function() {
-                var config = path.join(PROJECT_DIR, 'config.js');
-                assert(fs.existsSync(config));
-            });
-
             it('should create webgme app.js file', function() {
                 var app = path.join(PROJECT_DIR, 'app.js');
                 assert(fs.existsSync(app));
@@ -247,6 +237,25 @@ describe('WebGME-setup-tool', function() {
                     content = fs.readFileSync(config, 'utf8');
                 // Check that it is printed on multiple lines
                 assert(content.split('\n').length > 3);
+            });
+
+            // WebGME config
+            describe('WebGME config', function() {
+                var CONFIG_DIR = path.join(PROJECT_DIR, 'config');
+
+                it('should create config directory', function() {
+                    assert(fs.existsSync(CONFIG_DIR));
+                });
+
+                it('should create a webgme config file', function() {
+                    var config = path.join(CONFIG_DIR, WebGMEConfig);
+                    assert(fs.existsSync(config));
+                });
+
+                it('should create editable (boilerplate) webgme config file', function() {
+                    var config = path.join(CONFIG_DIR, 'config.default.js');
+                    assert(fs.existsSync(config));
+                });
             });
         });
 
