@@ -6,7 +6,7 @@ var path = require('path'),
     _ = require('lodash');
 
 var WebGMEComponentManager = require('../src/WebGMEComponentManager');
-var WebGMEConfig = 'config.webgme.js';
+var WebGMEConfig = path.join('config', 'config.webgme.js');
 var webgmeManager = new WebGMEComponentManager();
 var emitter = webgmeManager.logger._emitter;
 
@@ -45,7 +45,7 @@ describe('Misc Issues', function() {
         });
 
         it('should not create duplicate paths in gme config', function() {
-            var gmeConfigPath = path.join(PROJECT_DIR, 'config.webgme.js'),
+            var gmeConfigPath = path.join(PROJECT_DIR, WebGMEConfig),
                 gmeConfig = fs.readFileSync(gmeConfigPath, 'utf8'),
                 pluginPaths = /'src\/plugin'/g;
             assert(gmeConfig.match(pluginPaths).length === 1);

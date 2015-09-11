@@ -207,7 +207,7 @@ describe('Seed tests', function() {
             });
 
             it('should add the path to the webgme config', function() {
-                var configPath = path.join(PROJECT_DIR,'config.webgme.js'),
+                var configPath = path.join(PROJECT_DIR, WebGMEConfig),
                     config = fs.readFileSync(configPath, 'utf8'),
                     paths = config.match(/seedProjects.*/g).join(';'),
                     moduleName;
@@ -225,7 +225,7 @@ describe('Seed tests', function() {
                 });
 
                 it('should remove the path from the webgme config', function() {
-                    var config = require(path.join(PROJECT_DIR,'config.webgme.js')),
+                    var config = require(path.join(PROJECT_DIR, WebGMEConfig)),
                     paths = config.seedProjects.basePaths.join(';');
                     assert.equal(paths.indexOf(OTHER_SEED), -1);
                 });
@@ -270,7 +270,7 @@ describe('Seed tests', function() {
             });
 
             it('should add the path to the webgme config', function() {
-                var configPath = path.join(PROJECT_DIR,'config.webgme.js'),
+                var configPath = path.join(PROJECT_DIR, WebGMEConfig),
                     config = fs.readFileSync(configPath, 'utf8'),
                     paths = config.match(/seedProjects.*/g).join(';'),
                     projectName = cliProject.split('/').pop().toLowerCase();
@@ -279,7 +279,7 @@ describe('Seed tests', function() {
             });
 
             it('should add the (relative) path to the webgme config', function() {
-                var configPath = path.join(PROJECT_DIR,'config.webgme.js'),
+                var configPath = path.join(PROJECT_DIR, WebGMEConfig),
                     config = fs.readFileSync(configPath, 'utf8'),
                     lines = config.match(/seedProjects.*/g),  // One per line
                     paths = lines.map(function(line) { 
@@ -300,7 +300,7 @@ describe('Seed tests', function() {
                 });
 
                 it('should remove the path from the webgme config', function() {
-                    var configPath = path.join(PROJECT_DIR,'config.webgme.js'),
+                    var configPath = path.join(PROJECT_DIR, WebGMEConfig),
                         config = fs.readFileSync(configPath, 'utf8'),
                         paths = config.match(/seedProjects.*/g);
 

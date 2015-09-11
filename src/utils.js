@@ -104,7 +104,7 @@ define(['lodash',
         var content = getWebGMEConfigContent(),
             templatePath = path.join(__dirname, 'res', 'config.template.js'),
             template = _.template(fs.readFileSync(templatePath)),
-            configPath = path.join(getRootPath(), 'config.webgme.js');
+            configPath = path.join(getRootPath(), 'config', 'config.webgme.js');
 
         // Convert paths to use / as path separator
         fs.writeFileSync(configPath, template(content));

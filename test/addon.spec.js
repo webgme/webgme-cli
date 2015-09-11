@@ -6,7 +6,7 @@ var path = require('path'),
     _ = require('lodash');
 
 var WebGMEComponentManager = require('../src/WebGMEComponentManager');
-var WebGMEConfig = 'config.webgme.js';
+var WebGMEConfig = path.join('config', 'config.webgme.js');
 var webgmeManager = new WebGMEComponentManager();
 var emitter = webgmeManager.logger._emitter;
 
@@ -74,7 +74,7 @@ describe('AddOn tests', function() {
         });
 
         it('should add the addOn (relative) path to the config file', function() {
-            var configPath = path.join(PROJECT_DIR, 'config.webgme.js'),
+            var configPath = path.join(PROJECT_DIR, WebGMEConfig),
                 configText = fs.readFileSync(configPath,'utf-8');
             assert.notEqual(configText.indexOf(ADDON_ID), -1);
         });
@@ -91,7 +91,7 @@ describe('AddOn tests', function() {
         });
 
         it('should enable addOns in the webgme config', function() {
-            var config = require(path.join(PROJECT_DIR, 'config.webgme.js'));
+            var config = require(path.join(PROJECT_DIR, WebGMEConfig));
             assert(config.addOn.enable);
         });
 
@@ -122,7 +122,7 @@ describe('AddOn tests', function() {
             });
 
             it('should remove the addOn (relative) path from config', function() {
-                var configPath = path.join(PROJECT_DIR, 'config.webgme.js'),
+                var configPath = path.join(PROJECT_DIR, WebGMEConfig),
                     configText = fs.readFileSync(configPath, 'utf-8');
                 assert.equal(configText.indexOf(ADDON_ID), -1);
             });
@@ -164,7 +164,7 @@ describe('AddOn tests', function() {
             });
 
             it('should add the path to the webgme config', function() {
-                var config = require(path.join(PROJECT_DIR,'config.webgme.js')),
+                var config = require(path.join(PROJECT_DIR,WebGMEConfig)),
                 paths = config.addOn.basePaths.join(';');
                 assert.notEqual(paths.indexOf(otherProject.split('/')[1]), -1);
             });
@@ -178,7 +178,7 @@ describe('AddOn tests', function() {
                 });
 
                 it('should remove the path from the webgme config', function() {
-                    var configPath = path.join(PROJECT_DIR,'config.webgme.js'),
+                    var configPath = path.join(PROJECT_DIR,WebGMEConfig),
                         configText = fs.readFileSync(configPath,'utf8');
                     assert.equal(configText.indexOf(OTHER_ADDON), -1);
                 });
@@ -223,7 +223,7 @@ describe('AddOn tests', function() {
             });
 
             it('should add the path to the webgme config', function() {
-                var config = require(path.join(PROJECT_DIR,'config.webgme.js')),
+                var config = require(path.join(PROJECT_DIR, WebGMEConfig)),
                 paths = config.addOn.basePaths.join(';');
                 assert.notEqual(paths.indexOf(otherProject.split('/')[1]), -1);
             });
@@ -237,7 +237,7 @@ describe('AddOn tests', function() {
                 });
 
                 it('should remove the path from the webgme config', function() {
-                    var configPath = path.join(PROJECT_DIR,'config.webgme.js'),
+                    var configPath = path.join(PROJECT_DIR, WebGMEConfig),
                         configText = fs.readFileSync(configPath, 'utf8');
                     assert.equal(configText.indexOf(OTHER_ADDON), -1);
                 });

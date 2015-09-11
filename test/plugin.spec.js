@@ -6,7 +6,7 @@ var path = require('path'),
     _ = require('lodash');
 
 var WebGMEComponentManager = require('../src/WebGMEComponentManager');
-var WebGMEConfig = 'config.webgme.js';
+var WebGMEConfig = path.join('config', 'config.webgme.js');
 var webgmeManager = new WebGMEComponentManager();
 var emitter = webgmeManager.logger._emitter;
 
@@ -62,7 +62,7 @@ describe('Plugin tests', function() {
         });
 
         it('should add the plugin (relative) path to the config file', function() {
-            var config = require(path.join(PROJECT_DIR, 'config.webgme.js'));
+            var config = require(path.join(PROJECT_DIR, WebGMEConfig));
             // check that basePath has been added!
             var relativeBase = PluginBasePath.replace(PROJECT_DIR+path.sep, '');
             assert.notEqual(config.plugin.basePaths.indexOf(relativeBase), -1);
@@ -186,7 +186,7 @@ describe('Plugin tests', function() {
             });
 
             it('should add the path to the webgme config', function() {
-                var config = require(path.join(PROJECT_DIR,'config.webgme.js')),
+                var config = require(path.join(PROJECT_DIR, WebGMEConfig)),
                 paths = config.plugin.basePaths.join(';');
                 assert.notEqual(paths.indexOf(otherProject.split('/')[1]), -1);
             });
@@ -200,7 +200,7 @@ describe('Plugin tests', function() {
                 });
 
                 it('should remove the path from the webgme config', function() {
-                    var config = require(path.join(PROJECT_DIR,'config.webgme.js')),
+                    var config = require(path.join(PROJECT_DIR, WebGMEConfig)),
                     paths = config.plugin.basePaths.join(';');
                     assert.equal(paths.indexOf(OTHER_PLUGIN), -1);
                 });
@@ -245,7 +245,7 @@ describe('Plugin tests', function() {
             });
 
             it('should add the path to the webgme config', function() {
-                var config = require(path.join(PROJECT_DIR,'config.webgme.js')),
+                var config = require(path.join(PROJECT_DIR, WebGMEConfig)),
                 paths = config.plugin.basePaths.join(';');
                 assert.notEqual(paths.indexOf(otherProject.split('/')[1]), -1);
             });
@@ -259,7 +259,7 @@ describe('Plugin tests', function() {
                 });
 
                 it('should remove the path from the webgme config', function() {
-                    var config = require(path.join(PROJECT_DIR,'config.webgme.js')),
+                    var config = require(path.join(PROJECT_DIR, WebGMEConfig)),
                     paths = config.plugin.basePaths.join(';');
                     assert.equal(paths.indexOf(OTHER_PLUGIN), -1);
                 });
