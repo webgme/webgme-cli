@@ -176,7 +176,7 @@ define(['lodash',
         if (project) {
             projectPath = path.join('node_modules', project);
         }
-        gmeConfigPath = path.join(getRootPath(), projectPath, 'config.js');
+        gmeConfigPath = path.join(getRootPath(), projectPath, 'config');
 
         return gmeConfigPath;
     };

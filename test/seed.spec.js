@@ -28,7 +28,7 @@ var TMP_DIR = path.join(__dirname, '..', 'test-tmp'),
     OTHER_SEED = 'OtherSeed',
     otherProject;
 
-describe.only('Seed tests', function() {
+describe('Seed tests', function() {
     'use strict';
     
     var SEED_NAME = 'MyWebGMEProject',

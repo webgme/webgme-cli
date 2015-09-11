@@ -1,17 +1,14 @@
 /*globals describe,it,before,after*/
 var WebGMEComponentManager = require('../src/WebGMEComponentManager'),
-    sinon = require('sinon'),
     fs = require('fs'),
     path = require('path'),
     assert = require('assert'),
-    chai = require('chai'),
-    expect = chai.expect,
-    sinonChai = require('sinon-chai'),
     _ = require('lodash'),
     rm_rf = require('rimraf');
 
 var emitter;
-var WebGMEConfig = 'config.webgme.js';
+var WebGMEConfig = 'config.webgme.js',
+    SETUP_CONFIG = 'webgme-setup.json';
 var webgmeManager = new WebGMEComponentManager();
 
 var callWebGME = function(args, callback) {
@@ -266,7 +263,7 @@ describe('WebGME-setup-tool', function() {
                 fs.mkdirSync(PROJECT_DIR);
                 process.chdir(PROJECT_DIR);
                 callWebGME({_: ['node', 'webgme', 'init']}, function() {
-                    var configPath = path.join(PROJECT_DIR, WebGMEConfig);
+                    var configPath = path.join(PROJECT_DIR, SETUP_CONFIG);
                     assert(fs.existsSync(configPath));
                     done();
                 });
@@ -278,7 +275,7 @@ describe('WebGME-setup-tool', function() {
                 process.chdir(PROJECT_DIR);
                 fs.writeFileSync(path.join(PROJECT_DIR, 'temp'), 'stuff');
                 callWebGME({_: ['node', 'webgme', 'init']}, function(err) {
-                    var configPath = path.join(PROJECT_DIR, WebGMEConfig);
+                    var configPath = path.join(PROJECT_DIR, SETUP_CONFIG);
                     assert(!fs.existsSync(configPath));
                     assert(!!err);
                     done();
