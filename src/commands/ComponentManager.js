@@ -13,11 +13,13 @@ define(['rimraf',
         'fs',
         'module',
         'child_process',
+        'plural',
         'commands/../utils'], function(rm_rf,
                                        path,
                                        fs,
                                        module,
                                        childProcess,
+                                       plural,
                                        utils) {
     'use strict';
 
@@ -28,6 +30,7 @@ define(['rimraf',
     var ComponentManager = function(name, logger) {
         this._logger = logger;
         this._name = name;  // Name to be used in cli usage, etc
+        this._group = plural(name);  // Plural version of name
         this._webgmeName = name;  // Name to be used only in webgme config
         this._prepareWebGmeConfig();
     };
@@ -41,11 +44,11 @@ define(['rimraf',
      */
     ComponentManager.prototype.ls = function(args, callback) {
         var config = utils.getConfig(),
-            plugins = Object.keys(config.components[this._name]).join(' ') || '<none>',
-            deps = Object.keys(config.dependencies[this._name]).join(' ') || '<none>';
+            plugins = Object.keys(config.components[this._group]).join(' ') || '<none>',
+            deps = Object.keys(config.dependencies[this._group]).join(' ') || '<none>';
 
-        this._logger.write('Detected '+this._name+'s: '+plugins+
-            '\nThird party '+this._name+'s: '+deps);
+        this._logger.write('Detected '+this._group+': '+plugins+
+            '\nThird party '+this._group+': '+deps);
         callback(null);
     };
 
@@ -53,7 +56,7 @@ define(['rimraf',
         // TODO: Check args
         var name = args._[2],
             config = utils.getConfig(),
-            type = config.components[this._name][name] !== undefined ? 
+            type = config.components[this._group][name] !== undefined ? 
                 'components' : 'dependencies';
 
         // Remove from config files
@@ -62,7 +65,7 @@ define(['rimraf',
         // Remove any actual files
         if (type === 'components') {
             // Remove the name directories from src, test
-            var paths = Object.keys(config[type][this._name][name]),
+            var paths = Object.keys(config[type][this._group][name]),
                 remaining = paths.length,
                 finished = function() {
                     if (--remaining === 0) {
@@ -70,7 +73,7 @@ define(['rimraf',
                     }
                 };
             paths.forEach(function(pathType) {
-                var pathItems = config[type][this._name][name][pathType].split(path.sep),
+                var pathItems = config[type][this._group][name][pathType].split(path.sep),
                     componentPath = this._getSaveLocation;
                 // Remove p recursively
                 pathItems.pop();
@@ -124,12 +127,12 @@ define(['rimraf',
                     config = utils.getConfig(),
                     gmeCliConfigPath = utils.getConfigPath(pkgProject.toLowerCase()),
                     gmeConfigPath = utils.getGMEConfigPath(pkgProject.toLowerCase()),
-                    dependencyRoot = path.dirname(gmeConfigPath);;
+                    dependencyRoot = path.dirname(gmeConfigPath);
 
                 if (fs.existsSync(gmeCliConfigPath)) {
                     otherConfig = JSON.parse(fs.readFileSync(gmeCliConfigPath, 'utf-8'));
-                    if (otherConfig.components[this._name][componentName]) {
-                        componentPath = otherConfig.components[this._name][componentName].src;
+                    if (otherConfig.components[this._group][componentName]) {
+                        componentPath = otherConfig.components[this._group][componentName].src;
                     }
                 } else if (fs.existsSync(gmeConfigPath)) {
                     otherConfig = nodeRequire(gmeConfigPath);
@@ -162,7 +165,7 @@ define(['rimraf',
 
                 componentPath = path.relative(projectRoot, componentPath);
 
-                config.dependencies[this._name][componentName] = {
+                config.dependencies[this._group][componentName] = {
                     project: pkgProject,
                     path: componentPath
                 };
@@ -182,7 +185,7 @@ define(['rimraf',
     ComponentManager.prototype._removeFromConfig = function(plugin, type) {
         var config = utils.getConfig();
         // Remove entry from the config
-        delete config[type][this._name][plugin];
+        delete config[type][this._group][plugin];
         utils.saveConfig(config);
         utils.updateWebGMEConfig();
 
@@ -196,14 +199,14 @@ define(['rimraf',
      * @return {String}
      */
     ComponentManager.prototype._getResource = function(name) {
-        var resourcePath = path.join(__dirname,'..','res',this._name,name);
+        var resourcePath = path.join(__dirname,'..','res',this._group,name);
         return fs.readFileSync(resourcePath, 'utf-8');
     };
 
     ComponentManager.prototype._getSaveLocation = function(type) {
         // Guarantee that it is either 'src' or 'test'
         type = type === 'test' ? 'test': 'src';
-        var savePath = path.join(utils.getRootPath(), type, this._name);
+        var savePath = path.join(utils.getRootPath(), type, this._group);
         // We assume this means the location is relevant and will create
         // it if needed
         utils.mkdir(savePath);
@@ -242,8 +245,8 @@ define(['rimraf',
             var config = utils.getConfig();
             var entries = Object.keys(config);
             entries.forEach(function(entry) {
-                if (config[entry][this._name] === undefined) {
-                    config[entry][this._name] = {};
+                if (config[entry][this._group] === undefined) {
+                    config[entry][this._group] = {};
                 }
             }, this);
             utils.saveConfig(config);
@@ -259,7 +262,8 @@ define(['rimraf',
      */
     ComponentManager.prototype._register = function(name, content) {
         var config = utils.getConfig();
-        config.components[this._name][name] = content;
+        config.components[this._group][name] = content;
+        console.log('CONFIG:', config);
         utils.saveConfig(config);
         utils.updateWebGMEConfig();
     };

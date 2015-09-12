@@ -47,7 +47,7 @@ describe('Misc Issues', function() {
         it('should not create duplicate paths in gme config', function() {
             var gmeConfigPath = path.join(PROJECT_DIR, WebGMEConfig),
                 gmeConfig = fs.readFileSync(gmeConfigPath, 'utf8'),
-                pluginPaths = /'src\/plugin'/g;
+                pluginPaths = /'src\/plugins'/g;
             assert(gmeConfig.match(pluginPaths).length === 1);
         });
     });

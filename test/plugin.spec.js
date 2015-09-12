@@ -31,9 +31,9 @@ describe('Plugin tests', function() {
     'use strict';
     
     var PLUGIN_NAME = 'MyNewPlugin',
-        PluginBasePath = path.join(PROJECT_DIR, 'src', 'plugin'),
+        PluginBasePath = path.join(PROJECT_DIR, 'src', 'plugins'),
         PLUGIN_SRC = path.join(PluginBasePath, PLUGIN_NAME, PLUGIN_NAME+'.js'),
-        PLUGIN_TEST = path.join(PROJECT_DIR, 'test', 'plugin', PLUGIN_NAME, PLUGIN_NAME+'.spec.js');
+        PLUGIN_TEST = path.join(PROJECT_DIR, 'test', 'plugins', PLUGIN_NAME, PLUGIN_NAME+'.spec.js');
 
     before(function(done) {
         if (fs.existsSync(PROJECT_DIR)) {
@@ -70,7 +70,27 @@ describe('Plugin tests', function() {
 
         it('should record the plugin in .webgme file', function() {
             var config = require(CONFIG_PATH);
-            assert.notEqual(config.components.plugin[PLUGIN_NAME], undefined);
+            assert.notEqual(config.components.plugins[PLUGIN_NAME], undefined);
+        });
+
+        describe('2nd plugin', function() {
+            var secondPluginName = 'ABrandNewPlugin';
+            before(function(done) {
+                process.chdir(PROJECT_DIR);  // Start in different directory
+                callWebGME({
+                    _: ['node', 'webgme', 'new', 'plugin', secondPluginName]
+                }, done);
+            });
+
+            it('should have both dirs in src/plugins', function() {
+                [PLUGIN_NAME, secondPluginName]
+                    .map(function(name) {
+                        return path.join(PROJECT_DIR, 'src', 'plugins', name);
+                    })
+                    .forEach(function(pluginPath) {
+                        assert(fs.existsSync(pluginPath));
+                    });
+            });
         });
 
         describe('options', function() {
@@ -83,7 +103,7 @@ describe('Plugin tests', function() {
                 }, done);
             });
             it('should not create test file', function() {
-                var testPath = path.join(PROJECT_DIR, 'test', 'plugin', NoTestPlugin, NoTestPlugin+'.js');
+                var testPath = path.join(PROJECT_DIR, 'test', 'plugins', NoTestPlugin, NoTestPlugin+'.js');
                 assert(!fs.existsSync(testPath), 'Created meta.js file');
             });
 
@@ -91,7 +111,7 @@ describe('Plugin tests', function() {
         });
 
         describe('test file', function() {
-            var PLUGIN_TEST = path.join(PROJECT_DIR, 'test', 'plugin',
+            var PLUGIN_TEST = path.join(PROJECT_DIR, 'test', 'plugins',
                 PLUGIN_NAME, PLUGIN_NAME+'.spec.js');
 
             it('should create test file in test/plugin', function() {
@@ -132,18 +152,18 @@ describe('Plugin tests', function() {
         });
 
         it('should remove plugin src directory', function() {
-            var pluginPath = path.join(PROJECT_DIR, 'src', 'plugin', PLUGIN_NAME);
+            var pluginPath = path.join(PROJECT_DIR, 'src', 'plugins', PLUGIN_NAME);
             assert.equal(fs.existsSync(pluginPath), false);
         });
 
         it('should remove plugin test directory', function() {
-            var pluginPath = path.join(PROJECT_DIR, 'test', 'plugin', PLUGIN_NAME);
+            var pluginPath = path.join(PROJECT_DIR, 'test', 'plugins', PLUGIN_NAME);
             assert.equal(fs.existsSync(pluginPath), false);
         });
 
         it('should remove plugin entry from '+CONFIG_NAME, function() {
             var config = require(CONFIG_PATH);
-            assert.equal(config.components.plugin[PLUGIN_NAME], undefined);
+            assert.equal(config.components.plugins[PLUGIN_NAME], undefined);
         });
     });
 
@@ -182,7 +202,7 @@ describe('Plugin tests', function() {
             it('should add the project to the '+CONFIG_NAME, function() {
                 var configText = fs.readFileSync(CONFIG_PATH),
                     config = JSON.parse(configText);
-                assert.notEqual(config.dependencies.plugin[OTHER_PLUGIN], undefined);
+                assert.notEqual(config.dependencies.plugins[OTHER_PLUGIN], undefined);
             });
 
             it('should add the path to the webgme config', function() {
@@ -208,7 +228,7 @@ describe('Plugin tests', function() {
                 it('should remove plugin entry from '+CONFIG_NAME, function() {
                     var configText = fs.readFileSync(CONFIG_PATH),
                         config = JSON.parse(configText);
-                    assert.equal(config.dependencies.plugin[OTHER_PLUGIN], undefined);
+                    assert.equal(config.dependencies.plugins[OTHER_PLUGIN], undefined);
                 });
 
                 it.skip('should remove project from package.json', function() {
@@ -241,7 +261,7 @@ describe('Plugin tests', function() {
             it('should add the project to the '+CONFIG_NAME, function() {
                 var configText = fs.readFileSync(CONFIG_PATH),
                     config = JSON.parse(configText);
-                assert.notEqual(config.dependencies.plugin[OTHER_PLUGIN], undefined);
+                assert.notEqual(config.dependencies.plugins[OTHER_PLUGIN], undefined);
             });
 
             it('should add the path to the webgme config', function() {
@@ -267,7 +287,7 @@ describe('Plugin tests', function() {
                 it('should remove plugin entry from '+CONFIG_NAME, function() {
                     var configText = fs.readFileSync(CONFIG_PATH),
                         config = JSON.parse(configText);
-                    assert.equal(config.dependencies.plugin[OTHER_PLUGIN], undefined);
+                    assert.equal(config.dependencies.plugins[OTHER_PLUGIN], undefined);
                 });
 
                 it.skip('should remove project from package.json', function() {

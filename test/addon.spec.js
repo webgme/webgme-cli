@@ -33,10 +33,10 @@ describe('AddOn tests', function() {
 
     var ADDON_ID = 'MyNewAddOn',
         ADDON_NAME = 'NewAddOnName',
-        AddOnBasePath = path.join(PROJECT_DIR, 'src', 'addOn'),
+        AddOnBasePath = path.join(PROJECT_DIR, 'src', 'addOns'),
         ADDON_DIR = path.join(AddOnBasePath, ADDON_ID),
         ADDON_SRC = path.join(AddOnBasePath, ADDON_ID, ADDON_ID+'.js'),
-        ADDON_TEST = path.join(PROJECT_DIR, 'test', 'addOn', ADDON_ID, ADDON_ID+'.spec.js');
+        ADDON_TEST = path.join(PROJECT_DIR, 'test', 'addOns', ADDON_ID, ADDON_ID+'.spec.js');
 
     before(function(done) {
         if (fs.existsSync(PROJECT_DIR)) {
@@ -81,12 +81,12 @@ describe('AddOn tests', function() {
 
         it('should record the addOn in '+PROJECT_CONFIG+' file', function() {
             var config = require(CONFIG_PATH);
-            assert.notEqual(config.components.addOn[ADDON_ID], undefined);
+            assert.notEqual(config.components.addOns[ADDON_ID], undefined);
         });
 
         it('should record relative path in '+PROJECT_CONFIG+' file', function() {
             var config = require(CONFIG_PATH),
-                srcPath = config.components.addOn[ADDON_ID].src;
+                srcPath = config.components.addOns[ADDON_ID].src;
             assert(!path.isAbsolute(srcPath));
         });
 
@@ -131,7 +131,7 @@ describe('AddOn tests', function() {
                 var configPath = CONFIG_PATH,
                     configContent = fs.readFileSync(configPath),
                     config = JSON.parse(configContent);
-                assert.equal(config.components.addOn[ADDON_ID], undefined);
+                assert.equal(config.components.addOns[ADDON_ID], undefined);
             });
         });
     });
@@ -160,7 +160,7 @@ describe('AddOn tests', function() {
                 var configPath = CONFIG_PATH,
                 configText = fs.readFileSync(configPath),
                 config = JSON.parse(configText);
-                assert.notEqual(config.dependencies.addOn[OTHER_ADDON], undefined);
+                assert.notEqual(config.dependencies.addOns[OTHER_ADDON], undefined);
             });
 
             it('should add the path to the webgme config', function() {
@@ -186,7 +186,7 @@ describe('AddOn tests', function() {
                 it('should remove addOn entry from '+PROJECT_CONFIG, function() {
                     var configText = fs.readFileSync(CONFIG_PATH),
                     config = JSON.parse(configText);
-                    assert.equal(config.dependencies.addOn[OTHER_ADDON], undefined);
+                    assert.equal(config.dependencies.addOns[OTHER_ADDON], undefined);
                 });
 
                 it.skip('should remove project from package.json', function() {
@@ -219,7 +219,7 @@ describe('AddOn tests', function() {
             it('should add the project to the '+PROJECT_CONFIG, function() {
                 var configText = fs.readFileSync(CONFIG_PATH),
                     config = JSON.parse(configText);
-                assert.notEqual(config.dependencies.addOn[OTHER_ADDON], undefined);
+                assert.notEqual(config.dependencies.addOns[OTHER_ADDON], undefined);
             });
 
             it('should add the path to the webgme config', function() {
@@ -245,7 +245,7 @@ describe('AddOn tests', function() {
                 it('should remove addOn entry from '+PROJECT_CONFIG, function() {
                     var configText = fs.readFileSync(CONFIG_PATH),
                         config = JSON.parse(configText);
-                    assert.equal(config.dependencies.addOn[OTHER_ADDON], undefined);
+                    assert.equal(config.dependencies.addOns[OTHER_ADDON], undefined);
                 });
 
                 it.skip('should remove project from package.json', function() {

@@ -32,9 +32,9 @@ describe('Seed tests', function() {
     'use strict';
     
     var SEED_NAME = 'MyWebGMEProject',
-        SeedBasePath = path.join(PROJECT_DIR, 'src', 'seed'),
+        SeedBasePath = path.join(PROJECT_DIR, 'src', 'seeds'),
         SEED_SRC = path.join(SeedBasePath, SEED_NAME, SEED_NAME+'.js'),
-        SEED_TEST = path.join(PROJECT_DIR, 'test', 'seed', SEED_NAME, SEED_NAME+'.spec.js');
+        SEED_TEST = path.join(PROJECT_DIR, 'test', 'seeds', SEED_NAME, SEED_NAME+'.spec.js');
 
     before(function(done) {
         var after = function() {
@@ -113,7 +113,7 @@ describe('Seed tests', function() {
                 // Check the webgem-setup.json
                 var configContent = fs.readFileSync(CONFIG_PATH,'utf8'),
                     config = JSON.parse(configContent),
-                    srcPath = config.components.seed.myNewSeed2.src;
+                    srcPath = config.components.seeds.myNewSeed2.src;
 
                 assert(!path.isAbsolute(srcPath));
                 done();
@@ -203,7 +203,7 @@ describe('Seed tests', function() {
             it('should add the project to the '+CONFIG_NAME, function() {
                 var configText = fs.readFileSync(CONFIG_PATH),
                     config = JSON.parse(configText);
-                assert.notEqual(config.dependencies.seed[OTHER_SEED], undefined);
+                assert.notEqual(config.dependencies.seeds[OTHER_SEED], undefined);
             });
 
             it('should add the path to the webgme config', function() {
@@ -233,7 +233,7 @@ describe('Seed tests', function() {
                 it('should remove seed entry from '+CONFIG_NAME, function() {
                     var configText = fs.readFileSync(CONFIG_PATH),
                         config = JSON.parse(configText);
-                    assert.equal(config.dependencies.seed[OTHER_SEED], undefined);
+                    assert.equal(config.dependencies.seeds[OTHER_SEED], undefined);
                 });
 
                 it.skip('should remove project from package.json', function() {
@@ -266,7 +266,7 @@ describe('Seed tests', function() {
             it('should add the project to the '+CONFIG_NAME, function() {
                 var configText = fs.readFileSync(CONFIG_PATH),
                     config = JSON.parse(configText);
-                assert.notEqual(config.dependencies.seed[OTHER_SEED], undefined);
+                assert.notEqual(config.dependencies.seeds[OTHER_SEED], undefined);
             });
 
             it('should add the path to the webgme config', function() {
@@ -310,7 +310,7 @@ describe('Seed tests', function() {
                 it('should remove seed entry from '+CONFIG_NAME, function() {
                     var configText = fs.readFileSync(CONFIG_PATH, 'utf8'),
                         config = JSON.parse(configText);
-                    assert.equal(config.dependencies.seed[OTHER_SEED], undefined);
+                    assert.equal(config.dependencies.seeds[OTHER_SEED], undefined);
                 });
 
                 it.skip('should remove project from package.json', function() {

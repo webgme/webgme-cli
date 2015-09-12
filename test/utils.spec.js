@@ -26,7 +26,7 @@ describe('utils', function() {
                     config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
 
                 config.components = {
-                    plugin: {
+                    plugins: {
                         dummyPlugin: {src: 'src\\plugin'}  // Convert to use win32 path sep
                     }
                 };

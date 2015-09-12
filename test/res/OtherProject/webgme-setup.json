@@ -1,25 +1,25 @@
 {
   "components": {
-    "plugin": {
+    "plugins": {
       "OtherPlugin": {
         "src": "src/plugin/OtherPlugin",
         "test": "test/plugin/OtherPlugin"
       }
     },
-    "addOn": {
+    "addOns": {
       "OtherAddOn": {
         "src": "src/addOn/OtherAddOn"
       }
     },
-    "seed": {
+    "seeds": {
       "OtherSeed": {
         "src": "src/seed/OtherSeed"
       }
     }
   },
   "dependencies": {
-    "plugin": {},
-    "addOn": {},
-    "seed": {}
+    "plugins": {},
+    "addOns": {},
+    "seeds": {}
   }
 }

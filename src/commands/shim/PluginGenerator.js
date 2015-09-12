@@ -39,8 +39,6 @@ define(['coreplugins/PluginGenerator/PluginGenerator',
     // Helper function for the PluginGenerator
     var fixFilePath = function(file) {
         file.name = file.name.replace('undefined/', '');
-        // Change "plugins" to "plugin"
-        file.name = file.name.replace('plugins', 'plugin');
     };
 
     var fixFixturePath = function(file) {
