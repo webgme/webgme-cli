@@ -263,7 +263,6 @@ define(['rimraf',
     ComponentManager.prototype._register = function(name, content) {
         var config = utils.getConfig();
         config.components[this._group][name] = content;
-        console.log('CONFIG:', config);
         utils.saveConfig(config);
         utils.updateWebGMEConfig();
     };

@@ -54,7 +54,10 @@ define(['fs',
     };
 
     var getConfigFlagForArgs = {
-        string: CONFIG_FLAG_BY_TYPE.string
+        string: function(config) {
+            var rawFlag = CONFIG_FLAG_BY_TYPE.string(config).name;
+            return rawFlag.replace(/^-[-]?/, '');
+        }
     };
 
     var PluginManager = function(logger) {
@@ -154,6 +157,7 @@ define(['fs',
             // Update if necessary
             if (getConfigFlagForArgs[type]) {
                 flag = getConfigFlagForArgs[type](RAW_CONFIG[i]);
+            } else {
             }
             if (args.hasOwnProperty(flag)) {
                 config[RAW_CONFIG[i].name] = args[flag];

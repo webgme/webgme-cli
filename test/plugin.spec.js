@@ -15,7 +15,7 @@ var callWebGME = function(args, callback) {
     if (callback === undefined) {
         callback = function(){};
     }
-    webgmeManager.executeCommand(_.extend({_: ['node', 'cli.js']}, args), callback);
+    webgmeManager.invokeFromCommandLine(args, callback);
 };
 
 // Useful constants
@@ -38,19 +38,17 @@ describe('Plugin tests', function() {
     before(function(done) {
         if (fs.existsSync(PROJECT_DIR)) {
             rm_rf(PROJECT_DIR, function() {
-                callWebGME({_:['node', 'webgme', 'init', PROJECT_DIR]}, done);
+                callWebGME(['node', 'webgme', 'init', PROJECT_DIR], done);
             });
         } else {
-            callWebGME({_:['node', 'webgme', 'init', PROJECT_DIR]}, done);
+            callWebGME(['node', 'webgme', 'init', PROJECT_DIR], done);
         }
     });
 
     describe('new plugin', function() {
         before(function(done) {
             process.chdir(PROJECT_DIR);  // Start in different directory
-            callWebGME({
-                _: ['node', 'webgme', 'new', 'plugin', PLUGIN_NAME]
-            }, done);
+            callWebGME(['node', 'webgme', 'new', 'plugin', PLUGIN_NAME], done);
         });
 
         it('should create the plugin source file', function() {
@@ -77,9 +75,8 @@ describe('Plugin tests', function() {
             var secondPluginName = 'ABrandNewPlugin';
             before(function(done) {
                 process.chdir(PROJECT_DIR);  // Start in different directory
-                callWebGME({
-                    _: ['node', 'webgme', 'new', 'plugin', secondPluginName]
-                }, done);
+                callWebGME(['node', 'webgme', 'new', 'plugin', secondPluginName],
+                    done);
             });
 
             it('should have both dirs in src/plugins', function() {
@@ -97,17 +94,20 @@ describe('Plugin tests', function() {
             var NoTestPlugin = 'NoTestForMe';
             before(function(done) {
                 process.chdir(PROJECT_DIR);  // Start in different directory
-                callWebGME({
-                    _: ['node', 'webgme', 'new', 'plugin', NoTestPlugin],
-                    'test': false
-                }, done);
+                callWebGME(['node', 'webgme', 'new', 'plugin', NoTestPlugin,
+                    '--no-test', '--plugin-name', 'MyNewPlugin'], done);
             });
+
             it('should not create test file', function() {
                 var testPath = path.join(PROJECT_DIR, 'test', 'plugins', NoTestPlugin, NoTestPlugin+'.js');
-                assert(!fs.existsSync(testPath), 'Created meta.js file');
+                assert(!fs.existsSync(testPath), 'Created test file');
             });
 
-
+            it('should have the new name in the source file', function() {
+                var srcPath = path.join(PROJECT_DIR, 'src', 'plugins', NoTestPlugin, NoTestPlugin+'.js'),
+                    content = fs.readFileSync(srcPath, 'utf8');
+                assert(content.indexOf('MyNewPlugin') > -1, 'Does not have the name in the source');
+            });
         });
 
         describe('test file', function() {
@@ -133,7 +133,7 @@ describe('Plugin tests', function() {
                     done();
                 });
 
-                callWebGME({_: ['node', 'webgme', 'ls', 'plugin']});
+                callWebGME(['node', 'webgme', 'ls', 'plugin']);
             });
         });
     });
@@ -142,12 +142,9 @@ describe('Plugin tests', function() {
         var PLUGIN_NAME = 'RemoveMe';
         before(function(done) {
             process.chdir(PROJECT_DIR);
-            callWebGME({
-                _: ['node', 'webgme', 'new', 'plugin', PLUGIN_NAME]
-            }, function() {
-                callWebGME({
-                    _: ['node', 'webgme', 'rm', 'plugin', PLUGIN_NAME]
-                }, done);
+            callWebGME(['node', 'webgme', 'new', 'plugin', PLUGIN_NAME], function() {
+                callWebGME(['node', 'webgme', 'rm', 'plugin', PLUGIN_NAME],
+                    done);
             });
         });
 
@@ -172,7 +169,7 @@ describe('Plugin tests', function() {
         describe('errors', function() {
             it('should not miss plugin or project', function(done) {
                 emitter.once('error', done.bind(this, null));
-                callWebGME({_: ['node', 'webgme', 'add', 'plugin', OTHER_PLUGIN]});
+                callWebGME(['node', 'webgme', 'add', 'plugin', OTHER_PLUGIN]);
             });
 
             // FIXME
@@ -188,9 +185,7 @@ describe('Plugin tests', function() {
                 this.timeout(10000);
                 process.chdir(PROJECT_DIR);
                 emitter.on('error', assert.bind(assert, false));
-                callWebGME({
-                    _: ['node', 'webgme', 'add', 'plugin', OTHER_PLUGIN, otherProject]
-                }, done);
+                callWebGME(['node', 'webgme', 'add', 'plugin', OTHER_PLUGIN, otherProject], done);
             });
 
             it('should add the project to the package.json', function() {
@@ -214,9 +209,7 @@ describe('Plugin tests', function() {
             describe('rm dependency plugin', function() {
                 before(function(done) {
                     process.chdir(PROJECT_DIR);
-                    callWebGME({
-                        _: ['node', 'webgme', 'rm', 'plugin', OTHER_PLUGIN]
-                    }, done);
+                    callWebGME(['node', 'webgme', 'rm', 'plugin', OTHER_PLUGIN], done);
                 });
 
                 it('should remove the path from the webgme config', function() {
@@ -247,9 +240,7 @@ describe('Plugin tests', function() {
                 this.timeout(5000);
                 process.chdir(PROJECT_DIR);
                 emitter.on('error', assert.bind(assert, false));
-                callWebGME({
-                    _: ['node', 'webgme', 'add', 'plugin', OTHER_PLUGIN, otherProject]
-                }, done);
+                callWebGME(['node', 'webgme', 'add', 'plugin', OTHER_PLUGIN, otherProject], done);
             });
 
             it('should add the project to the package.json', function() {
@@ -273,9 +264,7 @@ describe('Plugin tests', function() {
             describe('rm dependency plugin', function() {
                 before(function(done) {
                     process.chdir(PROJECT_DIR);
-                    callWebGME({
-                        _: ['node', 'webgme', 'rm', 'plugin', OTHER_PLUGIN]
-                    }, done);
+                    callWebGME(['node', 'webgme', 'rm', 'plugin', OTHER_PLUGIN], done);
                 });
 
                 it('should remove the path from the webgme config', function() {
