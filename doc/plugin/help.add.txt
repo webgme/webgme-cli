@@ -1,1 +1,0 @@
-usage: webgme add plugin [url] [plugin name]

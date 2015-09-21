@@ -1,0 +1,13 @@
+#!/usr/bin/env node
+
+'use strict';
+var Command = require('commander').Command,
+    program = new Command(),
+    components = ['plugin', 'seed'];
+
+for (var i = components.length; i--;) {
+    program
+        .command(components[i] + ' <name>', 'Remove a '+components[i]+'s')
+}
+
+program.parse(process.argv);

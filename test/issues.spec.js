@@ -1,46 +1,33 @@
 /*globals describe,it,before,beforeEach,after*/
 var path = require('path'),
+    utils = require('./res/utils'),
     assert = require('assert'),
     fs = require('fs'),
     rm_rf = require('rimraf'),
+    Logger = require('../src/Logger'),
+    PluginManager = require('../src/PluginManager'),
     _ = require('lodash');
 
-var WebGMEComponentManager = require('../src/WebGMEComponentManager');
+var logger = new Logger(),
+    manager = new PluginManager(logger),
+    emitter = logger._emitter;
+
 var WebGMEConfig = path.join('config', 'config.webgme.js');
-var webgmeManager = new WebGMEComponentManager();
-var emitter = webgmeManager.logger._emitter;
-
-var callWebGME = function(args, callback) {
-    'use strict';
-    if (callback === undefined) {
-        callback = function(){};
-    }
-    webgmeManager.executeCommand(_.extend({_: ['node', 'cli.js']}, args), callback);
-};
-
 var TMP_DIR = path.join(__dirname, '..', 'test-tmp');
 var PROJECT_DIR = path.join(TMP_DIR, 'IssuesProject');
 describe('Misc Issues', function() {
     'use strict';
 
     before(function(done) {
-        if (fs.existsSync(PROJECT_DIR)) {
-            rm_rf(PROJECT_DIR, function() {
-                callWebGME({_:['node', 'webgme', 'init', PROJECT_DIR]}, done);
-            });
-        } else {
-            callWebGME({_:['node', 'webgme', 'init', PROJECT_DIR]}, done);
-        }
+        utils.getCleanProject(PROJECT_DIR, done);
     });
 
     // issue 1
     describe('issue 1', function() {
         before(function(done) {
             process.chdir(PROJECT_DIR);
-            callWebGME({_:['node', 'webgme', 'new', 'plugin', 'Plugin1']}, function() {
-                callWebGME({_:['node', 'webgme', 'new', 'plugin', 'Plugin2']}, function() {
-                    done();
-                });
+            manager.new({pluginID: 'Plugin1'}, function() {
+                manager.new({pluginID: 'Plugin2'}, done);
             });
         });
 

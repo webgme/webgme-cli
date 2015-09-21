@@ -7,12 +7,12 @@
     "webgme": "./bin/webgme"
   },
   "directories": {
-    "doc": "doc",
     "test": "test"
   },
   "scripts": {
     "test": "mkdir test-tmp; node node_modules/mocha/bin/mocha test/*.js && node node_modules/mocha/bin/mocha test/plugins/{RemoveFrom,AddTo}Plugin.spec.js",
-    "test-cover": "mkdir test-tmp; node node_modules/istanbul/lib/cli.js --hook-run-in-context cover node_modules/mocha/bin/_mocha -- -R spec test/*.js"
+    "test-cover": "mkdir test-tmp; node node_modules/istanbul/lib/cli.js --hook-run-in-context cover node_modules/mocha/bin/_mocha -- -R spec test/*.js",
+    "test-plugin": "node node_modules/mocha/bin/mocha test/plugins/{RemoveFrom,AddTo}Plugin.spec.js"
   },
   "repository": {
     "type": "git",
@@ -26,10 +26,12 @@
   "homepage": "https://github.com/webgme/webgme-setup-tool#readme",
   "dependencies": {
     "change-case": "^2.3.0",
+    "commander": "brollb/commander.js",
     "lodash": "^3.9.3",
     "minimist": "^1.1.1",
     "mkdirp": "^0.5.1",
     "mongo-uri": "^0.1.2",
+    "nop": "^1.0.0",
     "plural": "^0.1.6",
     "q": "^1.4.1",
     "ramda": "^0.15.1",
@@ -38,11 +40,12 @@
     "webgme": "latest"
   },
   "devDependencies": {
-    "q": "^1.4.1",
-    "istanbul": "^0.3.17",
-    "sinon": "^1.15.4",
-    "sinon-chai": "^2.8.0",
     "chai": "^3.0.0",
-    "mocha": "^2.2.5"
+    "fs-extra": "^0.24.0",
+    "istanbul": "^0.3.17",
+    "mocha": "^2.2.5",
+    "q": "^1.4.1",
+    "sinon": "^1.15.4",
+    "sinon-chai": "^2.8.0"
   }
 }

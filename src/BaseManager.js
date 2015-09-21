@@ -6,29 +6,38 @@ var _ = require('lodash'),
     fs = require('fs'),
     R = require('ramda'),
     mkdir = require('mkdirp'),
+    Logger = require('./Logger'),
     PROJECT_CONFIG = 'webgme-setup.json';
 
 var BaseManager = function(logger) {
-    this._logger = logger;
+    this._logger = logger || new Logger();
 };
 
 BaseManager.prototype.init = function (args, callback) {  // Create new project
     var project,
-        name;
+        name,
+        err;
 
-    if (args._.length < 2) {  // Creating in current directory
+    project = path.resolve(args.name || process.cwd());
+    name = path.basename(project).toLowerCase();
+    this._logger.info('Creating new project at '+project);
+
+    if (!args.name) {  // Creating in current directory
         // Check if the project is empty
         var isEmpty = fs.readdirSync(process.cwd()).length === 0;
         if (!isEmpty) {
-            var err = 'Cannot create project in non-empty directory';
+            err = 'Cannot create project in non-empty directory';
+            this._logger.error(err);
+            return callback(err);
+        }
+    } else {  // Check that the target directory doesn't exist
+        if (fs.existsSync(project)) {
+            err = 'Cannot create '+args.name+'. File exists.';
             this._logger.error(err);
             return callback(err);
         }
     }
 
-    project = path.resolve(args._[1] || process.cwd());
-    name = path.basename(project).toLowerCase();
-    this._logger.info('Creating new project at '+project);
     mkdir(project, function(err) {
         if (err) {
             this._logger.error('Error: '+err);

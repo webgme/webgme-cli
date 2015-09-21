@@ -1,0 +1,15 @@
+#!/usr/bin/env node
+
+'use strict';
+var Command = require('commander').Command,
+    program = new Command(),
+    components = ['plugin', 'seed'],
+    allActions = ['new', 'add', 'remove'];
+
+program
+    .command('plugin <name>', 'Create a new plugin');
+
+program
+    .command('seed <project>', 'Create a seed from an existing project')
+    .alias('s')
+    .parse(process.argv);

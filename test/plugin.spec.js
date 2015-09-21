@@ -1,29 +1,25 @@
 /*globals it,describe,before,after*/
 var path = require('path'),
+    utils = require('./res/utils'),
     assert = require('assert'),
-    fs = require('fs'),
+    nop = require('nop'),
+    fse = require('fs-extra'),
+    Logger = require('../src/Logger'),
+    PluginManager = require(__dirname+'/../src/PluginManager'),
     rm_rf = require('rimraf'),
     _ = require('lodash');
 
-var WebGMEComponentManager = require('../src/WebGMEComponentManager');
-var WebGMEConfig = path.join('config', 'config.webgme.js');
-var webgmeManager = new WebGMEComponentManager();
-var emitter = webgmeManager.logger._emitter;
-
-var callWebGME = function(args, callback) {
-    'use strict';
-    if (callback === undefined) {
-        callback = function(){};
-    }
-    webgmeManager.invokeFromCommandLine(args, callback);
-};
+var logger = new Logger(),
+    manager = new PluginManager(logger),
+    emitter = logger._emitter;
 
 // Useful constants
 var TMP_DIR = path.join(__dirname, '..', 'test-tmp'),
+    WebGMEConfig = path.join('config', 'config.webgme.js'),
     PROJECT_DIR = path.join(TMP_DIR, 'ExamplePluginProject'),
     CONFIG_NAME = 'webgme-setup.json',
     CONFIG_PATH = path.join(PROJECT_DIR, CONFIG_NAME),
-    OTHER_PROJECT = __dirname+'/res/OtherProject',
+    OTHER_PROJECT = path.join(__dirname, 'res', 'OtherProject'),
     OTHER_PLUGIN = 'OtherPlugin',
     otherProject;
 
@@ -36,27 +32,21 @@ describe('Plugin tests', function() {
         PLUGIN_TEST = path.join(PROJECT_DIR, 'test', 'plugins', PLUGIN_NAME, PLUGIN_NAME+'.spec.js');
 
     before(function(done) {
-        if (fs.existsSync(PROJECT_DIR)) {
-            rm_rf(PROJECT_DIR, function() {
-                callWebGME(['node', 'webgme', 'init', PROJECT_DIR], done);
-            });
-        } else {
-            callWebGME(['node', 'webgme', 'init', PROJECT_DIR], done);
-        }
+        utils.getCleanProject(PROJECT_DIR, done);
     });
 
     describe('new plugin', function() {
         before(function(done) {
             process.chdir(PROJECT_DIR);  // Start in different directory
-            callWebGME(['node', 'webgme', 'new', 'plugin', PLUGIN_NAME], done);
+            manager.new({pluginID: PLUGIN_NAME}, done);
         });
 
         it('should create the plugin source file', function() {
-            assert(fs.existsSync(PLUGIN_SRC));
+            assert(fse.existsSync(PLUGIN_SRC));
         });
 
         it('should create the plugin\'s test file', function() {
-            assert(fs.existsSync(PLUGIN_TEST));
+            assert(fse.existsSync(PLUGIN_TEST));
         });
 
         it('should add the plugin (relative) path to the config file', function() {
@@ -75,8 +65,7 @@ describe('Plugin tests', function() {
             var secondPluginName = 'ABrandNewPlugin';
             before(function(done) {
                 process.chdir(PROJECT_DIR);  // Start in different directory
-                callWebGME(['node', 'webgme', 'new', 'plugin', secondPluginName],
-                    done);
+                manager.new({pluginID: secondPluginName}, done);
             });
 
             it('should have both dirs in src/plugins', function() {
@@ -85,7 +74,7 @@ describe('Plugin tests', function() {
                         return path.join(PROJECT_DIR, 'src', 'plugins', name);
                     })
                     .forEach(function(pluginPath) {
-                        assert(fs.existsSync(pluginPath));
+                        assert(fse.existsSync(pluginPath));
                     });
             });
         });
@@ -94,18 +83,19 @@ describe('Plugin tests', function() {
             var NoTestPlugin = 'NoTestForMe';
             before(function(done) {
                 process.chdir(PROJECT_DIR);  // Start in different directory
-                callWebGME(['node', 'webgme', 'new', 'plugin', NoTestPlugin,
-                    '--no-test', '--plugin-name', 'MyNewPlugin'], done);
+                manager.new({pluginID: NoTestPlugin,
+                             test: false,
+                             pluginName: 'MyNewPlugin'}, done);
             });
 
             it('should not create test file', function() {
                 var testPath = path.join(PROJECT_DIR, 'test', 'plugins', NoTestPlugin, NoTestPlugin+'.js');
-                assert(!fs.existsSync(testPath), 'Created test file');
+                assert(!fse.existsSync(testPath), 'Created test file');
             });
 
             it('should have the new name in the source file', function() {
                 var srcPath = path.join(PROJECT_DIR, 'src', 'plugins', NoTestPlugin, NoTestPlugin+'.js'),
-                    content = fs.readFileSync(srcPath, 'utf8');
+                    content = fse.readFileSync(srcPath, 'utf8');
                 assert(content.indexOf('MyNewPlugin') > -1, 'Does not have the name in the source');
             });
         });
@@ -115,11 +105,11 @@ describe('Plugin tests', function() {
                 PLUGIN_NAME, PLUGIN_NAME+'.spec.js');
 
             it('should create test file in test/plugin', function() {
-                assert(fs.existsSync(PLUGIN_TEST));
+                assert(fse.existsSync(PLUGIN_TEST));
             });
 
             it('should have correct path for test fixtures', function() {
-                var testContent = fs.readFileSync(PLUGIN_TEST, 'utf8'),
+                var testContent = fse.readFileSync(PLUGIN_TEST, 'utf8'),
                     fixtureRegex = /require\('(.*)'\)/,
                     result = fixtureRegex.exec(testContent);
                 assert(result[1] === '../../globals');
@@ -133,7 +123,17 @@ describe('Plugin tests', function() {
                     done();
                 });
 
-                callWebGME(['node', 'webgme', 'ls', 'plugin']);
+                manager.ls({}, nop);
+            });
+
+            it('should not list plugins in wrong directory ', function(done) {
+                process.chdir(__dirname);
+                manager.ls({}, function(err) {
+                    console.log('err:', err);
+                    assert(err);
+                    process.chdir(PROJECT_DIR);
+                    done();
+                });
             });
         });
     });
@@ -142,20 +142,17 @@ describe('Plugin tests', function() {
         var PLUGIN_NAME = 'RemoveMe';
         before(function(done) {
             process.chdir(PROJECT_DIR);
-            callWebGME(['node', 'webgme', 'new', 'plugin', PLUGIN_NAME], function() {
-                callWebGME(['node', 'webgme', 'rm', 'plugin', PLUGIN_NAME],
-                    done);
-            });
+            manager.rm({name: 'MyPlugin'}, done);
         });
 
         it('should remove plugin src directory', function() {
             var pluginPath = path.join(PROJECT_DIR, 'src', 'plugins', PLUGIN_NAME);
-            assert.equal(fs.existsSync(pluginPath), false);
+            assert.equal(fse.existsSync(pluginPath), false);
         });
 
         it('should remove plugin test directory', function() {
             var pluginPath = path.join(PROJECT_DIR, 'test', 'plugins', PLUGIN_NAME);
-            assert.equal(fs.existsSync(pluginPath), false);
+            assert.equal(fse.existsSync(pluginPath), false);
         });
 
         it('should remove plugin entry from '+CONFIG_NAME, function() {
@@ -169,7 +166,7 @@ describe('Plugin tests', function() {
         describe('errors', function() {
             it('should not miss plugin or project', function(done) {
                 emitter.once('error', done.bind(this, null));
-                callWebGME(['node', 'webgme', 'add', 'plugin', OTHER_PLUGIN]);
+                manager.add({name: OTHER_PLUGIN}, nop);
             });
 
             // FIXME
@@ -180,22 +177,23 @@ describe('Plugin tests', function() {
         });
 
         describe('projects NOT created with webgme-setup-tool', function() {
-            otherProject = __dirname+'/res/NonCliProj';
+            otherProject = path.join(__dirname+'res', 'NonCliProj');
             before(function(done) {
                 this.timeout(10000);
                 process.chdir(PROJECT_DIR);
                 emitter.on('error', assert.bind(assert, false));
-                callWebGME(['node', 'webgme', 'add', 'plugin', OTHER_PLUGIN, otherProject], done);
+                manager.add({name: OTHER_PLUGIN, 
+                             project: otherProject}, done);
             });
 
             it('should add the project to the package.json', function() {
                 var pkg = require(path.join(PROJECT_DIR, 'package.json')),
-                depName = otherProject.split('/').pop().toLowerCase();
+                depName = otherProject.split(path.sep).pop().toLowerCase();
                 assert.notEqual(pkg.dependencies[depName], undefined);
             });
 
             it('should add the project to the '+CONFIG_NAME, function() {
-                var configText = fs.readFileSync(CONFIG_PATH),
+                var configText = fse.readFileSync(CONFIG_PATH),
                     config = JSON.parse(configText);
                 assert.notEqual(config.dependencies.plugins[OTHER_PLUGIN], undefined);
             });
@@ -203,13 +201,13 @@ describe('Plugin tests', function() {
             it('should add the path to the webgme config', function() {
                 var config = require(path.join(PROJECT_DIR, WebGMEConfig)),
                 paths = config.plugin.basePaths.join(';');
-                assert.notEqual(paths.indexOf(otherProject.split('/')[1]), -1);
+                assert.notEqual(paths.indexOf(otherProject.split(path.sep)[1]), -1);
             });
 
             describe('rm dependency plugin', function() {
                 before(function(done) {
                     process.chdir(PROJECT_DIR);
-                    callWebGME(['node', 'webgme', 'rm', 'plugin', OTHER_PLUGIN], done);
+                    manager.rm({name: OTHER_PLUGIN}, done);
                 });
 
                 it('should remove the path from the webgme config', function() {
@@ -219,7 +217,7 @@ describe('Plugin tests', function() {
                 });
 
                 it('should remove plugin entry from '+CONFIG_NAME, function() {
-                    var configText = fs.readFileSync(CONFIG_PATH),
+                    var configText = fse.readFileSync(CONFIG_PATH),
                         config = JSON.parse(configText);
                     assert.equal(config.dependencies.plugins[OTHER_PLUGIN], undefined);
                 });
@@ -235,22 +233,23 @@ describe('Plugin tests', function() {
         });
 
         describe('projects created with webgme-setup-tool', function() {
-            otherProject = __dirname+'/res/OtherProject';
+            otherProject = path.join(__dirname, 'res', 'OtherProject');
             before(function(done) {
                 this.timeout(5000);
                 process.chdir(PROJECT_DIR);
                 emitter.on('error', assert.bind(assert, false));
-                callWebGME(['node', 'webgme', 'add', 'plugin', OTHER_PLUGIN, otherProject], done);
+                manager.add({name: OTHER_PLUGIN, 
+                             project: otherProject}, done);
             });
 
             it('should add the project to the package.json', function() {
                 var pkg = require(path.join(PROJECT_DIR, 'package.json')),
-                depName = otherProject.split('/').pop().toLowerCase();
+                depName = otherProject.split(path.sep).pop().toLowerCase();
                 assert.notEqual(pkg.dependencies[depName], undefined);
             });
 
             it('should add the project to the '+CONFIG_NAME, function() {
-                var configText = fs.readFileSync(CONFIG_PATH),
+                var configText = fse.readFileSync(CONFIG_PATH),
                     config = JSON.parse(configText);
                 assert.notEqual(config.dependencies.plugins[OTHER_PLUGIN], undefined);
             });
@@ -258,13 +257,13 @@ describe('Plugin tests', function() {
             it('should add the path to the webgme config', function() {
                 var config = require(path.join(PROJECT_DIR, WebGMEConfig)),
                 paths = config.plugin.basePaths.join(';');
-                assert.notEqual(paths.indexOf(otherProject.split('/')[1]), -1);
+                assert.notEqual(paths.indexOf(otherProject.split(path.sep)[1]), -1);
             });
 
             describe('rm dependency plugin', function() {
                 before(function(done) {
                     process.chdir(PROJECT_DIR);
-                    callWebGME(['node', 'webgme', 'rm', 'plugin', OTHER_PLUGIN], done);
+                    manager.rm({name: OTHER_PLUGIN}, done);
                 });
 
                 it('should remove the path from the webgme config', function() {
@@ -274,7 +273,7 @@ describe('Plugin tests', function() {
                 });
 
                 it('should remove plugin entry from '+CONFIG_NAME, function() {
-                    var configText = fs.readFileSync(CONFIG_PATH),
+                    var configText = fse.readFileSync(CONFIG_PATH),
                         config = JSON.parse(configText);
                     assert.equal(config.dependencies.plugins[OTHER_PLUGIN], undefined);
                 });
@@ -291,7 +290,7 @@ describe('Plugin tests', function() {
     });
 
     after(function(done) {
-        if (fs.existsSync(PROJECT_DIR)) {
+        if (fse.existsSync(PROJECT_DIR)) {
             rm_rf(PROJECT_DIR, done);
         } else {
             done();

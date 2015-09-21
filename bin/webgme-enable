@@ -1,0 +1,9 @@
+#!/usr/bin/env node
+
+'use strict';
+var Command = require('commander').Command,
+    program = new Command();
+
+program
+    .command('plugin <name> <project>', 'Enable an existing plugin')
+    .parse(process.argv);

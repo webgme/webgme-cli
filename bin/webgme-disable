@@ -1,0 +1,9 @@
+#!/usr/bin/env node
+
+'use strict';
+var Command = require('commander').Command,
+    program = new Command();
+
+program
+    .command('plugin <name> <project>', 'Disable an existing plugin')
+    .parse(process.argv);

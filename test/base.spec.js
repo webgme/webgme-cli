@@ -1,147 +1,28 @@
 /*globals describe,it,before,after*/
-var WebGMEComponentManager = require('../src/WebGMEComponentManager'),
+var BaseManager = require('../src/BaseManager'),
+    Logger = require('../src/Logger'),
     fs = require('fs'),
     path = require('path'),
     assert = require('assert'),
     _ = require('lodash'),
-    rm_rf = require('rimraf');
+    rm_rf = require('rimraf'),
+    nop = function(){};
 
-var emitter;
+var logger = new Logger(),
+    emitter = logger._emitter,
+    manager = new BaseManager(logger);
+
 var WebGMEConfig = 'config.webgme.js',
     SETUP_CONFIG = 'webgme-setup.json';
-var webgmeManager = new WebGMEComponentManager();
-
-var callWebGME = function(args, callback) {
-    'use strict';
-    webgmeManager.executeCommand(_.extend({_: ['node', 'webgme']}, args), callback);
-};
 
 var PROJECT_DIR,
     TMP_DIR = path.join(__dirname, '..', 'test-tmp');
 
-describe('WebGME-setup-tool', function() {
+describe('BaseManager', function() {
     'use strict';
 
     before(function() {
         process.chdir(__dirname);
-        emitter = webgmeManager.logger._emitter;
-        // sinon.spy(emitter, 'on');
-    });
-
-    describe('usage message', function() {
-        var usageMsg;
-        before(function(done) {
-            fs.readFile(__dirname+'/../doc/usage.txt', 'utf-8', function(e, txt) {
-                usageMsg = txt;
-                done();
-            });
-        });
-
-        it('should display the usage message if given invalid args', function(done) {
-            emitter.once('write', function(msg) {
-                assert.equal(msg, usageMsg);
-                done();
-            });
-            callWebGME({_: ['node', 'webgme', 'INVALID', 'THING']});
-        });
-    });
-
-    describe('basic flags', function() {
-
-        describe('help', function() {
-            var helpMsg, newHelpSnippet;
-            before(function(done) {
-                fs.readFile(__dirname+'/../doc/help.txt', 'utf-8', function(e, txt) {
-                    helpMsg = txt.split('\n')[0];
-                    // Load the help msg for new plugins
-                    fs.readFile(__dirname+'/../doc/plugin/help.new.txt', 'utf-8', function(e, txt) {
-                        newHelpSnippet = txt.split('\n')[0];
-                        done();
-                    });
-                });
-            });
-
-            it('should log to console when given --help', function(done) {
-                emitter.once('write', function(msg) {
-                    done();
-                });
-                callWebGME({help: true});
-            });
-
-            it('should display help message when given --help', function(done) {
-                emitter.once('write', function(msg) {
-                    assert.notEqual(msg.indexOf(helpMsg), -1);
-                    done();
-                });
-                callWebGME({help: true});
-            });
-
-            it('should display help message when given -h', function(done) {
-                emitter.once('write', function(msg) {
-                    assert.notEqual(msg.indexOf(helpMsg), -1);
-                    done();
-                });
-                callWebGME({h: true});
-            });
-
-            describe('custom help messages', function() {
-                var getMessage = function(type, action, item) {
-                    item += item.length ? '/' : '';
-                    action = action.length ? '.'+action : '';
-                    return fs.readFileSync(__dirname+'/../doc/'+item+type+action+'.txt', 'utf-8');
-                };
-
-                it('should display help message for init', function(done) {
-                    emitter.once('write', function(msg) {
-                        // Since the new help message is a template, I am just checking the usage line
-                        var helpSnippet = getMessage('help', 'init', '').split('\n')[0];
-                        assert.notEqual(msg.indexOf(helpSnippet), -1);
-                        done();
-                    });
-                    callWebGME({_: ['node', 'webgme', 'init'], help: true});
-                });
-
-                it('should display help message for "new plugin"', function(done) {
-                    emitter.once('write', function(msg) {
-                        // Since the new help message is a template, I am just checking the usage line
-                        newHelpSnippet = getMessage('help', 'new', 'plugin').split('\n')[0];
-                        assert.notEqual(msg.indexOf(newHelpSnippet), -1);
-                        done();
-                    });
-                    callWebGME({_: ['node', 'webgme', 'new', 'plugin'], help: true});
-                });
-            });
-
-            it('should display options for "new plugin --help"', function(done) {
-                emitter.once('write', function(msg) {
-                    // Since the new help message is a template, I am just checking the usage line
-                    assert.notEqual(msg.indexOf("plugin-name"), -1);
-                    done();
-                });
-                callWebGME({_: ['node', 'webgme', 'new', 'plugin'], help: true});
-            });
-
-        });
-
-        describe('version', function() {
-            var version;
-            before(function() {
-                version = require('../package.json').version;
-            });
-
-            it('should display correct version', function(done) {
-                emitter.once('write', function(msg) {
-                    assert.equal('v'+version, msg);
-                    done();
-                });
-                callWebGME({version: true});
-            });
-        });
-
-    });
-
-    describe('verbose', function() {
-        // TODO
     });
 
     // Creating a new item from boilerplate
@@ -168,7 +49,7 @@ describe('WebGME-setup-tool', function() {
 
             before(function(done) {
                 process.chdir(TMP_DIR);
-                callWebGME({_: ['node', 'webgme', 'init', PROJECT_DIR]}, function() {
+                manager.init({name: PROJECT_DIR}, function() {
                     process.chdir(PROJECT_DIR);
                     done();
                 });
@@ -192,7 +73,7 @@ describe('WebGME-setup-tool', function() {
                     .forEach(assert);
             });
 
-            it('should create a .webgme file in project root', function() {
+            it('should create a webgme-setup.json file in project root', function() {
                 assert(fs.existsSync(path.join(PROJECT_DIR, 'webgme-setup.json')));
             });
 
@@ -225,7 +106,7 @@ describe('WebGME-setup-tool', function() {
                 emitter.once('error', function(msg) {
                     done();
                 });
-                callWebGME({_: ['node', 'webgme', 'init']});
+                manager.init({}, nop);
             });
 
             // issue 15
@@ -254,6 +135,12 @@ describe('WebGME-setup-tool', function() {
                     assert(fs.existsSync(config));
                 });
             });
+
+            it('should fail f the dir exists', function() {
+                manager.init({name: PROJECT_DIR}, function(err) {
+                    assert(!!err);
+                });
+            });
         });
 
         describe('init w/o args', function() {
@@ -262,7 +149,7 @@ describe('WebGME-setup-tool', function() {
                 PROJECT_DIR = path.join(TMP_DIR, 'InitNoArgs');
                 fs.mkdirSync(PROJECT_DIR);
                 process.chdir(PROJECT_DIR);
-                callWebGME({_: ['node', 'webgme', 'init']}, function() {
+                manager.init({}, function() {
                     var configPath = path.join(PROJECT_DIR, SETUP_CONFIG);
                     assert(fs.existsSync(configPath));
                     done();
@@ -274,7 +161,7 @@ describe('WebGME-setup-tool', function() {
                 fs.mkdirSync(PROJECT_DIR);
                 process.chdir(PROJECT_DIR);
                 fs.writeFileSync(path.join(PROJECT_DIR, 'temp'), 'stuff');
-                callWebGME({_: ['node', 'webgme', 'init']}, function(err) {
+                manager.init({}, function(err) {
                     var configPath = path.join(PROJECT_DIR, SETUP_CONFIG);
                     assert(!fs.existsSync(configPath));
                     assert(!!err);

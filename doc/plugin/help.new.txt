@@ -1,3 +1,0 @@
-usage: webgme new plugin [plugin name] [options]
-options:    <% _.forEach(options, function(option) { %>
-    <%= option.name.length > 12 ? option.name : option.name+"\t"%>	<%= option.desc%><% }); %>
