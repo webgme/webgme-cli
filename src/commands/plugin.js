@@ -117,7 +117,9 @@ define(['fs',
 
         // Get the src, test paths
         var paths = R.mapObjIndexed(function(empty, type) {
-            return path.join(type, 'plugins', config.pluginID);
+            // We will store paths using '/' as a path sep as this is expected
+			// in the webgme config
+			return type + '/plugins/' + config.pluginID;
         }, {src: null, test: null});
 
         // Store the plugin info in the webgme-setup.json file

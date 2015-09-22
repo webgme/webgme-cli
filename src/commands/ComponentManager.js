@@ -65,7 +65,8 @@ define(['rimraf',
         // Remove any actual files
         if (type === 'components') {
             // Remove the name directories from src, test
-            var paths = Object.keys(config[type][this._group][name]),
+            var components = config[type][this._group],
+				paths = Object.keys(components[name]),
                 remaining = paths.length,
                 finished = function() {
                     if (--remaining === 0) {
@@ -73,11 +74,7 @@ define(['rimraf',
                     }
                 };
             paths.forEach(function(pathType) {
-                var pathItems = config[type][this._group][name][pathType].split(path.sep),
-                    componentPath = this._getSaveLocation;
-                // Remove p recursively
-                pathItems.pop();
-                componentPath = pathItems.join(path.sep);
+                var componentPath = components[name][pathType].replace(/\//g, path.sep);
                 this._logger.info('Removing '+componentPath);
                 rm_rf(componentPath, finished);
             }, this);

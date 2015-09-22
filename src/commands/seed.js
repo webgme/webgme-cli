@@ -68,6 +68,7 @@ define(['lodash',
                 this._logger.write('Created '+this._name+' at '+filePath);
                 // Save the relative file dir
                 fileDir = path.relative(utils.getRootPath(), fileDir);
+				fileDir = fileDir.split(path.sep).join('/');
                 this._register(name, {src: fileDir});
                 //this._register(name, {src: path.relative(__dirname, fileDir)});
                 callback();
