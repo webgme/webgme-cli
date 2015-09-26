@@ -1,0 +1,15 @@
+#!/usr/bin/env node
+
+'use strict';
+var Command = require('commander').Command,
+    SeedManager = require('../src/SeedManager'),
+    program = new Command(),
+    nop = require('nop');
+
+program
+    .arguments('<name>')
+    .action(function(name) {
+        program.name = name;
+        manager.rm(program, nop);
+    })
+    .parse(process.argv);

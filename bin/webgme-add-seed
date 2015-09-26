@@ -1,0 +1,17 @@
+#!/usr/bin/env node
+/*jshint node: true*/
+'use strict';
+var Command = require('commander').Command,
+    program = new Command(),
+    SeedManager = require('../src/SeedManager'),
+    nop = require('nop');
+
+var manager = new SeedManager();
+
+program.arguments('<name> <project>')
+    .action(function(name, project) {
+        program.name = name;
+        program.project = project;
+        manager.add(program, nop);
+    })
+    .parse(process.argv);

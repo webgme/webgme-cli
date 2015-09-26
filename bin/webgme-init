@@ -1,0 +1,16 @@
+#!/usr/bin/env node
+
+'use strict';
+var Command = require('commander').Command,
+    BaseManager = require('../src/BaseManager'),
+    manager = new BaseManager(),
+    program = new Command(),
+    nop = function() {};
+
+program
+    .arguments('<name>')
+    .action(function(name) {
+        program.name = name;
+        manager.init(program, nop);
+    })
+    .parse(process.argv);

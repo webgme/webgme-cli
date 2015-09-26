@@ -1,0 +1,26 @@
+{
+  "components": {
+    "plugins": {
+      "MyPlugin": {
+        "src": "src/plugins/MyPlugin",
+        "test": "test/plugins/MyPlugin"
+      }
+    },
+    "seeds": {
+      "test": {
+        "src": "src/seeds/test"
+      }
+    },
+    "addOns": {
+      "MyAddon": {
+        "srcDir": "src/addOns/MyAddon",
+        "src": "src/addOns/MyAddon/MyAddon.js"
+      }
+    }
+  },
+  "dependencies": {
+    "plugins": {},
+    "seeds": {},
+    "addOns": {}
+  }
+}

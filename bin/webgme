@@ -1,6 +1,39 @@
 #!/usr/bin/env node
 
-var WebGMEComponentManager = require('../src/WebGMEComponentManager'),
-    webgmeManager = new WebGMEComponentManager();
+var Command = require('commander').Command,
+    program = new Command(),
+    allActions = ['new', 'add', 'remove', 'ls'];
 
-webgmeManager.invokeFromCommandLine(process.argv);
+/* * * * * * * * * * Components * * * * * * * * * */
+// TODO: Verify that we are in a project
+program
+    .command('add <component>', 'Add a WebGME component from another project')
+    .alias('a');
+
+program
+    .command('new <component>', 'Create new WebGME component')
+    .alias('n');
+
+program
+    .command('ls <component>', 'List all WebGME components')
+    .alias('l');
+
+program
+    .command('rm <component>', 'Remove a WebGME component')
+    .alias('r');
+
+program
+    .command('enable <component>', 'Enable a WebGME component')
+    .alias('e');
+
+program
+    .command('disable <component>', 'Disable a WebGME component')
+    .alias('d');
+
+program
+    .command('init [name]', 'Initialize new WebGME app')
+    .alias('i')
+    .parse(process.argv);
+
+// TODO: Create custom help message from all actions and components
+// Use the description from the action (in the component file)
