@@ -3,6 +3,9 @@
  * All functions not prepended with an '_' are considered actions callable
  * from the commandline. The name of the file is considered the name of the
  * item.
+ *
+ * This convention is most important bc of the addition of a preprocessing
+ * function to all these functions in the ComponentManager constructor.
  */
 
 'use strict';

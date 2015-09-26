@@ -106,11 +106,20 @@ var updateWebGMEConfig = function() {
  * Get the paths from a config (sub) object such as "components" or 
  * "dependencies"
  *
+ * Input example: {
+ *   plugins: {
+ *      ...
+ *   },
+ *   seeds: {
+ *      ...
+ *   }
+ * }
+ *
  * @param {Object} config
  * @return {String[]}
  */
 var getPathsFromConfigGroup = function(config) {
-    return R.mapObj(function(componentType) {
+    return R.mapObj(function(componentType) {  // ie, plugin/seed/etc OBJECT
         return R.values(componentType).map(function(component) {
             return component.src || component.path;
         });
@@ -145,6 +154,27 @@ var getWebGMEConfigContent = function() {
         paths[type] = arrays.reduce(R.concat)  // Merge all paths
             .map(R.replace.bind(R, '\\', '/'));  // Convert to use '/' for path separator
     });
+
+    // Set the requirejsPaths to be an array of all dependency paths
+    var componentTypes = Object.keys(config.dependencies),
+        components,
+        names;
+
+    paths.requirejsPaths = [];
+    for (var i = componentTypes.length; i--;) {
+        components = config.dependencies[componentTypes[i]];
+        names = Object.keys(components);
+        for (var j = names.length; j--;) {
+            paths.requirejsPaths.push({
+                name: names[j],
+                path: components[names[j]].src || components[names[j]].path
+            });
+        }
+    }
+
+    if (!paths.requirejsPaths.length) {
+        paths.requirejsPaths = null;
+    }
 
     return paths;
 };
@@ -198,6 +228,11 @@ var getPackageName = function(npmPackage) {
     // FIXME: It currently assumes everything is a github url. Should support
     // hashes, packages, etc
     // Ideally, we could use an npm feature to do this
+    if (npmPackage[0] === '.') {  // File path
+        return npmPackage.split(path.sep).pop();
+    }
+
+    // Github url: project/repo
     return npmPackage.split('/').pop();
 };
 

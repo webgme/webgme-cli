@@ -5,6 +5,7 @@
 <% if (typeof seeds === "undefined") seeds = [];
 if (typeof addOns === "undefined") addOns = [];
 if (typeof plugins === "undefined") plugins = [];
+if (typeof requirejsPaths === "undefined") requirejsPaths = null;
 
 var dirname = function(path) {
   var pathItems = path.split('/');
@@ -14,21 +15,26 @@ var dirname = function(path) {
 
 var printConfigPaths = function(name, paths) {
   paths = _.uniq(paths);
-  return paths.map(function(path) {
+  var text =  paths.map(function(path) {
     return 'config.'+name+'.basePaths.push(\''+path+'\');'
   }).join('\n');
+  return text.length ? text+'\n' : text;
 }; %>
-
 var config = require('webgme/config/config.default'),
     validateConfig = require('webgme/config/validator');
 
 <% // FIXME: This needs to be restructured... %>
 // The paths can be loaded from the webgme-setup.json
-<%= printConfigPaths('plugin', plugins.map(dirname)) %>
-<%= printConfigPaths('addOn', addOns.map(dirname)) %>
-<%= printConfigPaths('seedProjects', seeds) %>
-
+<%= printConfigPaths('plugin', plugins.map(dirname)) +
+    printConfigPaths('addOn', addOns.map(dirname)) +
+    printConfigPaths('seedProjects', seeds) %>
 <% if (addOns.length > 0) { %>config.addOn.enable = true<%}%>
+// Add requirejs paths
+<% if (requirejsPaths) { %>config.requirejsPaths = {
+<%= requirejsPaths.map(function(obj) { 
+        return '  \''+obj.name+'\': __dirname+\'/../'+obj.path+'\'';
+    }).join(',\n') %>
+};<% } %>
 
 validateConfig(config);
 module.exports = config;
