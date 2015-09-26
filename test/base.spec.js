@@ -102,13 +102,6 @@ describe('BaseManager', function() {
                 assert(fs.existsSync(app));
             });
 
-            it('should throw error if no project name', function(done) {
-                emitter.once('error', function(msg) {
-                    done();
-                });
-                manager.init({}, nop);
-            });
-
             // issue 15
             it('should pretty printed webgme-setup.json', function() {
                 var config = path.join(PROJECT_DIR, 'webgme-setup.json'),

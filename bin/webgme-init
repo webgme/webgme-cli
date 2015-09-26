@@ -8,9 +8,13 @@ var Command = require('commander').Command,
     nop = function() {};
 
 program
-    .arguments('<name>')
+    .arguments('[name]')
     .action(function(name) {
         program.name = name;
         manager.init(program, nop);
     })
     .parse(process.argv);
+
+if (program.args.length === 0) {  // action will not be called
+    manager.init({}, nop);
+}
