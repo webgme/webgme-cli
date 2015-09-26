@@ -32,7 +32,7 @@ var config = require('webgme/config/config.default'),
 // Add requirejs paths
 <% if (requirejsPaths) { %>config.requirejsPaths = {
 <%= requirejsPaths.map(function(obj) { 
-        return '  \''+obj.name+'\': __dirname+\'/../'+obj.path+'\'';
+        return '  \''+obj.name+'\': \''+obj.path+'\'';
     }).join(',\n') %>
 };<% } %>
 

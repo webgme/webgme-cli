@@ -182,13 +182,25 @@ describe('Plugin tests', function() {
         });
 
         describe('projects NOT created with webgme-setup-tool', function() {
+            var previousDir, oldConfigPath;
             otherProject = path.join(__dirname+'res', 'NonCliProj');
             before(function(done) {
                 this.timeout(10000);
-                process.chdir(PROJECT_DIR);
-                emitter.on('error', assert.bind(assert, false));
-                manager.add({name: OTHER_PLUGIN, 
-                             project: otherProject}, done);
+                oldConfigPath = CONFIG_PATH;
+                previousDir = PROJECT_DIR;
+                PROJECT_DIR = path.join(PROJECT_DIR, 'NewProject');
+                CONFIG_PATH = path.join(PROJECT_DIR, CONFIG_NAME),
+                utils.getCleanProject(PROJECT_DIR, function() {
+                    process.chdir(PROJECT_DIR);
+                    emitter.on('error', assert.bind(assert, false));
+                    manager.add({name: OTHER_PLUGIN, 
+                                 project: otherProject}, done);
+                });
+            });
+
+            after(function() {
+                PROJECT_DIR = previousDir;
+                CONFIG_PATH = oldConfigPath;
             });
 
             it('should add the project to the package.json', function() {
@@ -207,6 +219,13 @@ describe('Plugin tests', function() {
                 var config = require(path.join(PROJECT_DIR, WebGMEConfig)),
                 paths = config.plugin.basePaths.join(';');
                 assert.notEqual(paths.indexOf(otherProject.split(path.sep)[1]), -1);
+            });
+
+            it('should add the relative path to the requirejsPaths webgme config', function() {
+                var config = require(path.join(PROJECT_DIR, WebGMEConfig));
+
+                assert.notEqual(config.requirejsPaths[OTHER_PLUGIN], undefined);
+                assert.notEqual(config.requirejsPaths[OTHER_PLUGIN][0], '/');
             });
 
             describe('rm dependency plugin', function() {
