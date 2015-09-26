@@ -18,7 +18,7 @@ program.arguments('<pluginID>')
     });
 
 // Get the config
-var options = PluginManager.prototype._getNewOptions()
+var options = PluginManager.prototype._getOptions()
     .filter(function(opt) {  // Remove the id
         return opt.name !== '--plugin-id';
     }),

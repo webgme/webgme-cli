@@ -38,7 +38,7 @@ describe('Plugin tests', function() {
     describe('new plugin', function() {
         before(function(done) {
             process.chdir(PROJECT_DIR);  // Start in different directory
-            manager.new({pluginID: PLUGIN_NAME}, done);
+            manager.new({pluginID: PLUGIN_NAME, meta: true}, done);
         });
 
         it('should create the plugin source file', function() {
@@ -47,6 +47,11 @@ describe('Plugin tests', function() {
 
         it('should create the plugin\'s test file', function() {
             assert(fse.existsSync(PLUGIN_TEST));
+        });
+
+        it('should not create the plugin\'s meta file', function() {
+            var metaPath = path.join(PluginBasePath, PLUGIN_NAME, 'meta.js');
+            assert(!fse.existsSync(metaPath));
         });
 
         it('should add the plugin (relative) path to the config file', function() {

@@ -2,58 +2,35 @@
 'use strict';
 
 var TEST_FIXTURE_DIR = '../../globals',
-    BlobClient = require('./blobClient'),
     _ = require('lodash'),
+    R = require('ramda'),
     path = require('path'),
     utils = require('../utils'),
-    R = require('ramda'),
-    requirejs = require('requirejs');
-
-utils.loadPaths(requirejs);
-var WebGMEPluginGenerator = requirejs('coreplugins/PluginGenerator/PluginGenerator'),
-    PluginBase = requirejs('plugin/PluginBase');
+    PluginShim = require('./PluginShim'),
+    requirejs = require('requirejs'),
+    WebGMEPluginGenerator = requirejs('coreplugins/PluginGenerator/PluginGenerator');
 
 var PluginGenerator = function(logger, config) {
     // Load the PluginGenerator from the core plugins
     // Use it to create the boilerplate for the new plugin
     WebGMEPluginGenerator.call(this);
-    var blobClient = new BlobClient();
-    this.initialize(logger, blobClient);
-    this._currentConfig = config;
-    this.logger = logger;
-    this.configure({});
-    this.META = {};
+    PluginShim.call(this, WebGMEPluginGenerator, logger, config);
 };
 
-_.extend(PluginGenerator.prototype, 
-    PluginBase.prototype,
-    WebGMEPluginGenerator.prototype);
+_.extend(PluginGenerator.prototype, PluginShim.prototype, WebGMEPluginGenerator.prototype);
 
-PluginGenerator.prototype.initialize = function(logger, blob) {
-    this.blobClient = blob;
-    this.logger = logger;
-};
-
-// Helper function for the PluginGenerator
+// Helper function
 var fixFilePath = function(file) {
     file.name = file.name.replace('undefined/', '');
 };
 
-var fixFixturePath = function(file) {
-    // Get the current path
-    var regex = /testFixture = require\(['"]{1}(.*)['"]{1}\)/,
-        oldPath = file.content.match(regex);
-
-    file.content = file.content.replace(oldPath[1], TEST_FIXTURE_DIR);
-};
-
-
 // Make the src/plugins test/plugins directories as needed
-PluginGenerator.prototype.main = function() {
+PluginGenerator.prototype.main = function(callback) {
     var self = this;
     WebGMEPluginGenerator.prototype.main.call(this, function(e, result) {
         if (e) {
-            return this.logger.error(e);
+            this.logger.error(e);
+            callback(e);
         }
 
         // Fix any file names
@@ -64,7 +41,7 @@ PluginGenerator.prototype.main = function() {
                 return file.name.indexOf('test') === 0;
             })[0];
             if (test) {  // If they are generating test file
-                fixFixturePath(test);
+                self.fixFixturePath(test);
             }
 
             artifact.files.forEach(function(file) {
@@ -74,6 +51,7 @@ PluginGenerator.prototype.main = function() {
 
         // Save all BlobClient Artifacts to the fs
         utils.saveFilesFromBlobClient(self.blobClient);
+        callback();
     });
 };
 

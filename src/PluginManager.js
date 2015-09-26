@@ -6,9 +6,7 @@
  */
 
 'use strict';
-var childProcess = require('child_process'),
-    changeCase = require('change-case'),
-    _ = require('lodash'),
+var _ = require('lodash'),
     R = require('ramda'),
     path = require('path'),
     rm_rf = require('rimraf'),
@@ -17,39 +15,8 @@ var childProcess = require('child_process'),
     ComponentManager = require('./ComponentManager'),
     PluginGenerator = require('./shim/PluginGenerator'),
     Enableable = require('./mixins/Enableable/Enableable'), 
-    spawn = childProcess.spawn,
+    PluginHelpers = require('./shim/PluginHelpers'),
     RAW_CONFIG = PluginGenerator.prototype.getConfigStructure();
-
-var CONFIG_FLAG_BY_TYPE = {
-    boolean: function(config) {
-        var nondefault = !config.value ? '' : 'no-';
-        var desc = config.description || config.displayName;
-        if (config.value) {
-            desc = 'Don\'t '+changeCase.lowerCaseFirst(desc);
-        }
-        return {
-            name: '--'+nondefault+changeCase.paramCase(config.name),
-            type: 'boolean',
-            desc: desc
-        };
-    },
-
-    string: function(config) {
-        return {
-            name: '--'+changeCase.paramCase(config.name),
-            type: 'string',
-            items: config.valueItems,
-            desc: config.description
-        };
-    }
-};
-
-var getConfigFlagForArgs = {
-    string: function(config) {
-        var rawFlag = CONFIG_FLAG_BY_TYPE.string(config).name;
-        return rawFlag.replace(/^-[-]?/, '');
-    }
-};
 
 var PluginManager = function(logger) {
     ComponentManager.call(this, 'plugin', logger);
@@ -65,10 +32,22 @@ _.extend(PluginManager.prototype, ComponentManager.prototype,
  *
  * @return {undefined}
  */
-PluginManager.prototype._getNewOptions = function() {
+PluginManager.prototype._getOptions = function() {
     return RAW_CONFIG.map(function(config) {
-        return CONFIG_FLAG_BY_TYPE[config.valueType](config);
+        return PluginHelpers.getConfigValue[config.valueType](config);
+    }).filter(function(opt) {
+        return opt.name.indexOf('meta') === -1;
     });
+};
+
+PluginManager.prototype._parseConfig = function(options) {
+    var defaultConfig = PluginHelpers.getConfig(RAW_CONFIG, options),
+        config = _.extend(defaultConfig, R.omit(['args'], options));
+
+    // We don't support the meta flag as we don't provide access to any project
+    config.meta = false;
+
+    return config;
 };
 
 /**
@@ -79,59 +58,29 @@ PluginManager.prototype._getNewOptions = function() {
  */
 PluginManager.prototype.new = function(options, callback) {
     // Set the config options from the command line flags
-    var config = _.extend(this._getConfig(options), R.omit(['args'], options));
-    var pluginGenerator = new PluginGenerator(this._logger, config);
-    pluginGenerator.main();
+    var self = this,
+        config = this._parseConfig(options),
+        pluginGenerator = new PluginGenerator(this._logger, config);
 
-    // Get the src, test paths
-    var paths = R.mapObjIndexed(function(empty, type) {
-        return path.join(type, 'plugins', config.pluginID);
-    }, {src: null, test: null});
-
-    // Store the plugin info in the webgme-setup.json file
-    var pluginConfig = {
-        src: paths.src,
-        test: paths.test
-    };
-    this._register(config.pluginID, pluginConfig);
-    this._logger.write('Created new plugin at '+paths.src);
-    callback();
-};
-
-PluginManager.prototype.new.options = PluginManager.prototype._getNewOptions();
-
-/**
- * Get the config for the plugin from the config structure and the command
- * line arguments.
- *
- * @param args
- * @param configStructure
- * @return {Object} config
- */
-PluginManager.prototype._getConfig = function(args) {
-    // Determine the commandline flag from the raw config
-    var config = {},
-        flag,
-        type;
-
-    for (var i = RAW_CONFIG.length; i--;) {
-        // Retrieve values from plugin generator's config
-        type = RAW_CONFIG[i].valueType;
-        flag = RAW_CONFIG[i].name;
-
-        // Set default
-        config[RAW_CONFIG[i].name] = RAW_CONFIG[i].value;
-
-        // Update if necessary
-        if (getConfigFlagForArgs[type]) {
-            flag = getConfigFlagForArgs[type](RAW_CONFIG[i]);
-        } else {
+    pluginGenerator.main(function(e) {
+        if (e) {
+            return callback(e);
         }
-        if (args.hasOwnProperty(flag)) {
-            config[RAW_CONFIG[i].name] = args[flag];
-        }
-    }
-    return config;
+
+        // Get the src, test paths
+        var paths = R.mapObjIndexed(function(empty, type) {
+            return path.join(type, 'plugins', config.pluginID);
+        }, {src: null, test: null});
+
+        // Store the plugin info in the webgme-setup.json file
+        var pluginConfig = {
+            src: paths.src,
+            test: paths.test
+        };
+        self._register(config.pluginID, pluginConfig);
+        self._logger.write('Created new plugin at '+paths.src);
+        callback();
+    });
 };
 
 module.exports = PluginManager;
