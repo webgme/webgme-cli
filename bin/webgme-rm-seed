@@ -4,7 +4,8 @@
 var Command = require('commander').Command,
     SeedManager = require('../src/SeedManager'),
     program = new Command(),
-    nop = require('nop');
+    nop = require('nop'),
+    manager = new SeedManager();
 
 program
     .arguments('<name>')
