@@ -2,12 +2,13 @@
 
 'use strict';
 var Command = require('commander').Command,
-    program = new Command(),
-    components = ['plugin', 'seed'];
+    program = new Command();
 
-for (var i = components.length; i--;) {
-    program
-        .command(components[i] + ' <name>', 'List all '+components[i]+'s')
-}
+require('../src/BinUtils')
+    .getSupportedSubCommands(__dirname)
+    .forEach(function(component) {
+        program
+            .command(component.cmd + ' <name> <app>', 'Add a new ' + component.name + ' from another app')
+    });
 
 program.parse(process.argv);

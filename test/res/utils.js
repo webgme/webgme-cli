@@ -22,6 +22,16 @@ var getCleanProject = function(projectDir, done) {
     }
 };
 
+// Clear the require cache so the next load is correct
+var requireReload = function() {
+    var dep;
+    for (var i = arguments.length; i--;) {
+        dep = require.resolve(arguments[i]);
+        delete require.cache[dep];
+    }
+};
+
 module.exports = {
-    getCleanProject: getCleanProject
+    getCleanProject: getCleanProject,
+    requireReload: requireReload
 };

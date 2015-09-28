@@ -28,7 +28,6 @@
     "change-case": "^2.3.0",
     "commander": "brollb/commander.js",
     "lodash": "^3.9.3",
-    "minimist": "^1.1.1",
     "mkdirp": "^0.5.1",
     "mongo-uri": "^0.1.2",
     "nop": "^1.0.0",

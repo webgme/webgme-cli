@@ -6,18 +6,21 @@ var Command = require('commander').Command,
     nop = require('nop'),
     utils = require('../src/utils'),
     program = new Command(),
-    components = ['plugin', 'seed'];
+    components = require('../src/BinUtils').getSupportedSubCommands(__dirname);
 
 if (process.argv.length - 2) {  // arguments passed - forward to components and stuff
     for (var i = components.length; i--;) {
         program
-            .command(components[i] + ' <name>', 'List all '+components[i]+'s')
+            .command(components[i].cmd + ' <name>', 'List all '+components[i].name+'s')
     }
 
     program.parse(process.argv);
 } else {  
-    // FIXME: Too many error messages
-    var managers = ['PluginManager', 'SeedManager']
+    var managers = components
+        .map(function(component) {
+            return component.name.substring(0,1).toUpperCase() + 
+                component.name.substring(1) + 'Manager';
+        })
         .map(function(name) {
             var srcPath = path.join(__dirname, '..', 'src', name);
             return new (require(srcPath));

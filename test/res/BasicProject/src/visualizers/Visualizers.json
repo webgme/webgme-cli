@@ -1,0 +1,8 @@
+[
+  {
+    "id": "MyViz",
+    "title": "MyViz",
+    "panel": "panels/MyViz/MyVizPanel",
+    "DEBUG_ONLY": false
+  }
+]

@@ -156,27 +156,89 @@ var getWebGMEConfigContent = function() {
     });
 
     // Set the requirejsPaths to be an array of all dependency paths
+    paths.requirejsPaths = getRequireJSPaths(config);
+    return paths;
+};
+
+var getRequireJSPaths = function(config) {
     var componentTypes = Object.keys(config.dependencies),
         components,
-        names;
+        paths = [],
+        names,
+        i;
 
-    paths.requirejsPaths = [];
-    for (var i = componentTypes.length; i--;) {
+    for (i = componentTypes.length; i--;) {
         components = config.dependencies[componentTypes[i]];
         names = Object.keys(components);
         for (var j = names.length; j--;) {
-            paths.requirejsPaths.push({
+            paths.push({
                 name: names[j],
                 path: components[names[j]].src || components[names[j]].path
             });
         }
     }
 
-    if (!paths.requirejsPaths.length) {
-        paths.requirejsPaths = null;
+    // If it has any visualizers, add some boilerplate
+    if (hasVisualizers(config)) {
+        ['panels', 'widgets'].forEach(function(name) {
+            paths.push({
+                name: name,
+                path: './src/visualizers/'+name
+            });
+        });
+
+        // Add all dependent visualizers
+        // These are in the format 'widgets/DepViz': './node_modules/<project>/<path>'
+        var vizConfig = config.dependencies.visualizers,
+            dependentVizs = Object.keys(vizConfig),
+            depName,
+            depPath,
+            project;
+
+        for (i = dependentVizs.length; i--;) {
+            depName = vizConfig[dependentVizs[i]].src.split('/')
+            depName.pop();
+            depName = depName.join('/');
+
+            project = vizConfig[dependentVizs[i]].project.toLowerCase();
+            depPath = ['.', 'node_modules', project,
+                vizConfig[dependentVizs[i]].panel].join('/');
+
+            paths.push({
+                name: depName,
+                path: depPath
+            });
+
+            depPath = ['.', 'node_modules', project,
+                vizConfig[dependentVizs[i]].widget].join('/');
+
+            paths.push({
+                name: depName.replace('panel', 'widget'),
+                path: depPath
+            });
+        }
+    }
+
+    if (!paths.length) {
+        paths = null;
     }
 
     return paths;
+};
+
+/**
+ * Check that the config contains at least one visualizer (in either components
+ * or dependencies)
+ *
+ * @param config
+ * @return {Boolean}
+ */
+var hasVisualizers = function(config) {
+    return ['components', 'dependencies']
+        .reduce(function(prev, type) {
+            return prev || (config[type].visualizers && 
+                Object.keys(config[type].visualizers).length > 0);
+        }, false);
 };
 
 var getConfigPath = function(project) {
@@ -246,6 +308,7 @@ var loadPaths = function(requirejs) {
             common: __dirname + '/../node_modules/webgme/src/common',
 
             'plugin/PluginGenerator/PluginGenerator': __dirname + '/../node_modules/webgme/src/plugin/coreplugins/PluginGenerator/',
+            'plugin/VisualizerGenerator/VisualizerGenerator': __dirname + '/../node_modules/webgme/src/plugin/coreplugins/VisualizerGenerator/',
         }
     });
 };
