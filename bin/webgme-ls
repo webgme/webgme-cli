@@ -2,12 +2,32 @@
 
 'use strict';
 var Command = require('commander').Command,
+    path = require('path'),
+    nop = require('nop'),
+    utils = require('../src/utils'),
     program = new Command(),
     components = ['plugin', 'seed'];
 
-for (var i = components.length; i--;) {
-    program
-        .command(components[i] + ' <name>', 'List all '+components[i]+'s')
-}
+if (process.argv.length - 2) {  // arguments passed - forward to components and stuff
+    for (var i = components.length; i--;) {
+        program
+            .command(components[i] + ' <name>', 'List all '+components[i]+'s')
+    }
 
-program.parse(process.argv);
+    program.parse(process.argv);
+} else {  
+    // FIXME: Too many error messages
+    var managers = ['PluginManager', 'SeedManager']
+        .map(function(name) {
+            var srcPath = path.join(__dirname, '..', 'src', name);
+            return new (require(srcPath));
+        })
+
+    if (!utils.getRootPath()) {
+        managers[0].ls({}, nop);
+    } else {
+        managers.forEach(function(manager) {
+            manager.ls({}, nop);
+        });
+    }
+}

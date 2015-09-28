@@ -2,8 +2,11 @@
 // Testing the command line interfaces for the commands
 var spawn = require('child_process').spawn,
     path = require('path'),
+    R = require('ramda'),
     assert = require('assert'),
+    utils = require(__dirname+'/res/utils'),
     binPath = path.join(__dirname, '..', 'bin', 'webgme'),
+    TMP_DIR = path.join(__dirname, '..', 'test-tmp'),
     cliCalls = [
         'new',
         'add',
@@ -27,7 +30,7 @@ var spawn = require('child_process').spawn,
         return args+' --help';
     });
 
-var testCliCall = function(args, done) {
+var testCliCall = function(args, test, done) {
     var webgmeBin,
         response = '',
         error = '';
@@ -45,7 +48,11 @@ var testCliCall = function(args, done) {
     webgmeBin.on('exit', function(code) {
         assert.equal(code, 0, error);
         assert.notEqual(response.length, 0);
-        done();
+        if (test) {
+            test(response, error, done);
+        } else {
+            done();
+        }
     });
 };
 
@@ -56,10 +63,32 @@ describe('cli', function() {
         process.chdir(__dirname);
     });
 
-    it('should run "webgme --help"', testCliCall.bind(this, ['--help']));
+    // Checking that they all print help message
+    it('should run "webgme --help"', testCliCall.bind(this, ['--help'], null));
 
     for (var i = cliCalls.length; i--;) {
         it('should run "webgme ' + cliCalls[i] + '"', 
-            testCliCall.bind(this, cliCalls[i].split(' ')));
+            testCliCall.bind(this, cliCalls[i].split(' '), null));
     }
+
+    // Checking that 'webgme ls' lists all components
+    describe('ls', function() {
+        var lsProject = path.join(TMP_DIR, 'BaseLsProj');
+        before(function(done) {
+            utils.getCleanProject(lsProject, done);
+        });
+
+        it('should print all installed/dependent components', function(done) {
+            var testFn = function(res, err, done) {
+                var contents = ['plugin', 'seed'];
+                assert.equal(res.indexOf('Usage'), -1);
+                contents.forEach(R.pipe(
+                    res.indexOf.bind(res),
+                    assert.notEqual.bind(assert, -1)
+                ));
+                done();
+            };
+            testCliCall(['ls'], testFn, done);
+        });
+    });
 });

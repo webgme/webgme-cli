@@ -6,6 +6,7 @@ var BaseManager = require('../src/BaseManager'),
     assert = require('assert'),
     _ = require('lodash'),
     rm_rf = require('rimraf'),
+    utils = require(__dirname+'/res/utils'),
     nop = function(){};
 
 var logger = new Logger(),
@@ -21,75 +22,76 @@ var PROJECT_DIR,
 describe('BaseManager', function() {
     'use strict';
 
-    before(function() {
-        process.chdir(__dirname);
-    });
-
-    // Creating a new item from boilerplate
-    describe('basic commands', function() {
-        PROJECT_DIR = path.join(TMP_DIR, 'ExampleProject');
-        before(function(done) {
-            // Create tmp directory in project root
-            if (!fs.existsSync(TMP_DIR)) {
+    before(function(done) {
+        if (!fs.existsSync(TMP_DIR)) {
+            fs.mkdir(TMP_DIR, function() {
+                process.chdir(TMP_DIR);
+                done();
+            });
+        } else {
+            rm_rf(TMP_DIR, function() {
                 fs.mkdir(TMP_DIR, function() {
                     process.chdir(TMP_DIR);
                     done();
                 });
-            } else {
-                rm_rf(TMP_DIR, function() {
-                    fs.mkdir(TMP_DIR, function() {
-                        process.chdir(TMP_DIR);
-                        done();
-                    });
-                });
-            }
+            });
+        }
+    });
+
+    // Creating a new item from boilerplate
+    describe('basic commands', function() {
+        PROJECT_DIR = path.join(TMP_DIR, 'BaseManagerInitProject');
+        before(function(done) {
+            utils.getCleanProject(PROJECT_DIR, done);
         });
 
         describe('init', function() {
+            var initProject = path.join(TMP_DIR, 'InitProject');
 
             before(function(done) {
                 process.chdir(TMP_DIR);
-                manager.init({name: PROJECT_DIR}, function() {
-                    process.chdir(PROJECT_DIR);
+                console.log('init for '+initProject);
+                manager.init({name: initProject}, function() {
+                    process.chdir(initProject);
                     done();
                 });
             });
 
             it('should create a new directory with project name', function() {
-                assert(fs.existsSync(PROJECT_DIR));
+                assert(fs.existsSync(initProject));
             });
 
             it('should create (valid) globals test fixture', function() {
-                var fixturePath = path.join(PROJECT_DIR, 'test', 'globals.js');
+                var fixturePath = path.join(initProject, 'test', 'globals.js');
                 assert(fs.existsSync(fixturePath));
             });
 
             it('should create a src and test dirs', function() {
                 var res = ['src', 'test']
                     .map(function(dir) {
-                        return path.join(PROJECT_DIR, dir);
+                        return path.join(initProject, dir);
                     })
                     .map(fs.existsSync)
                     .forEach(assert);
             });
 
             it('should create a webgme-setup.json file in project root', function() {
-                assert(fs.existsSync(path.join(PROJECT_DIR, 'webgme-setup.json')));
+                assert(fs.existsSync(path.join(initProject, 'webgme-setup.json')));
             });
 
             it('should initialize an npm project', function() {
-                var packageJSON = path.join(PROJECT_DIR, 'package.json');
+                var packageJSON = path.join(initProject, 'package.json');
                 assert(fs.existsSync(packageJSON));
             });
 
             it('should name the npm project appropriately', function() {
-                var packageJSON = path.join(PROJECT_DIR, 'package.json');
+                var packageJSON = path.join(initProject, 'package.json');
                 var pkg = require(packageJSON);
-                assert.equal(pkg.name, 'ExampleProject'.toLowerCase());
+                assert.equal(pkg.name, 'InitProject'.toLowerCase());
             });
 
             it('should add the webgme as a dependency', function() {
-                var packageJSON = path.join(PROJECT_DIR, 'package.json');
+                var packageJSON = path.join(initProject, 'package.json');
                 var deps = require(packageJSON).dependencies;
                 assert(deps.hasOwnProperty('webgme'));
             });
@@ -98,13 +100,13 @@ describe('BaseManager', function() {
             });
 
             it('should create webgme app.js file', function() {
-                var app = path.join(PROJECT_DIR, 'app.js');
+                var app = path.join(initProject, 'app.js');
                 assert(fs.existsSync(app));
             });
 
             // issue 15
             it('should pretty printed webgme-setup.json', function() {
-                var config = path.join(PROJECT_DIR, 'webgme-setup.json'),
+                var config = path.join(initProject, 'webgme-setup.json'),
                     content = fs.readFileSync(config, 'utf8');
                 // Check that it is printed on multiple lines
                 assert(content.split('\n').length > 3);
@@ -112,7 +114,7 @@ describe('BaseManager', function() {
 
             // WebGME config
             describe('WebGME config', function() {
-                var CONFIG_DIR = path.join(PROJECT_DIR, 'config');
+                var CONFIG_DIR = path.join(initProject, 'config');
 
                 it('should create config directory', function() {
                     assert(fs.existsSync(CONFIG_DIR));
@@ -130,7 +132,7 @@ describe('BaseManager', function() {
             });
 
             it('should fail f the dir exists', function() {
-                manager.init({name: PROJECT_DIR}, function(err) {
+                manager.init({name: initProject}, function(err) {
                     assert(!!err);
                 });
             });
