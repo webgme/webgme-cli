@@ -45,6 +45,16 @@ describe('Plugin tests', function() {
             assert(fse.existsSync(PLUGIN_SRC));
         });
 
+        it('should be valid js', function() {
+            var content = fse.readFileSync(PLUGIN_SRC, 'utf8');
+            assert(utils.isValidJs(content));
+        });
+
+        it('should not have desc (if none provided)', function() {
+            var content = fse.readFileSync(PLUGIN_SRC, 'utf8');
+            assert.equal(content.indexOf('getDescription'), -1);
+        });
+
         it('should create the plugin\'s test file', function() {
             assert(fse.existsSync(PLUGIN_TEST));
         });

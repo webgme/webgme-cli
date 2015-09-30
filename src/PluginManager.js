@@ -44,8 +44,7 @@ PluginManager.prototype._getOptions = function() {
 };
 
 PluginManager.prototype._parseConfig = function(options) {
-    var defaultConfig = PluginHelpers.getConfig(RAW_CONFIG, options),
-        config = _.extend(defaultConfig, R.omit(['args'], options));
+    var config = PluginHelpers.getConfig(RAW_CONFIG, options);
 
     // We don't support the meta flag as we don't provide access to any project
     config.meta = false;
