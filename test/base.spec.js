@@ -151,15 +151,28 @@ describe('BaseManager', function() {
                 });
             });
 
-            it('should fail if dir is nonempty', function(done) {
+            it('should fail if dir has webgme-setup.json', function(done) {
                 PROJECT_DIR = path.join(TMP_DIR, 'InitNoArgsFail');
+                fs.mkdirSync(PROJECT_DIR);
+                process.chdir(PROJECT_DIR);
+                fs.writeFileSync(path.join(PROJECT_DIR, SETUP_CONFIG), 'stuff');
+                manager.init({}, function(err) {
+                    var appPath = path.join(PROJECT_DIR, 'app.js');
+                    assert(!fs.existsSync(appPath));
+                    assert(!!err);
+                    done();
+                });
+            });
+
+            it('should succeed in existing project', function(done) {
+                PROJECT_DIR = path.join(TMP_DIR, 'InitNoArgsSucceed');
                 fs.mkdirSync(PROJECT_DIR);
                 process.chdir(PROJECT_DIR);
                 fs.writeFileSync(path.join(PROJECT_DIR, 'temp'), 'stuff');
                 manager.init({}, function(err) {
                     var configPath = path.join(PROJECT_DIR, SETUP_CONFIG);
-                    assert(!fs.existsSync(configPath));
-                    assert(!!err);
+                    assert(fs.existsSync(configPath));
+                    assert(!err);
                     done();
                 });
             });
