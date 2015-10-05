@@ -152,7 +152,7 @@ var getWebGMEConfigContent = function() {
         });
 
         paths[type] = arrays.reduce(R.concat)  // Merge all paths
-            .map(R.replace.bind(R, '\\', '/'));  // Convert to use '/' for path separator
+            .map(R.replace.bind(R, /\\/g, '/'));  // Convert to use '/' for path separator
     });
 
     // Set the requirejsPaths to be an array of all dependency paths
