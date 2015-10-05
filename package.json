@@ -10,7 +10,8 @@
     "test": "test"
   },
   "scripts": {
-    "test": "mkdir test-tmp; node node_modules/mocha/bin/mocha test/*.js && node node_modules/mocha/bin/mocha test/plugins/{RemoveFrom,AddTo}Plugin.spec.js",
+    "test-win": "node node_modules/mocha/bin/mocha test/*.js",
+	"test": "mkdir test-tmp; node node_modules/mocha/bin/mocha test/*.js && node node_modules/mocha/bin/mocha test/plugins/{RemoveFrom,AddTo}Plugin.spec.js",
     "test-cover": "mkdir test-tmp; node node_modules/istanbul/lib/cli.js --hook-run-in-context cover node_modules/mocha/bin/_mocha -- -R spec test/*.js",
     "test-plugin": "node node_modules/mocha/bin/mocha test/plugins/{RemoveFrom,AddTo}Plugin.spec.js"
   },
