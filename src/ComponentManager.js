@@ -93,7 +93,8 @@ ComponentManager.prototype.rm = function(args, callback) {
 
 // TODO: Refactor this
 ComponentManager.prototype.add = function(args, callback) {
-    var project,
+    var self = this,
+        project,
         componentName,
         pkgPath,
         pkgContent,
@@ -123,73 +124,121 @@ ComponentManager.prototype.add = function(args, callback) {
     this._logger.infoStream(job.stderr);
 
     job.on('close', function(code) {
-        this._logger.info('npm exited with: '+code);
-        if (code === 0) {  // Success!
-            // Look up the componentPath by trying to load the config of 
-            // the new project or find the component through the component 
-            // paths defined in the config.js
-            var otherConfig,
-                componentPath = null,
-                config = utils.getConfig(),
-                gmeCliConfigPath = utils.getConfigPath(pkgProject.toLowerCase()),
-                gmeConfigPath = utils.getGMEConfigPath(pkgProject.toLowerCase()),
-                dependencyRoot = path.dirname(gmeConfigPath);
-
-            if (fs.existsSync(gmeCliConfigPath)) {
-                otherConfig = JSON.parse(fs.readFileSync(gmeCliConfigPath, 'utf-8'));
-                if (otherConfig.components[this._group][componentName]) {
-                    componentPath = otherConfig.components[this._group][componentName].src;
-                }
-            } else if (fs.existsSync(gmeConfigPath)) {
-                otherConfig = require(gmeConfigPath);
-                componentPath = utils.getPathContaining(otherConfig[this._webgmeName].basePaths.map(
-                function(p) {
-                    if (!path.isAbsolute(p)) {
-                        return path.join(path.dirname(gmeConfigPath), p);
-                    }
-                    return p;
-                }
-                ), componentName);
-                componentPath = componentPath !== null ? 
-                    path.join(componentPath,componentName) : null;
-            } else {
-                var err = 'Did not recognize the project as a WebGME project';
-                this._logger.error(err);
-                return callback(err);
-            }
-
-            // Verify that the component exists in the project
-            if (!componentPath) {
-                this._logger.error(pkgProject+' does not contain '+componentName);
-                return callback(pkgProject+' does not contain '+componentName);
-            }
-            if (!path.isAbsolute(componentPath)) {
-                componentPath = path.join(dependencyRoot, componentPath);
-            }
-            // If componentPath is not a directory, take the containing directory
-            if (!fs.lstatSync(componentPath).isDirectory()) {
-                componentPath = path.dirname(componentPath);
-            }
-
-            componentPath = path.relative(projectRoot, componentPath);
-
-            config.dependencies[this._group][componentName] = {
-                project: pkgProject,
-                path: componentPath
+        var err,
+            info = {
+                name: componentName,
+                pkg: pkgProject
             };
-            utils.saveConfig(config);
+        self._logger.info('npm exited with: '+code);
+        if (code === 0) {  // Success!
+            self._getJsonForConfig(info, function(err, configObject) {
+                if (err) {
+                    self._logger.error(err);
+                    return callback(err);
+                }
 
-            // Update the webgme config file from 
-            // the cli's config
-            utils.updateWebGMEConfig();
-            callback();
+                var config = utils.getConfig();
+                config.dependencies[self._group][componentName] = configObject;
+                utils.saveConfig(config);
+
+                // Update the webgme config file from 
+                // the cli's config
+                utils.updateWebGMEConfig();
+                configObject.id = componentName;
+                return callback(null, configObject);
+            });
 
         } else {
-            var err = 'Could not find project!';
-            this._logger.error(err);
+            err = 'Could not find project!';
+            self._logger.error(err);
             return callback(err);
         }
-    }.bind(this));
+    });
+};
+
+ComponentManager.prototype._getJsonForConfig = function(installInfo, callback) {
+    this._getPathFromDependency(installInfo, function(err, componentPath) {
+        if (err) {
+            return callback(err);
+        }
+        var pkgProject = installInfo.pkg,
+            gmeConfigPath = utils.getGMEConfigPath(pkgProject.toLowerCase()),
+            dependencyRoot = path.dirname(gmeConfigPath);
+
+        // Verify that the component exists in the project
+        if (!componentPath) {
+            self._logger.error(pkgProject+' does not contain '+componentName);
+            return callback(pkgProject+' does not contain '+componentName);
+        }
+        if (!path.isAbsolute(componentPath)) {
+            componentPath = path.join(dependencyRoot, componentPath);
+        }
+        if (!fs.existsSync(componentPath)) {
+            componentPath += '.js';
+        }
+        // If componentPath is not a directory, take the containing directory
+        if (!fs.lstatSync(componentPath).isDirectory()) {
+            componentPath = path.dirname(componentPath);
+        }
+
+        componentPath = path.relative(utils.getRootPath(), componentPath);
+
+        return callback(null, {
+            project: pkgProject,
+            path: componentPath
+        });
+    });
+};
+
+ComponentManager.prototype._getPathFromDependency = function(installInfo, callback) {
+    // Look up the componentPath by trying to load the config of 
+    // the new project or find the component through the component 
+    // paths defined in the config.js
+    var componentPath = this._getPathFromCliConfig(installInfo) || this._getPathFromGME(installInfo);
+    if (!componentPath) {
+        var err = 'Did not recognize the project as a WebGME project';
+        return callback(err);
+    }
+
+    return callback(null, componentPath);
+};
+
+ComponentManager.prototype._getPathFromCliConfig = function(installInfo) {
+    var pkgProject = installInfo.pkg,
+        name = installInfo.name,
+        otherConfig,
+        gmeCliConfigPath = utils.getConfigPath(pkgProject.toLowerCase());
+
+    if (fs.existsSync(gmeCliConfigPath)) {
+        otherConfig = JSON.parse(fs.readFileSync(gmeCliConfigPath, 'utf-8'));
+        if (otherConfig.components[this._group][name]) {
+            return otherConfig.components[this._group][name].src;
+        }
+    }
+    return null;
+};
+
+ComponentManager.prototype._getPathFromGME = function(installInfo) {
+    var pkgProject = installInfo.pkg,
+        gmeConfigPath = utils.getGMEConfigPath(pkgProject.toLowerCase()),
+        name = installInfo.name,
+        componentPath,
+        otherConfig;
+
+    if (fs.existsSync(gmeConfigPath)) {
+        otherConfig = require(gmeConfigPath);
+        componentPath = utils.getPathContaining(otherConfig[this._webgmeName].basePaths.map(
+        function(p) {
+            if (!path.isAbsolute(p)) {
+                return path.join(path.dirname(gmeConfigPath), p);
+            }
+            return p;
+        }
+        ), name);
+        return componentPath !== null ? 
+            path.join(componentPath, name) : null;
+    }
+    return null
 };
 
 ComponentManager.prototype._removeFromConfig = function(plugin, type) {
@@ -222,7 +271,7 @@ ComponentManager.prototype._prepareWebGmeConfig = function() {
     // Check for project directory
     var projectHome = utils.getRootPath();
     if (projectHome !== null) {
-        // Check for plugins entry in .webgme
+        // Check for entry in webgme-setup.json
         var config = utils.getConfig();
         var entries = Object.keys(config);
         entries.forEach(function(entry) {

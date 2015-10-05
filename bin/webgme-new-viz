@@ -1,0 +1,21 @@
+#!/usr/bin/env node
+
+'use strict';
+var Command = require('commander').Command,
+    VisualizerManager = require('../src/VisualizerManager'),
+    program = new Command(),
+    nop = require('nop');
+
+program
+    .arguments('<visualizerID>')
+    .option('--name <visualizerName>', 'Set the visualizer name. Default is the id')
+    .action(function(visualizerID) {
+        // FIXME: This is only called if an arg is passed!
+        // Otherwise, it fails silently
+        var manager = new VisualizerManager();
+
+        program.visualizerID = visualizerID;
+        program.name = program.visualizerName;
+        manager.new(program, nop);
+    })
+    .parse(process.argv);

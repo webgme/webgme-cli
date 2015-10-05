@@ -5,6 +5,7 @@
 <% if (typeof seeds === "undefined") seeds = [];
 if (typeof addOns === "undefined") addOns = [];
 if (typeof plugins === "undefined") plugins = [];
+if (typeof visualizers === "undefined") visualizers = [];
 if (typeof requirejsPaths === "undefined") requirejsPaths = null;
 
 var dirname = function(path) {
@@ -29,6 +30,8 @@ var config = require('webgme/config/config.default'),
     printConfigPaths('addOn', addOns.map(dirname)) +
     printConfigPaths('seedProjects', seeds) %>
 <% if (addOns.length > 0) { %>config.addOn.enable = true<%}%>
+// Visualizer descriptors
+<% if (visualizers.length > 0) { %>config.visualization.visualizerDescriptors.push('./src/visualizers/Visualizers.json');<%}%>
 // Add requirejs paths
 <% if (requirejsPaths) { %>config.requirejsPaths = {
 <%= requirejsPaths.map(function(obj) { 

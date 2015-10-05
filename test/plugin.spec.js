@@ -41,6 +41,16 @@ describe('Plugin tests', function() {
             manager.new({pluginID: PLUGIN_NAME, meta: true}, done);
         });
 
+        it('should not contain meta option', function() {
+            manager._getOptions()
+                .map(function(option) {
+                    return option.name.substring(2);
+                })
+                .forEach(function(name) {
+                    assert.equal(name.indexOf('meta'), -1);
+                });
+        });
+
         it('should create the plugin source file', function() {
             assert(fse.existsSync(PLUGIN_SRC));
         });

@@ -22,6 +22,13 @@ var spawn = require('child_process').spawn,
         'enable plugin',
         'disable plugin',
 
+        'new viz',
+        'add viz',
+        'rm viz',
+        'ls viz',
+        'enable viz',
+        'disable viz',
+
         'new seed',
         'add seed',
         'rm seed',

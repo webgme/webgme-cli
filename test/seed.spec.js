@@ -120,16 +120,6 @@ describe('Seed tests', function() {
         });
     });
 
-    describe.skip('rm seed', function() {
-        var SEED_NAME = 'RemoveMe';
-        before(function(done) {
-            process.chdir(PROJECT_DIR);
-            // Copy the 'test/res/OtherProject' to the TMP_DIR and remove
-            // a seed
-            // TODO
-        });
-    });
-
     describe('add seed', function() {
 
         describe('errors', function() {
@@ -205,13 +195,16 @@ describe('Seed tests', function() {
             describe('rm dependency seed', function() {
                 before(function(done) {
                     process.chdir(PROJECT_DIR);
+                    utils.requireReload(
+                        path.join(PROJECT_DIR, WebGMEConfig)
+                    );
                     manager.rm({name: OTHER_SEED}, done);
                 });
 
                 it('should remove the path from the webgme config', function() {
-                    var config = require(path.join(PROJECT_DIR, WebGMEConfig)),
-                    paths = config.seedProjects.basePaths.join(';');
-                    assert.equal(paths.indexOf(OTHER_SEED), -1);
+                    var configPath = path.join(PROJECT_DIR, WebGMEConfig),
+                        configText = fse.readFileSync(configPath, 'utf8');
+                    assert.equal(configText.indexOf(OTHER_SEED), -1);
                 });
 
                 it('should remove seed entry from '+CONFIG_NAME, function() {
@@ -227,6 +220,28 @@ describe('Seed tests', function() {
                 it.skip('should not remove project from package.json if used', function() {
                     // TODO
                 });
+            });
+        });
+
+        describe('rm seed', function() {
+            var RM_DIR = path.join(PROJECT_DIR, 'RemoveSeedTests'),
+                RM_SEED = 'test';
+            before(function(done) {
+                utils.getCleanProject(RM_DIR, function() {
+                    manager.rm({name: RM_SEED}, done);
+                });
+            });
+
+            it('should remove the path from the webgme config', function() {
+                var configPath = path.join(RM_DIR, WebGMEConfig),
+                    configText = fse.readFileSync(configPath, 'utf8');
+                assert.equal(configText.indexOf(RM_SEED), -1);
+            });
+
+            it('should remove seed entry from '+CONFIG_NAME, function() {
+                var configText = fse.readFileSync(CONFIG_PATH),
+                    config = JSON.parse(configText);
+                assert.equal(config.dependencies.seeds[RM_SEED], undefined);
             });
         });
 

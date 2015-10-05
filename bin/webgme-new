@@ -2,14 +2,13 @@
 
 'use strict';
 var Command = require('commander').Command,
-    program = new Command(),
-    components = ['plugin', 'seed'],
-    allActions = ['new', 'add', 'remove'];
+    program = new Command();
 
-program
-    .command('plugin <name>', 'Create a new plugin');
+require('../src/BinUtils')
+    .getSupportedSubCommands(__dirname)
+    .forEach(function(component) {
+        program
+            .command(component.cmd + ' <name>', 'Create a new ' + component.name);
+    });
 
-program
-    .command('seed <project>', 'Create a seed from an existing project')
-    .alias('s')
-    .parse(process.argv);
+program.parse(process.argv);

@@ -32,7 +32,17 @@ var isValidJs = function(text) {
     }
 };
 
+// Clear the require cache so the next load is correct
+var requireReload = function() {
+    var dep;
+    for (var i = arguments.length; i--;) {
+        dep = require.resolve(arguments[i]);
+        delete require.cache[dep];
+    }
+};
+
 module.exports = {
     getCleanProject: getCleanProject,
-    isValidJs: isValidJs
+    isValidJs: isValidJs,
+    requireReload: requireReload
 };

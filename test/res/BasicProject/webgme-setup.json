@@ -16,11 +16,20 @@
         "srcDir": "src/addOns/MyAddon",
         "src": "src/addOns/MyAddon/MyAddon.js"
       }
+    },
+    "visualizers": {
+      "MyViz": {
+        "src": "panels/MyViz/MyVizPanel",
+        "title": "MyViz",
+        "panel": "src/visualizers/panels/MyViz",
+        "widget": "src/visualizers/widgets/MyViz"
+      }
     }
   },
   "dependencies": {
     "plugins": {},
     "seeds": {},
-    "addOns": {}
+    "addOns": {},
+    "visualizers": {}
   }
 }

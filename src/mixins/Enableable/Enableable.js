@@ -40,7 +40,7 @@ Enableable.prototype._invokePlugin = function(args, action, callback) {
         pluginConfig;
 
     // Add the AddToRootPlugin
-    gmeConfig[this._name].basePaths.push(__dirname);
+    gmeConfig.plugin.basePaths.push(__dirname);
     // Create plugin config
     pluginConfig = {field: this._field, attribute: componentName};
     // Create project options

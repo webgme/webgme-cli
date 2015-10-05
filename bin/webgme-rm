@@ -3,11 +3,11 @@
 'use strict';
 var Command = require('commander').Command,
     program = new Command(),
-    components = ['plugin', 'seed'];
+    components = require('../src/BinUtils').getSupportedSubCommands(__dirname);
 
 for (var i = components.length; i--;) {
     program
-        .command(components[i] + ' <name>', 'Remove a '+components[i]+'s')
+        .command(components[i].cmd + ' <name>', 'Remove a '+components[i].name+'s')
 }
 
 program.parse(process.argv);
