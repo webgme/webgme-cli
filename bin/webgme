@@ -2,11 +2,13 @@
 
 var Command = require('commander').Command,
     program = new Command(),
+    version = require('../package.json').version,
     allActions = ['new', 'add', 'remove', 'ls'];
 
 /* * * * * * * * * * Components * * * * * * * * * */
 // TODO: Verify that we are in a project
 program
+    .version('v'+version)
     .command('add <component>', 'Add a WebGME component from another project')
     .alias('a');
 
