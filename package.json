@@ -1,6 +1,6 @@
 {
   "name": "webgme-setup-tool",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "",
   "main": "index.js",
   "bin": {
@@ -41,6 +41,7 @@
   },
   "devDependencies": {
     "chai": "^3.0.0",
+    "esprima": "^2.6.0",
     "fs-extra": "^0.24.0",
     "istanbul": "^0.3.17",
     "mocha": "^2.2.5",

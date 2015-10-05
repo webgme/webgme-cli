@@ -4,6 +4,7 @@
 
 var fse = require('fs-extra'),
     rm_rf = require('rimraf'),
+    esprima = require('esprima'),
     path = require('path'),
     BASE_PROJECT = path.join(__dirname, 'BasicProject');
 
@@ -22,6 +23,15 @@ var getCleanProject = function(projectDir, done) {
     }
 };
 
+var isValidJs = function(text) {
+    try {
+        esprima.parse(text);
+        return true;
+    } catch (e) {
+        return false;
+    }
+};
+
 // Clear the require cache so the next load is correct
 var requireReload = function() {
     var dep;
@@ -33,5 +43,6 @@ var requireReload = function() {
 
 module.exports = {
     getCleanProject: getCleanProject,
+    isValidJs: isValidJs,
     requireReload: requireReload
 };

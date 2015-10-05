@@ -23,10 +23,10 @@ BaseManager.prototype.init = function (args, callback) {  // Create new project
     this._logger.info('Creating new project at '+project);
 
     if (!args.name) {  // Creating in current directory
-        // Check if the project is empty
-        var isEmpty = fs.readdirSync(process.cwd()).length === 0;
-        if (!isEmpty) {
-            err = 'Cannot create project in non-empty directory';
+        // Check if the project contains webgme-setup.json file
+        var setupJsonPath = path.join(process.cwd(), PROJECT_CONFIG);
+        if (fs.existsSync(setupJsonPath)) {
+            err = 'Cannot create project here. Project already exists.';
             this._logger.error(err);
             return callback(err);
         }

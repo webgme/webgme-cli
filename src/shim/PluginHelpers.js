@@ -56,11 +56,7 @@ var getConfig = function(rawConfig, args) {
         config[rawConfig[i].name] = rawConfig[i].value;
 
         // Update if necessary
-        if (getConfigNameFromFlag[type]) {
-            flag = getConfigNameFromFlag[type](rawConfig[i]);
-        } else {
-        }
-        if (args.hasOwnProperty(flag)) {
+        if (args.hasOwnProperty(flag) && typeof args[flag] !== 'function') {
             config[rawConfig[i].name] = args[flag];
         }
     }
