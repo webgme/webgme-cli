@@ -49,6 +49,9 @@ PluginManager.prototype._parseConfig = function(options) {
     // We don't support the meta flag as we don't provide access to any project
     config.meta = false;
 
+    // If pluginName was not set in the options, set it to the pluginId
+    config.pluginName = options.pluginName || options.pluginID;
+
     return config;
 };
 

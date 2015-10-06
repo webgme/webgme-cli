@@ -65,6 +65,12 @@ describe('Plugin tests', function() {
             assert.equal(content.indexOf('getDescription'), -1);
         });
 
+        it('should set pluginName to pluginId by default', function() {
+            var content = fse.readFileSync(PLUGIN_SRC, 'utf8');
+            console.log(content);
+            assert.equal(content.indexOf('New Plugin'), -1);
+        });
+
         it('should create the plugin\'s test file', function() {
             assert(fse.existsSync(PLUGIN_TEST));
         });
@@ -81,7 +87,7 @@ describe('Plugin tests', function() {
             assert.notEqual(config.plugin.basePaths.indexOf(relativeBase), -1);
         });
 
-        it('should record the plugin in .webgme file', function() {
+        it('should record the plugin in webgme-setup.json', function() {
             var config = require(CONFIG_PATH);
             assert.notEqual(config.components.plugins[PLUGIN_NAME], undefined);
         });
