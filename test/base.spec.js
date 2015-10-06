@@ -96,7 +96,15 @@ describe('BaseManager', function() {
                 assert(deps.hasOwnProperty('webgme'));
             });
 
-            it.skip('should use the latest release of webgme', function() {
+            // issue 51
+            it('should use the same version of webgme as the setup tool', function() {
+                // Compare the package.json values
+                var packageJSON = path.join(initProject, 'package.json'),
+                    toolJson = path.join(__dirname, '..', 'package.json'),
+                    toolDeps = require(toolJson).dependencies,
+                    deps = require(packageJSON).dependencies;
+
+                assert.equal(deps.webgme, toolDeps.webgme);
             });
 
             it('should create webgme app.js file', function() {

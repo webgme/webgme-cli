@@ -47,7 +47,10 @@ BaseManager.prototype.init = function (args, callback) {  // Create new project
         // Create the package.json
         var pkgJsonTemplatePath = path.join(__dirname, 'res', 'package.template.json'),
             pkgJsonTemplate = _.template(fs.readFileSync(pkgJsonTemplatePath)),
+            toolJsonPath = path.join(__dirname, '..', 'package.json'),
+            toolJson = require(toolJsonPath),
             pkgContent = {
+                webgmeVersion: toolJson.dependencies.webgme,
                 name: name
             },
             pkgJson = pkgJsonTemplate(pkgContent);

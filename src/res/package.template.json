@@ -6,7 +6,7 @@
   },
   "version": "1.0.0",
   "dependencies": {
-    "webgme": "latest"
+    "webgme": "<%= webgmeVersion %>"
   },
   "devDependencies": {
     "mocha": "^2.2.5",
