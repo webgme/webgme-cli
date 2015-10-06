@@ -8,9 +8,9 @@ var _ = require('lodash'),
     R = require('ramda'),
     PROJECT_CONFIG = 'webgme-setup.json';
 
-var getRootPath = function() {
+var getRootPath = function(startPath) {
     // Walk back from current path until you find a webgme-setup.json file
-    var abspath = path.resolve('.'),
+    var abspath = path.resolve(startPath || '.'),
         previousPath;
 
     while (abspath !== previousPath) {
@@ -75,9 +75,9 @@ var saveFilesFromBlobClient = function(blobClient) {
 };
 
 /* * * * * * * Config Settings * * * * * * * */
-var getConfig = function() {
-    var root = getRootPath();
-    var config = fs.readFileSync(path.join(root, PROJECT_CONFIG));
+var getConfig = function(startPath) {
+    var root = getRootPath(startPath),
+        config = fs.readFileSync(path.join(root, PROJECT_CONFIG));
     return JSON.parse(config);
 };
 
@@ -92,13 +92,16 @@ var saveConfig = function(config) {
  *
  * @return {undefined}
  */
-var updateWebGMEConfig = function() {
-    var content = getWebGMEConfigContent(),
+var updateWebGMEConfig = function(startPath) {
+    var root = getRootPath(startPath),
+        content = getWebGMEConfigContent(startPath),
         templatePath = path.join(__dirname, 'res', 'config.template.js'),
         template = _.template(fs.readFileSync(templatePath)),
-        configPath = path.join(getRootPath(), 'config', 'config.webgme.js');
+        configPath = path.join(root, 'config', 'config.webgme.js');
 
-    // Convert paths to use / as path separator
+    // Add webgme app name to the content
+    var appName = require(path.join(root, 'package.json')).name;
+    content.appName = appName.replace(/-/g, '_');
     fs.writeFileSync(configPath, template(content));
 };
 
@@ -134,9 +137,9 @@ var unique = function(array) {
     return Object.keys(duplicates);
 };
 
-var getWebGMEConfigContent = function() {
+var getWebGMEConfigContent = function(startPath) {
     var arrays,
-        config = getConfig(),
+        config = getConfig(startPath),
         paths = {},
         configGroupPaths = ['components', 'dependencies']
             .map(function(type) {
@@ -196,7 +199,7 @@ var getRequireJSPaths = function(config) {
             project;
 
         for (i = dependentVizs.length; i--;) {
-            depName = vizConfig[dependentVizs[i]].src.split('/')
+            depName = vizConfig[dependentVizs[i]].src.split('/');
             depName.pop();
             depName = depName.join('/');
 

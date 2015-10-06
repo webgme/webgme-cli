@@ -7,6 +7,7 @@ var _ = require('lodash'),
     R = require('ramda'),
     mkdir = require('mkdirp'),
     Logger = require('./Logger'),
+    utils = require('./utils'),
     PROJECT_CONFIG = 'webgme-setup.json';
 
 var BaseManager = function(logger) {
@@ -70,6 +71,7 @@ BaseManager.prototype.init = function (args, callback) {  // Create new project
             dependencies: {}
         };
         fs.writeFileSync(path.join(project, PROJECT_CONFIG), JSON.stringify(webgmeInfo, null, 2));
+        utils.updateWebGMEConfig(project);
 
         this._logger.write('Created project at '+project+'.\n\n'+
         'Please run \'npm init\' from the within project to finish configuration.');
@@ -89,11 +91,8 @@ BaseManager._createBasicFileStructure = function(project) {
 BaseManager.prototype._createWebGMEFiles = function(project) {
     // Create webgme config info
     var configDir = path.join(project, 'config');
-    var webgmeConfigTemplate = fs.readFileSync(path.join(__dirname, 'res', 'config.template.js'));
-    var webgmeConfig = _.template(webgmeConfigTemplate)(this._getWebGMEConfigContent());
 
     fs.mkdirSync(configDir);
-    fs.writeFileSync(path.join(configDir, 'config.webgme.js'), webgmeConfig);
     fs.readdirSync(path.join(__dirname, 'res', 'config'))
         .map(R.pipe(R.nthArg(0), path.join.bind(path, 'config')))  // Add 'config/' for each
         .forEach(BaseManager._copyFileToProject.bind(null, project, ''));
@@ -103,13 +102,6 @@ BaseManager.prototype._createWebGMEFiles = function(project) {
 
     // Create test fixtures
     BaseManager._copyFileToProject(project, 'test', 'globals.js');
-};
-
-BaseManager.prototype._getWebGMEConfigContent = function() {
-    // TODO
-    return {
-        pluginPaths: ['src/plugin']
-    };
 };
 
 BaseManager._copyFileToProject = function(project, subPath, filename) {

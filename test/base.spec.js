@@ -46,11 +46,11 @@ describe('BaseManager', function() {
         });
 
         describe('init', function() {
-            var initProject = path.join(TMP_DIR, 'InitProject');
+            var appName = 'InitProject',
+                initProject = path.join(TMP_DIR, appName);
 
             before(function(done) {
                 process.chdir(TMP_DIR);
-                console.log('init for '+initProject);
                 manager.init({name: initProject}, function() {
                     process.chdir(initProject);
                     done();
@@ -59,6 +59,12 @@ describe('BaseManager', function() {
 
             it('should create a new directory with project name', function() {
                 assert(fs.existsSync(initProject));
+            });
+
+            it('should use the project name in the mongodb uri', function() {
+                var configPath = path.join(initProject, 'config', 'config.webgme.js'),
+                    config = require(configPath);
+                assert.equal(appName.toLowerCase(), config.mongo.uri.split('/').pop());
             });
 
             it('should create (valid) globals test fixture', function() {

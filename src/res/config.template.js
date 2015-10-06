@@ -39,5 +39,6 @@ var config = require('webgme/config/config.default'),
     }).join(',\n') %>
 };<% } %>
 
+<% // mongo uri %>config.mongo.uri = 'mongodb://127.0.0.1:27017/<%= appName %>'
 validateConfig(config);
 module.exports = config;

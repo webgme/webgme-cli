@@ -167,7 +167,12 @@ describe('Seed tests', function() {
                 this.timeout(10000);
                 process.chdir(PROJECT_DIR);
                 emitter.on('error', assert.bind(assert, false));
-                manager.add({name: OTHER_SEED, project: otherProject}, done);
+                manager.add({name: OTHER_SEED, project: otherProject}, function() {
+                    utils.requireReload(
+                        path.join(PROJECT_DIR, 'package.json')
+                    );
+                    done();
+                });
             });
 
             it('should add the project to the package.json', function() {

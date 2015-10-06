@@ -273,7 +273,8 @@ describe('Viz tests', function() {
                     utils.requireReload(
                         path.join(PROJECT_DIR, WebGMEConfig),
                         CONFIG_PATH,
-                        path.join(VizBasePath, 'Visualizers.json')
+                        path.join(VizBasePath, 'Visualizers.json'),
+                        path.join(PROJECT_DIR, 'package.json')
                     );
                     done();
                 });

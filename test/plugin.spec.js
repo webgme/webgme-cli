@@ -289,7 +289,12 @@ describe('Plugin tests', function() {
                 process.chdir(PROJECT_DIR);
                 emitter.on('error', assert.bind(assert, false));
                 manager.add({name: OTHER_PLUGIN, 
-                             project: otherProject}, done);
+                             project: otherProject}, function() {
+                    utils.requireReload(
+                        path.join(PROJECT_DIR, 'package.json')
+                    );
+                    done();
+                });
             });
 
             it('should add the project to the package.json', function() {
