@@ -6,7 +6,7 @@ The WebGME setup tool is a tool for managing WebGME apps. Specifically, it provi
 First install the project with 
 
 ```
-npm install -g webgme/webgme-setup-tool
+npm install -g webgme-setup-tool
 ```
 
 Next, create a new WebGME app:
