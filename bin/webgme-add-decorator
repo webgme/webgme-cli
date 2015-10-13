@@ -1,0 +1,19 @@
+#!/usr/bin/env node
+/*jshint node: true*/
+
+'use strict';
+var Command = require('commander').Command,
+    program = new Command(),
+    utils = require('../src/utils'),
+    nop = require('nop'),
+    DecoratorManager = require('../src/DecoratorManager');
+
+var manager = new DecoratorManager();
+
+program.arguments('<name> <project>')
+    .action(function(name, project) {
+        program.name = name;
+        program.project = project;
+        manager.add(program, nop);
+    })
+    .parse(process.argv);
