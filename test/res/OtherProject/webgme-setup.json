@@ -22,12 +22,18 @@
         "panel": "src/visualizers/panels/OtherViz",
         "widget": "src/visualizers/widgets/OtherViz"
       }
+    },
+    "decorators": {
+      "OtherDecorator": {
+        "src": "src/decorators/OtherDecorator"
+      }
     }
   },
   "dependencies": {
     "plugins": {},
     "addOns": {},
     "seeds": {},
-    "visualizers": {}
+    "visualizers": {},
+    "decorators": {}
   }
 }

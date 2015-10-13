@@ -37,7 +37,7 @@
     "ramda": "^0.15.1",
     "requirejs": "^2.1.18",
     "rimraf": "^2.4.0",
-    "webgme": "^1.0.1"
+    "webgme": "^1.0.2"
   },
   "devDependencies": {
     "chai": "^3.0.0",

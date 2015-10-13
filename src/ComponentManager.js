@@ -91,7 +91,6 @@ ComponentManager.prototype.rm = function(args, callback) {
     }
 };
 
-// TODO: Refactor this
 ComponentManager.prototype.add = function(args, callback) {
     var self = this,
         project,
@@ -149,7 +148,7 @@ ComponentManager.prototype.add = function(args, callback) {
             });
 
         } else {
-            err = 'Could not find project!';
+            err = 'Could not find project (' + project + ') !';
             self._logger.error(err);
             return callback(err);
         }
@@ -157,6 +156,7 @@ ComponentManager.prototype.add = function(args, callback) {
 };
 
 ComponentManager.prototype._getJsonForConfig = function(installInfo, callback) {
+    var self = this;
     this._getPathFromDependency(installInfo, function(err, componentPath) {
         if (err) {
             return callback(err);
@@ -167,8 +167,8 @@ ComponentManager.prototype._getJsonForConfig = function(installInfo, callback) {
 
         // Verify that the component exists in the project
         if (!componentPath) {
-            self._logger.error(pkgProject+' does not contain '+componentName);
-            return callback(pkgProject+' does not contain '+componentName);
+            self._logger.error(pkgProject+' does not contain '+componentPath);
+            return callback(pkgProject+' does not contain '+componentPath);
         }
         if (!path.isAbsolute(componentPath)) {
             componentPath = path.join(dependencyRoot, componentPath);
@@ -196,7 +196,7 @@ ComponentManager.prototype._getPathFromDependency = function(installInfo, callba
     // paths defined in the config.js
     var componentPath = this._getPathFromCliConfig(installInfo) || this._getPathFromGME(installInfo);
     if (!componentPath) {
-        var err = 'Did not recognize the project as a WebGME project';
+        var err = 'Did not recognize the project as a WebGME project (' + installInfo.pkg + ')';
         return callback(err);
     }
 
@@ -238,7 +238,7 @@ ComponentManager.prototype._getPathFromGME = function(installInfo) {
         return componentPath !== null ? 
             path.join(componentPath, name) : null;
     }
-    return null
+    return null;
 };
 
 ComponentManager.prototype._removeFromConfig = function(plugin, type) {

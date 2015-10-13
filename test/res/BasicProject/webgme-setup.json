@@ -24,12 +24,14 @@
         "panel": "src/visualizers/panels/MyViz",
         "widget": "src/visualizers/widgets/MyViz"
       }
-    }
+    },
+    "decorators": {}
   },
   "dependencies": {
     "plugins": {},
     "seeds": {},
     "addOns": {},
-    "visualizers": {}
+    "visualizers": {},
+    "decorators": {}
   }
 }

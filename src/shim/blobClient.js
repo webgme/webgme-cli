@@ -16,6 +16,29 @@ Artifact.prototype.addFile = function(key, file, callback) {
     }
 };
 
+Artifact.prototype.addFiles = function(filesToAdd, callback) {
+    var names = Object.keys(filesToAdd),
+        len = names.length,
+        error = null,
+        cb = function(err) {
+            error = err || error;
+            if (error) {
+                return callback(error);
+            }
+            if (--len === 0) {
+                return callback(null);
+            }
+        };
+
+    for (var i = names.length; i--;) {
+        this.addFile(names[i], filesToAdd[names[i]], cb);
+    }
+};
+
+Artifact.prototype.save = function(callback) {
+    callback(null);
+};
+
 var BlobClient = function() {
     this.artifacts = {};
 };
