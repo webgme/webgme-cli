@@ -42,16 +42,16 @@ describe('Decorator tests', function() {
             manager.new({decoratorName: RAW_DECORATOR_NAME, meta: true}, done);
         });
 
-        // FIXME: Finish this test
-        it.only('should recognize "Decorator" in name and not duplicate', function(done) {
-            var name = 'ANewDecorator';
-            process.chdir(PROJECT_DIR);  // Start in different directory
-            manager.new({decoratorName: name, meta: true}, function(err, result) {
-                var decDir = path.join(PROJECT_DIR, 'src', 'decorators', name);
-                console.log('checking', decDir);
-                    assert(fse.existsSync(decDir));
-                    done();
-                });
+        describe('duplicate "Decorator"', function() {
+            before(function(done) {
+                var name = 'ANewDecorator';
+                process.chdir(PROJECT_DIR);  // Start in different directory
+                manager.new({decoratorName: name, meta: true}, done);
+            });
+
+            it('should recognize "Decorator" in name and not duplicate', function() {
+                var decDir = path.join(PROJECT_DIR, 'src', 'decorators', 'ANewDecorator');
+                assert(fse.existsSync(decDir));
             });
         });
 

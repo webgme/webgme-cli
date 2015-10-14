@@ -38,9 +38,10 @@ _.extend(DecoratorManager.prototype, ComponentManager.prototype,
 DecoratorManager.prototype.new = function(options, callback) {
     // Set the config options from the command line flags
     options.meta = false;
+    options.decoratorName = options.decoratorName.replace(/Decorator$/, '');
     var self = this,
         decoratorGenerator = new DecoratorGenerator(this._logger, options),
-        name = options.decoratorName.replace(/Decorator$/, ''),
+        name = options.decoratorName,
         setupConfig;
 
     decoratorGenerator.main(function(e) {
