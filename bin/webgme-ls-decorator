@@ -1,0 +1,10 @@
+#!/usr/bin/env node
+
+'use strict';
+var utils = require('../src/utils'),
+    nop = require('nop'),
+    DecoratorManager = require('../src/DecoratorManager');
+
+var manager = new DecoratorManager();
+
+manager.ls({}, nop);

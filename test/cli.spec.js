@@ -1,5 +1,7 @@
 /*globals describe,it,before,beforeEach*/
 // Testing the command line interfaces for the commands
+'use strict';
+
 var spawn = require('child_process').spawn,
     path = require('path'),
     R = require('ramda'),
@@ -14,6 +16,13 @@ var spawn = require('child_process').spawn,
         'ls',
         'enable',
         'disable',
+
+        'new decorator',
+        'add decorator',
+        'rm decorator',
+        'ls decorator',
+        'enable decorator',
+        'disable decorator',
 
         'new plugin',
         'add plugin',

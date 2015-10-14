@@ -1,0 +1,19 @@
+#!/usr/bin/env node
+
+'use strict';
+var Command = require('commander').Command,
+    DecoratorManager = require('../src/DecoratorManager'),
+    program = new Command(),
+    nop = require('nop');
+
+program
+    .arguments('<decoratorName>')
+    .action(function(decoratorName) {
+        // FIXME: This is only called if an arg is passed!
+        // Otherwise, it fails silently
+        var manager = new DecoratorManager();
+
+        program.decoratorName = decoratorName;
+        manager.new(program, nop);
+    })
+    .parse(process.argv);
