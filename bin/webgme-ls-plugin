@@ -3,8 +3,8 @@
 'use strict';
 var utils = require('../src/utils'),
     nop = require('nop'),
-    DecoratorManager = require('../src/DecoratorManager');
+    PluginManager = require('../src/PluginManager');
 
-var manager = new DecoratorManager();
+var manager = new PluginManager();
 
 manager.ls({}, nop);
