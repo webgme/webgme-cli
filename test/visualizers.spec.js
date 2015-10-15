@@ -119,7 +119,6 @@ describe('Viz tests', function() {
                 visualizers = require(jsonPath);
 
             visualizers.forEach(function(viz) {
-                console.log('viz:', viz);
                 keys.forEach(function(key) {
                     assert.notEqual(viz[key], undefined);
                 });
@@ -199,7 +198,6 @@ describe('Viz tests', function() {
             it('should not list vizs in wrong directory ', function(done) {
                 process.chdir(__dirname);
                 manager.ls({}, function(err) {
-                    console.log('err:', err);
                     assert(err);
                     process.chdir(PROJECT_DIR);
                     done();
