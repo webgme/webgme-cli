@@ -46,18 +46,7 @@ BaseManager.prototype.init = function (args, callback) {  // Create new project
         }
 
         // Create the package.json
-        var pkgJsonTemplatePath = path.join(__dirname, 'res', 'package.template.json'),
-            pkgJsonTemplate = _.template(fs.readFileSync(pkgJsonTemplatePath)),
-            toolJsonPath = path.join(__dirname, '..', 'package.json'),
-            toolJson = require(toolJsonPath),
-            pkgContent = {
-                webgmeVersion: toolJson.dependencies.webgme,
-                name: name
-            },
-            pkgJson = pkgJsonTemplate(pkgContent);
-
-        this._logger.info('Writing package.json to '+path.join(project, 'package.json'));
-        fs.writeFileSync(path.join(project, 'package.json'), pkgJson);
+        this._createPkgJson(project, name);
 
         // Create the base directories
         BaseManager._createBasicFileStructure(project);
@@ -77,6 +66,44 @@ BaseManager.prototype.init = function (args, callback) {  // Create new project
         'Please run \'npm init\' from the within project to finish configuration.');
         callback();
     }.bind(this));
+};
+
+BaseManager.prototype._createPkgJson = function(project, name) {
+    var pkgJsonTemplatePath = path.join(__dirname, 'res', 'package.template.json'),
+        pkgJsonTemplate = _.template(fs.readFileSync(pkgJsonTemplatePath)),
+        toolJsonPath = path.join(__dirname, '..', 'package.json'),
+        toolJson = require(toolJsonPath),
+        pkgContent = {
+            webgmeVersion: toolJson.dependencies.webgme,
+            name: name
+        },
+        outputPkgJson = path.join(project, 'package.json'),
+        originalPkgJson = {},
+        newPkgJson = JSON.parse(pkgJsonTemplate(pkgContent)),
+        pkgJson;
+
+    // Load existing package.json, if exists
+    if (fs.existsSync(outputPkgJson)) {
+        originalPkgJson = require(outputPkgJson);
+        // We will remove the require cache for the package.json since
+        // we are changing it now
+        delete require.cache[require.resolve(outputPkgJson)];
+    }
+    pkgJson = _.extend({}, originalPkgJson, newPkgJson);
+
+    // Copy the dev and regular dependencies separately (_.extend is shallow)
+    pkgJson.dependencies = _.extend(
+        originalPkgJson.dependencies || {},
+        newPkgJson.dependencies
+    );
+    pkgJson.devDependencies = _.extend(
+        originalPkgJson.devDependencies || {},
+        newPkgJson.devDependencies
+    );
+
+    this._logger.info('Writing package.json to ' + outputPkgJson);
+
+    fs.writeFileSync(outputPkgJson, JSON.stringify(pkgJson, null, 2));
 };
 
 BaseManager._createBasicFileStructure = function(project) {

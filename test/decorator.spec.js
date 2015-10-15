@@ -85,7 +85,6 @@ describe('Decorator tests', function() {
 
         it('should record the decorator in webgme-setup.json', function() {
             var config = require(CONFIG_PATH);
-            console.log('config:', config);
             assert.notEqual(config.components.decorators[DECORATOR_NAME], undefined);
         });
 
@@ -120,7 +119,6 @@ describe('Decorator tests', function() {
             it('should not list decorators in wrong directory ', function(done) {
                 process.chdir(__dirname);
                 manager.ls({}, function(err) {
-                    console.log('err:', err);
                     assert(err);
                     process.chdir(PROJECT_DIR);
                     done();
@@ -203,7 +201,6 @@ describe('Decorator tests', function() {
             it('should add the project to the '+CONFIG_NAME, function() {
                 var configText = fse.readFileSync(CONFIG_PATH),
                     config = JSON.parse(configText);
-                console.log('config:', config);
                 assert.notEqual(config.dependencies.decorators[otherDecorator], undefined);
             });
 
