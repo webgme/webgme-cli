@@ -67,7 +67,6 @@ describe('Plugin tests', function() {
 
         it('should set pluginName to pluginId by default', function() {
             var content = fse.readFileSync(PLUGIN_SRC, 'utf8');
-            console.log(content);
             assert.equal(content.indexOf('New Plugin'), -1);
         });
 
@@ -160,7 +159,6 @@ describe('Plugin tests', function() {
             it('should not list plugins in wrong directory ', function(done) {
                 process.chdir(__dirname);
                 manager.ls({}, function(err) {
-                    console.log('err:', err);
                     assert(err);
                     process.chdir(PROJECT_DIR);
                     done();
