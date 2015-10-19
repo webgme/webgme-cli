@@ -15,6 +15,13 @@ Next, create a new WebGME app:
 webgme init MyNewProject
 ```
 
+Navigate to the project folder and install dependencies:
+
+```
+cd MyNewProject
+npm install
+```
+
 Now, from the project root, you can start the WebGME app with `npm start`!
 
 Additional useful commands include
