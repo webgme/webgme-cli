@@ -42,6 +42,7 @@ ComponentManager.prototype._preprocess = function(next, args, callback) {
         this._logger.error(err);
         return callback(err);
     }
+    this._prepareWebGmeConfig();
     next(args, callback);
 };
 

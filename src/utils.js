@@ -311,6 +311,7 @@ var loadPaths = function(requirejs) {
             common: __dirname + '/../node_modules/webgme/src/common',
 
             'plugin/PluginGenerator/PluginGenerator': __dirname + '/../node_modules/webgme/src/plugin/coreplugins/PluginGenerator/',
+            'plugin/AddOnGenerator/AddOnGenerator': __dirname + '/../node_modules/webgme/src/plugin/coreplugins/AddOnGenerator/',
             'plugin/DecoratorGenerator/DecoratorGenerator': __dirname + '/../node_modules/webgme/src/plugin/coreplugins/DecoratorGenerator/',
             'plugin/VisualizerGenerator/VisualizerGenerator': __dirname + '/../node_modules/webgme/src/plugin/coreplugins/VisualizerGenerator/',
         }

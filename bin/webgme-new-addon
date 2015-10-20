@@ -1,0 +1,38 @@
+#!/usr/bin/env node
+
+'use strict';
+var Command = require('commander').Command,
+    program = new Command(),
+    nop = require('nop'),
+    utils = require('../src/utils'),
+    AddonManager = require('../src/AddonManager');
+
+program.arguments('<addOnId>')
+    .action(function(addOnId) {
+        program.addOnId = addOnId;
+        var manager = new AddonManager();
+        manager.new(program, nop);
+    });
+
+// Get the config
+var options = AddonManager.prototype._getOptions()
+    .filter(function(opt) {  // Remove the id
+        return opt.name !== '--add-on-id';
+    }),
+    args,
+    regex;
+
+for (var i = options.length; i--;) {
+    args = [options[i].name, options[i].desc];
+    if (options[i].type !== 'boolean') {
+        args[0] += ' <value>';
+    }
+
+    if (options[i].items) {
+        regex = new RegExp('^(' + options[i].items.join('|') + ')$');
+        args.push(regex);
+    }
+    program.option.apply(program, args);
+}
+
+program.parse(process.argv);

@@ -3,7 +3,7 @@
 'use strict';
 
 <% if (typeof seeds === "undefined") seeds = [];
-if (typeof addOns === "undefined") addOns = [];
+if (typeof addons === "undefined") addons = [];
 if (typeof plugins === "undefined") plugins = [];
 if (typeof decorators === "undefined") decorators = [];
 if (typeof visualizers === "undefined") visualizers = [];
@@ -32,10 +32,10 @@ var config = require('webgme/config/config.default'),
 <% // FIXME: This needs to be restructured... %>
 // The paths can be loaded from the webgme-setup.json
 <%= printBasePaths('plugin', plugins.map(dirname)) +
-    printBasePaths('addOn', addOns.map(dirname)) +
+    printBasePaths('addOn', addons.map(dirname)) +
     printConfigPaths('visualization.decoratorPaths', decorators.map(dirname)) +
     printBasePaths('seedProjects', seeds) %>
-<% if (addOns.length > 0) { %>config.addOn.enable = true<%}%>
+<% if (addons.length > 0) { %>config.addOn.enable = true<%}%>
 // Visualizer descriptors
 <% if (visualizers.length > 0) { %>config.visualization.visualizerDescriptors.push('./src/visualizers/Visualizers.json');<%}%>
 // Add requirejs paths

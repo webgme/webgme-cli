@@ -11,7 +11,7 @@
         "src": "src/seeds/test"
       }
     },
-    "addOns": {
+    "addons": {
       "MyAddon": {
         "srcDir": "src/addOns/MyAddon",
         "src": "src/addOns/MyAddon/MyAddon.js"
@@ -30,7 +30,7 @@
   "dependencies": {
     "plugins": {},
     "seeds": {},
-    "addOns": {},
+    "addons": {},
     "visualizers": {},
     "decorators": {}
   }
