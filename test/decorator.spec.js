@@ -108,12 +108,10 @@ describe('Decorator tests', function() {
 
         describe('list decorators', function() {
             it('should list the new decorator', function(done) {
-                emitter.once('write', function(msg) {
-                    assert.notEqual(-1, msg.indexOf(DECORATOR_NAME));
+                manager.ls({}, function(err, decs) {
+                    assert.notEqual(-1, decs.components.indexOf(DECORATOR_NAME));
                     done();
                 });
-
-                manager.ls({}, nop);
             });
 
             it('should not list decorators in wrong directory ', function(done) {

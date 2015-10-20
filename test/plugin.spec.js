@@ -148,12 +148,10 @@ describe('Plugin tests', function() {
 
         describe('list plugins', function() {
             it('should list the new plugin', function(done) {
-                emitter.once('write', function(msg) {
-                    assert.notEqual(-1, msg.indexOf(PLUGIN_NAME));
+                manager.ls({}, function(err, plugins) {
+                    assert.notEqual(-1, plugins.components.indexOf(PLUGIN_NAME));
                     done();
                 });
-
-                manager.ls({}, nop);
             });
 
             it('should not list plugins in wrong directory ', function(done) {
