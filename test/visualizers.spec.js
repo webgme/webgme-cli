@@ -187,12 +187,10 @@ describe('Viz tests', function() {
 
         describe('list vizs', function() {
             it('should list the new viz', function(done) {
-                emitter.once('write', function(msg) {
-                    assert.notEqual(-1, msg.indexOf(NEW_VIZ));
+                manager.ls({}, function(err, vizs) {
+                    assert.notEqual(-1, vizs.components.indexOf(NEW_VIZ));
                     done();
                 });
-
-                manager.ls({}, nop);
             });
 
             it('should not list vizs in wrong directory ', function(done) {

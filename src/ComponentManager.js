@@ -59,7 +59,7 @@ ComponentManager.prototype.ls = function(args, callback) {
 
     this._logger.write('Detected '+this._group+': '+plugins+
         '\nThird party '+this._group+': '+deps);
-    callback(null);
+    callback(null, {components: plugins, dependencies: deps});
 };
 
 ComponentManager.prototype.rm = function(args, callback) {

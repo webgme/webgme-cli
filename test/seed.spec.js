@@ -321,6 +321,33 @@ describe('Seed tests', function() {
                     // TODO
                 });
             });
+
+            describe('list seeds', function() {
+                var LS_PROJ = path.join(PROJECT_DIR, 'ListSeeds');
+                before(function(done) {
+                    utils.getCleanProject(LS_PROJ , function() {
+                        process.chdir(LS_PROJ);
+                        done();
+                    });
+                });
+
+                it('should list the new seed', function(done) {
+                    manager.ls({}, function(err, seeds) {
+                        assert.notEqual(-1, seeds.components.indexOf('test'));
+                        done();
+                    });
+                });
+
+                it('should not list seeds in wrong directory ', function(done) {
+                    process.chdir(__dirname);
+
+                    try {
+                        manager.ls({}, nop);  // This should error
+                    } catch(e) {
+                        done();
+                    }
+                });
+            });
         });
     });
 
