@@ -24,6 +24,13 @@ var spawn = require('child_process').spawn,
         'enable decorator',
         'disable decorator',
 
+        'new addon',
+        'add addon',
+        'rm addon',
+        'ls addon',
+        'enable addon',
+        'disable addon',
+
         'new plugin',
         'add plugin',
         'rm plugin',
@@ -73,7 +80,6 @@ var testCliCall = function(args, test, done) {
 };
 
 describe('cli', function() {
-    'use strict';
 
     before(function() {
         process.chdir(__dirname);

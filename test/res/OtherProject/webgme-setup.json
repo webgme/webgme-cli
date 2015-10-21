@@ -27,6 +27,11 @@
       "OtherDecorator": {
         "src": "src/decorators/OtherDecorator"
       }
+    },
+    "addons": {
+      "OtherAddon": {
+        "src": "src/addons/OtherAddon"
+      }
     }
   },
   "dependencies": {
@@ -34,6 +39,7 @@
     "addOns": {},
     "seeds": {},
     "visualizers": {},
-    "decorators": {}
+    "decorators": {},
+    "addons": {}
   }
 }
