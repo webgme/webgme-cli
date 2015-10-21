@@ -30,8 +30,8 @@ webgme new plugin MyNewPlugin
 webgme ls plugin
 webgme rm plugin MyNewPlugin
 
-webgme new addOn MyNewAddOn
-webgme rm addOn MyNewAddOn
+webgme new addon MyNewAddOn
+webgme rm addon MyNewAddOn
 ```
 
 It currently supports adding plugins or addons from github repositories which are either created with this tool or contain a WebGME `config.js` file in the project root:
@@ -40,3 +40,7 @@ It currently supports adding plugins or addons from github repositories which ar
 webgme add plugin <plugin> <github user>/<github project>
 ```
 
+# FAQ
+
+## `Tried loading "coreplugins/XXXXGenerator/XXXXGenerator" at xxxxx/src/../node_modules/webgme/src/plugin/coreplugins/...`
+This usually happens after updating a clone of the webgme-setup-tool and is caused by an outdated version of the webgme. That is, this happens when the webgme-setup-tool has been updated to support a feature that isn't supported in the currently installed webgme dependency. Running `npm update` from the project root should fix it.
