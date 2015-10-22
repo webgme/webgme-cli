@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
 'use strict';
-var utils = require('../src/utils'),
+var utils = require('../lib/utils'),
     nop = require('nop'),
-    AddonManager = require('../src/AddonManager');
+    AddonManager = require('../lib/AddonManager');
 
 var manager = new AddonManager();
 

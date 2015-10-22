@@ -4,5 +4,6 @@ cache:
   directories:
     - node_modules
 node_js:
+    - "0.12.7"
     - "4.1.1"
     - "4.2.1"

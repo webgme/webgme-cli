@@ -1,7 +1,7 @@
 /*globals describe,it,before*/
 
 var Readable = require('stream').Readable,
-    Logger = require('../src/Logger'),
+    Logger = require('../lib/Logger'),
     assert = require('assert'),
     logger = new Logger(),
     emitter = logger._emitter;

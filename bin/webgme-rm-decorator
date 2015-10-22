@@ -4,8 +4,8 @@
 var Command = require('commander').Command,
     program = new Command(),
     nop = require('nop'),
-    utils = require('../src/utils'),
-    DecoratorManager = require('../src/DecoratorManager'),
+    utils = require('../lib/utils'),
+    DecoratorManager = require('../lib/DecoratorManager'),
     manager = new DecoratorManager();
 
 program

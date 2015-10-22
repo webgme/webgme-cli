@@ -4,8 +4,8 @@ var path = require('path'),
     fs = require('fs'),
     rm_rf = require('rimraf'),
     testUtils = require('./res/utils'),
-    utils = require('./../src/utils'),
-    PluginManager = require(__dirname+'/../src/PluginManager'),
+    utils = require('./../lib/utils'),
+    PluginManager = require(__dirname+'/../lib/PluginManager'),
     _ = require('lodash');
 
 var pluginManager = new PluginManager(),

@@ -11,8 +11,9 @@
   },
   "scripts": {
     "test-win": "node node_modules/mocha/bin/mocha test/*.js",
-	"test": "mkdir test-tmp; node node_modules/mocha/bin/mocha test/*.js && node node_modules/mocha/bin/mocha test/plugins/{RemoveFrom,AddTo}Plugin.spec.js",
+    "test": "mkdir test-tmp; node node_modules/mocha/bin/mocha test/*.js && node node_modules/mocha/bin/mocha test/plugins/{RemoveFrom,AddTo}Plugin.spec.js",
     "test-cover": "mkdir test-tmp; node node_modules/istanbul/lib/cli.js --hook-run-in-context cover node_modules/mocha/bin/_mocha -- -R spec test/*.js",
+    "postinstall": "node bin/postinstall.js",
     "test-plugin": "node node_modules/mocha/bin/mocha test/plugins/{RemoveFrom,AddTo}Plugin.spec.js"
   },
   "repository": {
@@ -26,8 +27,11 @@
   },
   "homepage": "https://github.com/webgme/webgme-setup-tool#readme",
   "dependencies": {
+    "babel": "^5.8.23",
     "change-case": "^2.3.0",
     "commander": "brollb/commander.js",
+    "deep-readdir": "^0.2.0",
+    "fs-extra": "^0.24.0",
     "lodash": "^3.9.3",
     "mkdirp": "^0.5.1",
     "mongo-uri": "^0.1.2",
@@ -42,10 +46,8 @@
   "devDependencies": {
     "chai": "^3.0.0",
     "esprima": "^2.6.0",
-    "fs-extra": "^0.24.0",
     "istanbul": "^0.3.17",
     "mocha": "^2.2.5",
-    "q": "^1.4.1",
     "sinon": "^1.15.4",
     "sinon-chai": "^2.8.0"
   }

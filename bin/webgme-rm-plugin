@@ -4,8 +4,8 @@
 var Command = require('commander').Command,
     program = new Command(),
     nop = require('nop'),
-    utils = require('../src/utils'),
-    PluginManager = require('../src/PluginManager'),
+    utils = require('../lib/utils'),
+    PluginManager = require('../lib/PluginManager'),
     manager = new PluginManager();
 
 program

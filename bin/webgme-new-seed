@@ -2,7 +2,7 @@
 
 'use strict';
 var Command = require('commander').Command,
-    SeedManager = require('../src/SeedManager'),
+    SeedManager = require('../lib/SeedManager'),
     program = new Command(),
     nop = require('nop');
 
