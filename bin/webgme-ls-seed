@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 'use strict';
-var SeedManager = require('../src/SeedManager'),
+var SeedManager = require('../lib/SeedManager'),
     nop = require('nop');
 
 var manager = new SeedManager();

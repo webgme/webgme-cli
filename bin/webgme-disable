@@ -4,7 +4,7 @@
 var Command = require('commander').Command,
     program = new Command();
 
-require('../src/BinUtils')
+require('../lib/BinUtils')
     .getSupportedSubCommands(__dirname)
     .forEach(function(component) {
         program

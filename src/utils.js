@@ -95,7 +95,7 @@ var saveConfig = function(config) {
 var updateWebGMEConfig = function(startPath) {
     var root = getRootPath(startPath),
         content = getWebGMEConfigContent(startPath),
-        templatePath = path.join(__dirname, 'res', 'config.template.js'),
+        templatePath = path.join(__dirname, 'res', 'config.template.js.ejs'),
         template = _.template(fs.readFileSync(templatePath)),
         configPath = path.join(root, 'config', 'config.webgme.js');
 

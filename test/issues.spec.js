@@ -4,8 +4,8 @@ var path = require('path'),
     assert = require('assert'),
     fs = require('fs'),
     rm_rf = require('rimraf'),
-    Logger = require('../src/Logger'),
-    PluginManager = require('../src/PluginManager'),
+    Logger = require('../lib/Logger'),
+    PluginManager = require('../lib/PluginManager'),
     _ = require('lodash');
 
 var logger = new Logger(),

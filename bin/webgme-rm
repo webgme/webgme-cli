@@ -3,7 +3,7 @@
 'use strict';
 var Command = require('commander').Command,
     program = new Command(),
-    components = require('../src/BinUtils').getSupportedSubCommands(__dirname);
+    components = require('../lib/BinUtils').getSupportedSubCommands(__dirname);
 
 for (var i = components.length; i--;) {
     program
