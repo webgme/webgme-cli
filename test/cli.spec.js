@@ -10,6 +10,9 @@ var spawn = require('child_process').spawn,
     binPath = path.join(__dirname, '..', 'bin', 'webgme'),
     TMP_DIR = path.join(__dirname, '..', 'test-tmp'),
     cliCalls = [
+        'init',
+        'start',
+
         'new',
         'add',
         'rm',
