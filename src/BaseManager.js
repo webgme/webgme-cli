@@ -4,6 +4,8 @@
 var _ = require('lodash'),
     path = require('path'),
     fs = require('fs'),
+    sync = require('child_process').spawnSync,
+    spawn = require('child_process').spawn,
     R = require('ramda'),
     mkdir = require('mkdirp'),
     Logger = require('./Logger'),
@@ -12,6 +14,23 @@ var _ = require('lodash'),
 
 var BaseManager = function(logger) {
     this._logger = logger || new Logger();
+};
+
+BaseManager.prototype.start = function (callback) {
+    this._logger.write('Installing dependencies...');
+    var result = sync('npm', ['install']).output[0];
+
+    if (result) {
+        this._logger.error('Installation failed: ' + result);
+        callback(result);
+    }
+
+    this._logger.write('Starting app...');
+    // Set this up to pass through to stdout
+    var app = spawn('npm', ['start']);
+    app.stdout.pipe(process.stdout);
+    app.stderr.pipe(process.stderr);
+    app.on('close', callback);
 };
 
 BaseManager.prototype.init = function (args, callback) {  // Create new project

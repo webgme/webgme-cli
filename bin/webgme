@@ -34,7 +34,11 @@ program
 
 program
     .command('init [name]', 'Initialize new WebGME app')
-    .alias('i')
+    .alias('i');
+
+program
+    .command('start', 'Start the existing WebGME app')
+    .alias('s')
     .parse(process.argv);
 
 // TODO: Create custom help message from all actions and components
