@@ -47,7 +47,7 @@ describe('BaseManager', function() {
         });
 
         describe('init', function() {
-            var appName = 'InitProject',
+            var appName = 'Init.Project',
                 initProject = path.join(TMP_DIR, appName);
 
             before(function(done) {
@@ -65,7 +65,7 @@ describe('BaseManager', function() {
             it('should use the project name in the mongodb uri', function() {
                 var configPath = path.join(initProject, 'config', 'config.webgme.js'),
                     config = require(configPath);
-                assert.equal(appName.toLowerCase(), config.mongo.uri.split('/').pop());
+                assert.equal(appName.toLowerCase().replace(/\./g, '_'), config.mongo.uri.split('/').pop());
             });
 
             it('should create (valid) globals test fixture', function() {
@@ -94,7 +94,7 @@ describe('BaseManager', function() {
             it('should name the npm project appropriately', function() {
                 var packageJSON = path.join(initProject, 'package.json');
                 var pkg = require(packageJSON);
-                assert.equal(pkg.name, 'InitProject'.toLowerCase());
+                assert.equal(pkg.name, 'Init.Project'.toLowerCase());
             });
 
             it('should add the webgme as a dependency', function() {
