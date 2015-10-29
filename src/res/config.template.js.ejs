@@ -7,6 +7,7 @@ if (typeof addons === "undefined") addons = [];
 if (typeof plugins === "undefined") plugins = [];
 if (typeof decorators === "undefined") decorators = [];
 if (typeof visualizers === "undefined") visualizers = [];
+if (typeof layouts === "undefined") layouts = [];
 if (typeof requirejsPaths === "undefined") requirejsPaths = null;
 
 var dirname = function(path) {
@@ -33,6 +34,7 @@ var config = require('webgme/config/config.default'),
 // The paths can be loaded from the webgme-setup.json
 <%= printBasePaths('plugin', plugins.map(dirname)) +
     printBasePaths('addOn', addons.map(dirname)) +
+    printBasePaths('visualization.layout', layouts.map(dirname)) +
     printConfigPaths('visualization.decoratorPaths', decorators.map(dirname)) +
     printBasePaths('seedProjects', seeds) %>
 <% if (addons.length > 0) { %>config.addOn.enable = true<%}%>

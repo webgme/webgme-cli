@@ -11,6 +11,7 @@ var config = require('webgme/config/config.default'),
 config.plugin.basePaths.push('src/plugin');
 config.addOn.basePaths.push('src/addons');
 config.visualization.decoratorPaths.push('src/decorators');
+config.visualization.layout.basePaths.push('src/layouts');
 config.seedProjects.basePaths.push('src/seed/OtherSeed');
 
 config.addOn.enable = true

@@ -1,0 +1,18 @@
+#!/usr/bin/env node
+/* jshint node:true */
+
+'use strict';
+var Command = require('commander').Command,
+    program = new Command(),
+    utils = require('../lib/utils'),
+    nop = require('nop'),
+    LayoutManager = require('../lib/LayoutManager');
+
+var manager = new LayoutManager();
+
+program.arguments('<name>')
+    .action(function(name) {
+        program.name = name;
+        manager.enable(program, nop);
+    })
+    .parse(process.argv);

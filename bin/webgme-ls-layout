@@ -1,0 +1,10 @@
+#!/usr/bin/env node
+
+'use strict';
+var utils = require('../lib/utils'),
+    nop = require('nop'),
+    LayoutManager = require('../lib/LayoutManager');
+
+var manager = new LayoutManager();
+
+manager.ls({}, nop);

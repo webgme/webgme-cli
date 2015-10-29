@@ -25,13 +25,17 @@
         "widget": "src/visualizers/widgets/MyViz"
       }
     },
-    "decorators": {}
+    "decorators": {},
+    "layouts": {}
   },
   "dependencies": {
     "plugins": {},
     "seeds": {},
     "addons": {},
     "visualizers": {},
-    "decorators": {}
+    "decorators": {},
+    "addOns": {},
+    "visualizers": {},
+    "layouts": {}
   }
 }

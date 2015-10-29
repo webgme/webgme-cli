@@ -32,6 +32,11 @@
       "OtherAddon": {
         "src": "src/addons/OtherAddon"
       }
+    },
+    "layouts": {
+      "OtherLayout": {
+        "src": "src/layouts/OtherLayout"
+      }
     }
   },
   "dependencies": {
@@ -40,6 +45,7 @@
     "seeds": {},
     "visualizers": {},
     "decorators": {},
-    "addons": {}
+    "addons": {},
+    "layouts": {}
   }
 }
