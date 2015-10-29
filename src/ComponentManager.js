@@ -197,7 +197,7 @@ ComponentManager.prototype._getPathFromDependency = function(installInfo, callba
     // paths defined in the config.js
     var componentPath = this._getPathFromCliConfig(installInfo) || this._getPathFromGME(installInfo);
     if (!componentPath) {
-        var err = 'Did not recognize the project as a WebGME project (' + installInfo.pkg + ')';
+        var err = 'Could not find the given ' + this._name;
         return callback(err);
     }
 

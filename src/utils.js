@@ -313,7 +313,8 @@ var loadPaths = function(requirejs) {
             'plugin/PluginGenerator/PluginGenerator': __dirname + '/../node_modules/webgme/src/plugin/coreplugins/PluginGenerator/',
             'plugin/AddOnGenerator/AddOnGenerator': __dirname + '/../node_modules/webgme/src/plugin/coreplugins/AddOnGenerator/',
             'plugin/DecoratorGenerator/DecoratorGenerator': __dirname + '/../node_modules/webgme/src/plugin/coreplugins/DecoratorGenerator/',
-            'plugin/VisualizerGenerator/VisualizerGenerator': __dirname + '/../node_modules/webgme/src/plugin/coreplugins/VisualizerGenerator/',
+            'plugin/LayoutGenerator/LayoutGenerator': __dirname + '/../node_modules/webgme/src/plugin/coreplugins/LayoutGenerator/',
+            'plugin/VisualizerGenerator/VisualizerGenerator': __dirname + '/../node_modules/webgme/src/plugin/coreplugins/VisualizerGenerator/'
         }
     });
 };
