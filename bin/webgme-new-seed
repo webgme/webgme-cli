@@ -8,6 +8,7 @@ var Command = require('commander').Command,
 
 program
     .arguments('<project>')
+    .description('Create a seed from an existing WebGME project')
     .option('-n, --seed-name [name]', 'Create different name for the seed')
     .option('-s, --source [branch|commit]', 'Branch or commit to use. Default is master')
     .action(function(project) {
