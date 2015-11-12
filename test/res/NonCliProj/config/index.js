@@ -8,7 +8,7 @@ var config = require('webgme/config/config.default'),
 // config.mongo.uri = mongodb://127.0.0.1:27017/webgme_my_app;
 config.plugin.basePaths.push('plugins');
 config.seedProjects.basePaths.push('./seeds');
-config.addOn.enable = true
+config.addOn.enable = true;
 config.addOn.basePaths.push("addOn");
 
 validateConfig(config);

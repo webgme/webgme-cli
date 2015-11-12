@@ -37,7 +37,7 @@ var config = require('webgme/config/config.default'),
     printBasePaths('visualization.layout', layouts.map(dirname)) +
     printConfigPaths('visualization.decoratorPaths', decorators.map(dirname)) +
     printBasePaths('seedProjects', seeds) %>
-<% if (addons.length > 0) { %>config.addOn.enable = true<%}%>
+<% if (addons.length > 0) { %>config.addOn.enable = true;<%}%>
 // Visualizer descriptors
 <% if (visualizers.length > 0) { %>config.visualization.visualizerDescriptors.push('./src/visualizers/Visualizers.json');<%}%>
 // Add requirejs paths
@@ -47,6 +47,7 @@ var config = require('webgme/config/config.default'),
     }).join(',\n') %>
 };<% } %>
 
-<% // mongo uri %>config.mongo.uri = 'mongodb://127.0.0.1:27017/<%= appName.replace(/\./g, '_') %>'
+<% if (typeof defaultLayout !== 'undefined') {%>config.visualization.layout.default = '<%= defaultLayout %>';<% } %>
+<% // mongo uri %>config.mongo.uri = 'mongodb://127.0.0.1:27017/<%= appName.replace(/\./g, '_') %>';
 validateConfig(config);
 module.exports = config;

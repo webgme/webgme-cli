@@ -5,20 +5,9 @@
  * @author rkereskenyi / https://github.com/rkereskenyi
  */
 
+'use strict';
 
-define([
-    'js/Constants',
-    'js/NodePropertyNames',
-    'js/Widgets/PartBrowser/PartBrowserWidget.DecoratorBase',
-    'js/Widgets/DiagramDesigner/DiagramDesignerWidget.Constants',
-    'text!../DiagramDesigner/OtherDecorator.DiagramDesignerWidget.html',
-    'css!../DiagramDesigner/OtherDecorator.DiagramDesignerWidget.css',
-    'css!./OtherDecorator.PartBrowserWidget.css'
-], function (CONSTANTS,
-             nodePropertyNames,
-             PartBrowserWidgetDecoratorBase,
-             DiagramDesignerWidgetConstants,
-             OtherDecoratorDiagramDesignerWidgetTemplate) {
+define(['js/Constants', 'js/NodePropertyNames', 'js/Widgets/PartBrowser/PartBrowserWidget.DecoratorBase', 'js/Widgets/DiagramDesigner/DiagramDesignerWidget.Constants', 'text!../DiagramDesigner/OtherDecorator.DiagramDesignerWidget.html', 'css!../DiagramDesigner/OtherDecorator.DiagramDesignerWidget.css', 'css!./OtherDecorator.PartBrowserWidget.css'], function (CONSTANTS, nodePropertyNames, PartBrowserWidgetDecoratorBase, DiagramDesignerWidgetConstants, OtherDecoratorDiagramDesignerWidgetTemplate) {
 
     'use strict';
 
@@ -56,8 +45,7 @@ define([
         this._renderContent();
     };
 
-    OtherDecoratorPartBrowserWidget.prototype.afterAppend = function () {
-    };
+    OtherDecoratorPartBrowserWidget.prototype.afterAppend = function () {};
 
     OtherDecoratorPartBrowserWidget.prototype._renderContent = function () {
         var client = this._control._client,
@@ -65,7 +53,7 @@ define([
 
         //render GME-ID in the DOM, for debugging
         if (DEBUG) {
-            this.$el.attr({'data-id': this._metaInfo[CONSTANTS.GME_ID]});
+            this.$el.attr({ 'data-id': this._metaInfo[CONSTANTS.GME_ID] });
         }
 
         if (nodeObj) {

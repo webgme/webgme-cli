@@ -8,14 +8,14 @@ var fse = require('fs-extra'),
     path = require('path'),
     BASE_PROJECT = path.join(__dirname, 'BasicProject');
 
-var getCleanProject = function(projectDir, done) {
-    var after = function() {
+var getCleanProject = function getCleanProject(projectDir, done) {
+    var after = function after() {
         process.chdir(projectDir);
         done();
     };
 
     if (fse.existsSync(projectDir)) {
-        rm_rf(projectDir, function() {
+        rm_rf(projectDir, function () {
             fse.copy(BASE_PROJECT, projectDir, after);
         });
     } else {
@@ -23,7 +23,7 @@ var getCleanProject = function(projectDir, done) {
     }
 };
 
-var isValidJs = function(text) {
+var isValidJs = function isValidJs(text) {
     try {
         esprima.parse(text);
         return true;
@@ -33,7 +33,7 @@ var isValidJs = function(text) {
 };
 
 // Clear the require cache so the next load is correct
-var requireReload = function() {
+var requireReload = function requireReload() {
     var dep;
     for (var i = arguments.length; i--;) {
         dep = require.resolve(arguments[i]);

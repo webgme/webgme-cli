@@ -5,13 +5,9 @@
  * @author rkereskenyi / https://github.com/rkereskenyi
  */
 
-define([
-    'js/Constants',
-    'js/NodePropertyNames',
-    'js/Widgets/DiagramDesigner/DiagramDesignerWidget.DecoratorBase',
-    'text!./OtherDecorator.DiagramDesignerWidget.html',
-    'css!./OtherDecorator.DiagramDesignerWidget.css'
-], function (CONSTANTS, nodePropertyNames, DiagramDesignerWidgetDecoratorBase, OtherDecoratorTemplate) {
+'use strict';
+
+define(['js/Constants', 'js/NodePropertyNames', 'js/Widgets/DiagramDesigner/DiagramDesignerWidget.DecoratorBase', 'text!./OtherDecorator.DiagramDesignerWidget.html', 'css!./OtherDecorator.DiagramDesignerWidget.css'], function (CONSTANTS, nodePropertyNames, DiagramDesignerWidgetDecoratorBase, OtherDecoratorTemplate) {
 
     'use strict';
 
@@ -46,8 +42,8 @@ define([
         this.skinParts.$name.on('dblclick.editOnDblClick', null, function (event) {
             if (self.hostDesignerItem.canvas.getIsReadOnlyMode() !== true) {
                 $(this).editInPlace({
-                    class: '',
-                    onChange: function (oldValue, newValue) {
+                    'class': '',
+                    onChange: function onChange(oldValue, newValue) {
                         self._onNodeTitleChanged(oldValue, newValue);
                     }
                 });
@@ -65,7 +61,7 @@ define([
             nodeObj = client.getNode(this._metaInfo[CONSTANTS.GME_ID]);
 
         //render GME-ID in the DOM, for debugging
-        this.$el.attr({'data-id': this._metaInfo[CONSTANTS.GME_ID]});
+        this.$el.attr({ 'data-id': this._metaInfo[CONSTANTS.GME_ID] });
 
         if (nodeObj) {
             this.name = nodeObj.getAttribute(nodePropertyNames.Attributes.name) || '';

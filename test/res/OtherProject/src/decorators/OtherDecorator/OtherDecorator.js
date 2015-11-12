@@ -5,11 +5,9 @@
  * @author rkereskenyi / https://github.com/rkereskenyi
  */
 
-define([
-    'js/Decorators/DecoratorBase',
-    './DiagramDesigner/OtherDecorator.DiagramDesignerWidget',
-    './PartBrowser/OtherDecorator.PartBrowserWidget'
-], function (DecoratorBase, OtherDecoratorDiagramDesignerWidget, OtherDecoratorPartBrowserWidget) {
+'use strict';
+
+define(['js/Decorators/DecoratorBase', './DiagramDesigner/OtherDecorator.DiagramDesignerWidget', './PartBrowser/OtherDecorator.PartBrowserWidget'], function (DecoratorBase, OtherDecoratorDiagramDesignerWidget, OtherDecoratorPartBrowserWidget) {
 
     'use strict';
 
@@ -19,7 +17,7 @@ define([
         DECORATOR_ID = 'OtherDecorator';
 
     OtherDecorator = function (params) {
-        var opts = _.extend({loggerName: this.DECORATORID}, params);
+        var opts = _.extend({ loggerName: this.DECORATORID }, params);
 
         __parent__.apply(this, [opts]);
 
