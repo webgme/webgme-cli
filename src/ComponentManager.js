@@ -67,7 +67,8 @@ ComponentManager.prototype.rm = function(args, callback) {
     var name = args.name,
         config = utils.getConfig(),
         type = config.components[this._group][name] !== undefined ? 
-            'components' : 'dependencies';
+            'components' : 'dependencies',
+        record = config[type][this._group][name];
 
     // Remove from config files
     this._removeFromConfig(name, type);
@@ -75,17 +76,27 @@ ComponentManager.prototype.rm = function(args, callback) {
     // Remove any actual files
     if (type === 'components') {
         // Remove the name directories from src, test
-        var paths = Object.keys(config[type][this._group][name]),
-            remaining = paths.length,
-            finished = function() {
-                if (--remaining === 0) {
-                    return callback();
-                }
-            };
+        var paths,
+            remaining,
+            finished;
+
+        paths = Object.keys(record)
+            .filter(key => {
+                return fs.existsSync(record[key]);
+            });
+        remaining = paths.length;
+        finished = function() {
+            if (--remaining === 0) {
+                return callback();
+            }
+        };
+
         paths.forEach(function(pathType) {
-            var componentPath = config[type][this._group][name][pathType];
+            var componentPath = record[pathType];
             this._logger.info('Removing '+componentPath);
-            rm_rf(componentPath, finished);
+            if (fs.existsSync(componentPath)) {
+                rm_rf(componentPath, finished);
+            }
         }, this);
     } else {
         callback();
@@ -296,6 +307,19 @@ ComponentManager.prototype._register = function(name, content) {
     config.components[this._group][name] = content;
     utils.saveConfig(config);
     utils.updateWebGMEConfig();
+};
+
+ComponentManager.prototype._getInstanceType = function(name) {
+    var config = utils.getConfig(),
+        types = Object.keys(config),
+        type = null;
+
+    types.forEach(currentType => {
+        if (config[currentType][this._group][name]) {
+            type = currentType;
+        }
+    });
+    return type;
 };
 
 module.exports = ComponentManager;

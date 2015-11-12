@@ -1,17 +1,9 @@
 /*globals define, WebGMEGlobal, $ */
-define([
-    'lib/jquery/' + (DEBUG ? 'jquery.layout' : 'jquery.layout.min'),
-    'js/logger',
-    'text!./templates/OtherLayout.html',
-    'text!./OtherLayoutConfig.json'
-], function(
-    _jQueryLayout,
-    Logger,
-    defaultLayoutTemplate,
-    LayoutConfigJSON
-) {
+'use strict';
+
+define(['lib/jquery/' + (DEBUG ? 'jquery.layout' : 'jquery.layout.min'), 'js/logger', 'text!./templates/OtherLayout.html', 'text!./OtherLayoutConfig.json'], function (_jQueryLayout, Logger, defaultLayoutTemplate, LayoutConfigJSON) {
     'use strict';
-    
+
     var CONFIG = JSON.parse(LayoutConfigJSON),
         SPACING_OPEN_TOUCH = 10,
         SPACING_CLOSED_TOUCH = 10,
@@ -21,11 +13,10 @@ define([
         SPACING_CLOSED = WebGMEGlobal.SUPPORTS_TOUCH ? SPACING_CLOSED_TOUCH : SPACING_CLOSED_DESKTOP,
         SIDE_PANEL_WIDTH = 202;
 
-    var OtherLayout = function(params) {
-        this._logger = (params && params.logger) || Logger.create('gme:Layouts:OtherLayout',
-            WebGMEGlobal.gmeConfig.client.log);
+    var OtherLayout = function OtherLayout(params) {
+        this._logger = params && params.logger || Logger.create('gme:Layouts:OtherLayout', WebGMEGlobal.gmeConfig.client.log);
         this.panels = CONFIG.panels;
-        this._template = (params && params.template) || defaultLayoutTemplate;
+        this._template = params && params.template || defaultLayoutTemplate;
 
         this._body = null;
         this._panelToContainer = {};
@@ -36,7 +27,7 @@ define([
      *
      * @return {undefined}
      */
-    OtherLayout.prototype.init = function() {
+    OtherLayout.prototype.init = function () {
         var self = this;
 
         this._body = $('body');
@@ -63,7 +54,7 @@ define([
                 resizable: false,
                 slidable: false,
                 spacing_open: 0, //jshint ignore: line
-                size: 27        //has to match footer CSS settings (height + border)
+                size: 27 //has to match footer CSS settings (height + border)
             },
             east: {
                 size: SIDE_PANEL_WIDTH,
@@ -72,12 +63,12 @@ define([
                 slidable: false,
                 spacing_open: SPACING_OPEN, //jshint ignore: line
                 spacing_closed: SPACING_CLOSED, //jshint ignore: line
-                onresize: function (/*paneName, paneElement, paneState, paneOptions, layoutName*/) {
+                onresize: function onresize() /*paneName, paneElement, paneState, paneOptions, layoutName*/{
                     self._onToolboxResize();
                 }
             },
             center: {
-                onresize: function (/*paneName, paneElement, paneState, paneOptions, layoutName*/) {
+                onresize: function onresize() /*paneName, paneElement, paneState, paneOptions, layoutName*/{
                     self._onCenterResize();
                 }
             }
@@ -92,7 +83,7 @@ define([
      * @param {String} container
      * @return {undefined}
      */
-    OtherLayout.prototype.addToContainer = function(panel, container) {
+    OtherLayout.prototype.addToContainer = function (panel, container) {
         if (container === 'header') {
             this._headerPanel.append(panel.$pEl);
         } else if (container === 'footer') {
@@ -115,7 +106,7 @@ define([
      * @param {Panel} panel
      * @return {undefined}
      */
-    OtherLayout.prototype.remove = function(panel) {
+    OtherLayout.prototype.remove = function (panel) {
         if (this._toolbox === panel) {
             this._toolboxPanel.empty();
         } else if (this._canvas === panel) {
@@ -128,7 +119,7 @@ define([
      *
      * @return {undefined}
      */
-    OtherLayout.prototype.destroy = function() {
+    OtherLayout.prototype.destroy = function () {
         this._body.empty();
     };
 
@@ -136,13 +127,13 @@ define([
     //
     // These are internally called and used by the example to provide a responsive
     // UI (even if it is simply scaling linearly here)
-    OtherLayout.prototype._onCenterResize = function() {
+    OtherLayout.prototype._onCenterResize = function () {
         if (this._canvas) {
             this._canvas.setSize(this._centerPanel.width(), this._centerPanel.height());
         }
     };
 
-    OtherLayout.prototype._onToolboxResize = function() {
+    OtherLayout.prototype._onToolboxResize = function () {
         if (this._toolbox) {
             this._toolbox.setSize(this._toolboxPanel.width(), this._toolboxPanel.height());
         }

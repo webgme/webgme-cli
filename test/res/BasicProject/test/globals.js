@@ -5,6 +5,8 @@
  * @author pmeijer / https://github.com/pmeijer
  */
 
+'use strict';
+
 var testFixture = require('webgme/test/_globals'),
     WEBGME_CONFIG_PATH = '../config';
 
@@ -13,15 +15,15 @@ var testFixture = require('webgme/test/_globals'),
 
 var WebGME = testFixture.WebGME,
     gmeConfig = require(WEBGME_CONFIG_PATH),
-    getGmeConfig = function () {
-        'use strict';
-        // makes sure that for each request it returns with a unique object and tests will not interfere
-        if (!gmeConfig) {
-            // if some tests are deleting or unloading the config
-            gmeConfig = require(WEBGME_CONFIG_PATH);
-        }
-        return JSON.parse(JSON.stringify(gmeConfig));
-    };
+    getGmeConfig = function getGmeConfig() {
+    'use strict';
+    // makes sure that for each request it returns with a unique object and tests will not interfere
+    if (!gmeConfig) {
+        // if some tests are deleting or unloading the config
+        gmeConfig = require(WEBGME_CONFIG_PATH);
+    }
+    return JSON.parse(JSON.stringify(gmeConfig));
+};
 
 WebGME.addToRequireJsPaths(gmeConfig);
 

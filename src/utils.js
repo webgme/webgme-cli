@@ -102,6 +102,20 @@ var updateWebGMEConfig = function(startPath) {
     // Add webgme app name to the content
     var appName = require(path.join(root, 'package.json')).name;
     content.appName = appName.replace(/-/g, '_');
+
+    // Add default layout info
+    var config = getConfig(startPath);
+    if (config) {
+        Object.keys(config).forEach(type => {
+            Object.keys(config[type].layouts || {}).forEach(layout => {
+                if (config[type].layouts[layout].enabled) {
+                    content.defaultLayout = layout;
+                }
+            });
+        });
+    }
+
+    // Create the WebGME config file
     fs.writeFileSync(configPath, template(content));
 };
 

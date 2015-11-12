@@ -1,6 +1,8 @@
 /*globals describe,it,before,beforeEach,after*/
-var SeedManager = require('../src/SeedManager'),
-    Logger = require('../src/Logger'),
+'use strict';
+
+var SeedManager = require('../lib/SeedManager'),
+    Logger = require('../lib/Logger'),
     path = require('path'),
     assert = require('assert'),
     utils = require('./res/utils'),
@@ -19,71 +21,66 @@ var TMP_DIR = path.join(__dirname, '..', 'test-tmp'),
     PROJECT_DIR = path.join(TMP_DIR, 'ExampleSeedProject'),
     CONFIG_NAME = 'webgme-setup.json',
     CONFIG_PATH = path.join(PROJECT_DIR, CONFIG_NAME),
-    OTHER_PROJECT = path.join(__dirname,'res', 'OtherProject'),
+    OTHER_PROJECT = path.join(__dirname, 'res', 'OtherProject'),
     OTHER_SEED = 'OtherSeed',
     otherProject;
 
-describe('Seed tests', function() {
+describe('Seed tests', function () {
     'use strict';
-    
+
     var SEED_NAME = 'MyWebGMEProject',
         SeedBasePath = path.join(PROJECT_DIR, 'src', 'seeds'),
-        SEED_SRC = path.join(SeedBasePath, SEED_NAME, SEED_NAME+'.js'),
-        SEED_TEST = path.join(PROJECT_DIR, 'test', 'seeds', SEED_NAME, SEED_NAME+'.spec.js');
+        SEED_SRC = path.join(SeedBasePath, SEED_NAME, SEED_NAME + '.js'),
+        SEED_TEST = path.join(PROJECT_DIR, 'test', 'seeds', SEED_NAME, SEED_NAME + '.spec.js');
 
-    before(function(done) {
+    before(function (done) {
         // Copy the project from /test/res
         utils.getCleanProject(PROJECT_DIR, done);
     });
 
-    describe('new seed', function() {
+    describe('new seed', function () {
         var passingPromise = {
-                then: function(fn) {
-                    fn();
-                    return {fail: nop};
-                }
-            };
+            then: function then(fn) {
+                fn();
+                return { fail: nop };
+            }
+        };
         var failingPromise = {
-                then: function() {
-                    return {fail: function(fn){
+            then: function then() {
+                return { fail: function fail(fn) {
                         return fn();
-                    }};
-                }
-            };
+                    } };
+            }
+        };
 
-        after(function() {
+        after(function () {
             manager = new SeedManager(logger);
         });
 
-        it('should call the WebGME export script', function(done) {
-            manager._exportProject = function() {
+        it('should call the WebGME export script', function (done) {
+            manager._exportProject = function () {
                 return passingPromise;
             };
-            manager.new({project: SEED_NAME}, done);
+            manager['new']({ project: SEED_NAME }, done);
         });
 
-        it('should pass required args to WebGME export script', function(done) {
-            var requiredArgs = [
-                'gmeConfig',
-                'projectName',
-                'source',
-                'outFile'
-            ];
-            manager._exportProject = function(params) {
+        it('should pass required args to WebGME export script', function (done) {
+            var requiredArgs = ['gmeConfig', 'projectName', 'source', 'outFile'];
+            manager._exportProject = function (params) {
                 var args = Object.keys(params);
                 assert(_.difference(args, requiredArgs).length === 0);
                 return passingPromise;
             };
-            manager.new({project: 'myNewSeed'}, done);
+            manager['new']({ project: 'myNewSeed' }, done);
         });
 
-        it('should save relative path', function(done) {
-            manager._exportProject = function(params) {
+        it('should save relative path', function (done) {
+            manager._exportProject = function (params) {
                 return passingPromise;
             };
-            manager.new({project: 'myNewSeed2'}, function() {
+            manager['new']({ project: 'myNewSeed2' }, function () {
                 // Check the webgem-setup.json
-                var configContent = fse.readFileSync(CONFIG_PATH,'utf8'),
+                var configContent = fse.readFileSync(CONFIG_PATH, 'utf8'),
                     config = JSON.parse(configContent),
                     srcPath = config.components.seeds.myNewSeed2.src;
 
@@ -92,11 +89,11 @@ describe('Seed tests', function() {
             });
         });
 
-        it('should enable seedProjects in config.webgme.js', function(done) {
-            manager._exportProject = function(params) {
+        it('should enable seedProjects in config.webgme.js', function (done) {
+            manager._exportProject = function (params) {
                 return passingPromise;
             };
-            manager.new({project: 'myNewSeed3'}, function() {
+            manager['new']({ project: 'myNewSeed3' }, function () {
                 // Check the webgem-setup.json
                 var configPath = path.join(PROJECT_DIR, WebGMEConfig),
                     config = require(configPath);
@@ -106,12 +103,12 @@ describe('Seed tests', function() {
             });
         });
 
-        it('should not create seed directory on fail', function(done) {
+        it('should not create seed directory on fail', function (done) {
             var seedName = 'failingSeed';
-            manager._exportProject = function(params) {
+            manager._exportProject = function (params) {
                 return failingPromise;
             };
-            manager.new({project: seedName}, function() {
+            manager['new']({ project: seedName }, function () {
                 // Check the webgme-setup.json
                 var seedPath = path.join(SeedBasePath, seedName);
                 assert(!fse.existsSync(seedPath));
@@ -120,74 +117,72 @@ describe('Seed tests', function() {
         });
     });
 
-    describe('add seed', function() {
+    describe('add seed', function () {
 
-        describe('errors', function() {
-            before(function() {
+        describe('errors', function () {
+            before(function () {
                 process.chdir(PROJECT_DIR);
             });
 
-            it('should not be missing seed or project', function(done) {
+            it('should not be missing seed or project', function (done) {
                 emitter.once('error', done.bind(this, undefined));
-                manager.add({project: OTHER_PROJECT}, nop);
+                manager.add({ project: OTHER_PROJECT }, nop);
             });
 
-            it('should have seed from project', function(done) {
+            it('should have seed from project', function (done) {
                 this.timeout(4000);
                 emitter.once('error', done.bind(this, undefined));
-                manager.add({name: 'blah', project: OTHER_PROJECT}, nop);
+                manager.add({ name: 'blah', project: OTHER_PROJECT }, nop);
             });
         });
 
-        describe('invalid projects', function() {
-            it('should error if invalid project', function(done) {
-                otherProject = path.join(__dirname,'res', 'NotANodeProj');
+        describe('invalid projects', function () {
+            it('should error if invalid project', function (done) {
+                otherProject = path.join(__dirname, 'res', 'NotANodeProj');
                 this.timeout(10000);
                 process.chdir(PROJECT_DIR);
-                manager.add({name: OTHER_SEED, project: otherProject}, function(err) {
+                manager.add({ name: OTHER_SEED, project: otherProject }, function (err) {
                     assert(err);
                     done();
                 });
             });
 
-            it('should error if not webgme project', function(done) {
+            it('should error if not webgme project', function (done) {
                 otherProject = path.join(__dirname, 'res', 'InvalidProject');
                 this.timeout(10000);
                 process.chdir(PROJECT_DIR);
-                manager.add({name: OTHER_SEED, project: otherProject}, function(err) {
+                manager.add({ name: OTHER_SEED, project: otherProject }, function (err) {
                     assert(err);
                     done();
                 });
             });
         });
 
-        describe('projects NOT created with webgme-setup-tool', function() {
-            before(function(done) {
+        describe('projects NOT created with webgme-setup-tool', function () {
+            before(function (done) {
                 otherProject = path.join(__dirname, 'res', 'NonCliProj');
                 this.timeout(10000);
                 process.chdir(PROJECT_DIR);
                 emitter.on('error', assert.bind(assert, false));
-                manager.add({name: OTHER_SEED, project: otherProject}, function() {
-                    utils.requireReload(
-                        path.join(PROJECT_DIR, 'package.json')
-                    );
+                manager.add({ name: OTHER_SEED, project: otherProject }, function () {
+                    utils.requireReload(path.join(PROJECT_DIR, 'package.json'));
                     done();
                 });
             });
 
-            it('should add the project to the package.json', function() {
+            it('should add the project to the package.json', function () {
                 var pkg = require(path.join(PROJECT_DIR, 'package.json')),
-                depName = otherProject.split(path.sep).pop().toLowerCase();
+                    depName = otherProject.split(path.sep).pop().toLowerCase();
                 assert.notEqual(pkg.dependencies[depName], undefined);
             });
 
-            it('should add the project to the '+CONFIG_NAME, function() {
+            it('should add the project to the ' + CONFIG_NAME, function () {
                 var configText = fse.readFileSync(CONFIG_PATH),
                     config = JSON.parse(configText);
                 assert.notEqual(config.dependencies.seeds[OTHER_SEED], undefined);
             });
 
-            it('should add the path to the webgme config', function() {
+            it('should add the path to the webgme config', function () {
                 var configPath = path.join(PROJECT_DIR, WebGMEConfig),
                     config = fse.readFileSync(configPath, 'utf8'),
                     paths = config.match(/seedProjects.*/g).join(';'),
@@ -197,81 +192,79 @@ describe('Seed tests', function() {
                 assert.notEqual(paths.indexOf(moduleName), -1);
             });
 
-            describe('rm dependency seed', function() {
-                before(function(done) {
+            describe('rm dependency seed', function () {
+                before(function (done) {
                     process.chdir(PROJECT_DIR);
-                    utils.requireReload(
-                        path.join(PROJECT_DIR, WebGMEConfig)
-                    );
-                    manager.rm({name: OTHER_SEED}, done);
+                    utils.requireReload(path.join(PROJECT_DIR, WebGMEConfig));
+                    manager.rm({ name: OTHER_SEED }, done);
                 });
 
-                it('should remove the path from the webgme config', function() {
+                it('should remove the path from the webgme config', function () {
                     var configPath = path.join(PROJECT_DIR, WebGMEConfig),
                         configText = fse.readFileSync(configPath, 'utf8');
                     assert.equal(configText.indexOf(OTHER_SEED), -1);
                 });
 
-                it('should remove seed entry from '+CONFIG_NAME, function() {
+                it('should remove seed entry from ' + CONFIG_NAME, function () {
                     var configText = fse.readFileSync(CONFIG_PATH),
                         config = JSON.parse(configText);
                     assert.equal(config.dependencies.seeds[OTHER_SEED], undefined);
                 });
 
-                it.skip('should remove project from package.json', function() {
+                it.skip('should remove project from package.json', function () {
                     // TODO
                 });
 
-                it.skip('should not remove project from package.json if used', function() {
+                it.skip('should not remove project from package.json if used', function () {
                     // TODO
                 });
             });
         });
 
-        describe('rm seed', function() {
+        describe('rm seed', function () {
             var RM_DIR = path.join(PROJECT_DIR, 'RemoveSeedTests'),
                 RM_SEED = 'test';
-            before(function(done) {
-                utils.getCleanProject(RM_DIR, function() {
-                    manager.rm({name: RM_SEED}, done);
+            before(function (done) {
+                utils.getCleanProject(RM_DIR, function () {
+                    manager.rm({ name: RM_SEED }, done);
                 });
             });
 
-            it('should remove the path from the webgme config', function() {
+            it('should remove the path from the webgme config', function () {
                 var configPath = path.join(RM_DIR, WebGMEConfig),
                     configText = fse.readFileSync(configPath, 'utf8');
                 assert.equal(configText.indexOf(RM_SEED), -1);
             });
 
-            it('should remove seed entry from '+CONFIG_NAME, function() {
+            it('should remove seed entry from ' + CONFIG_NAME, function () {
                 var configText = fse.readFileSync(CONFIG_PATH),
                     config = JSON.parse(configText);
                 assert.equal(config.dependencies.seeds[RM_SEED], undefined);
             });
         });
 
-        describe('projects created with webgme-setup-tool', function() {
+        describe('projects created with webgme-setup-tool', function () {
             var cliProject = path.join(__dirname, 'res', 'OtherProject');
-            before(function(done) {
+            before(function (done) {
                 this.timeout(5000);
                 process.chdir(PROJECT_DIR);
                 emitter.on('error', assert.bind(assert, false));
-                manager.add({name: OTHER_SEED, project: cliProject}, done);
+                manager.add({ name: OTHER_SEED, project: cliProject }, done);
             });
 
-            it('should add the project to the package.json', function() {
+            it('should add the project to the package.json', function () {
                 var pkg = require(path.join(PROJECT_DIR, 'package.json')),
-                depName = cliProject.split(path.sep).pop().toLowerCase();
+                    depName = cliProject.split(path.sep).pop().toLowerCase();
                 assert.notEqual(pkg.dependencies[depName], undefined);
             });
 
-            it('should add the project to the '+CONFIG_NAME, function() {
+            it('should add the project to the ' + CONFIG_NAME, function () {
                 var configText = fse.readFileSync(CONFIG_PATH),
                     config = JSON.parse(configText);
                 assert.notEqual(config.dependencies.seeds[OTHER_SEED], undefined);
             });
 
-            it('should add the path to the webgme config', function() {
+            it('should add the path to the webgme config', function () {
                 var configPath = path.join(PROJECT_DIR, WebGMEConfig),
                     config = fse.readFileSync(configPath, 'utf8'),
                     paths = config.match(/seedProjects.*/g).join(';'),
@@ -280,26 +273,27 @@ describe('Seed tests', function() {
                 assert(paths.indexOf(projectName) !== -1);
             });
 
-            it('should add the (relative) path to the webgme config', function() {
+            it('should add the (relative) path to the webgme config', function () {
                 var configPath = path.join(PROJECT_DIR, WebGMEConfig),
                     config = fse.readFileSync(configPath, 'utf8'),
-                    lines = config.match(/seedProjects.*/g),  // One per line
-                    paths = lines.map(function(line) { 
-                        return line.match(/['"]{1}.*['"]{1}/)[0]; 
-                    });
+                    lines = config.match(/seedProjects.*/g),
+                    // One per line
+                paths = lines.map(function (line) {
+                    return line.match(/['"]{1}.*['"]{1}/)[0];
+                });
 
                 for (var i = paths.length; i--;) {
-                    assert(!path.isAbsolute(paths[i]), 'Found absolute path: '+paths[i]);
+                    assert(!path.isAbsolute(paths[i]), 'Found absolute path: ' + paths[i]);
                 }
             });
 
-            describe('rm dependency seed', function() {
-                before(function(done) {
+            describe('rm dependency seed', function () {
+                before(function (done) {
                     process.chdir(PROJECT_DIR);
-                    manager.rm({name: OTHER_SEED}, done);
+                    manager.rm({ name: OTHER_SEED }, done);
                 });
 
-                it('should remove the path from the webgme config', function() {
+                it('should remove the path from the webgme config', function () {
                     var configPath = path.join(PROJECT_DIR, WebGMEConfig),
                         config = fse.readFileSync(configPath, 'utf8'),
                         paths = config.match(/seedProjects.*/g);
@@ -307,43 +301,43 @@ describe('Seed tests', function() {
                     assert(paths === null || paths.join(';').indexOf(OTHER_SEED) === -1);
                 });
 
-                it('should remove seed entry from '+CONFIG_NAME, function() {
+                it('should remove seed entry from ' + CONFIG_NAME, function () {
                     var configText = fse.readFileSync(CONFIG_PATH, 'utf8'),
                         config = JSON.parse(configText);
                     assert.equal(config.dependencies.seeds[OTHER_SEED], undefined);
                 });
 
-                it.skip('should remove project from package.json', function() {
+                it.skip('should remove project from package.json', function () {
                     // TODO
                 });
 
-                it.skip('should not remove project from package.json if used', function() {
+                it.skip('should not remove project from package.json if used', function () {
                     // TODO
                 });
             });
 
-            describe('list seeds', function() {
+            describe('list seeds', function () {
                 var LS_PROJ = path.join(PROJECT_DIR, 'ListSeeds');
-                before(function(done) {
-                    utils.getCleanProject(LS_PROJ , function() {
+                before(function (done) {
+                    utils.getCleanProject(LS_PROJ, function () {
                         process.chdir(LS_PROJ);
                         done();
                     });
                 });
 
-                it('should list the new seed', function(done) {
-                    manager.ls({}, function(err, seeds) {
+                it('should list the new seed', function (done) {
+                    manager.ls({}, function (err, seeds) {
                         assert.notEqual(-1, seeds.components.indexOf('test'));
                         done();
                     });
                 });
 
-                it('should not list seeds in wrong directory ', function(done) {
+                it('should not list seeds in wrong directory ', function (done) {
                     process.chdir(__dirname);
 
                     try {
-                        manager.ls({}, nop);  // This should error
-                    } catch(e) {
+                        manager.ls({}, nop); // This should error
+                    } catch (e) {
                         done();
                     }
                 });
@@ -351,7 +345,7 @@ describe('Seed tests', function() {
         });
     });
 
-    after(function(done) {
+    after(function (done) {
         if (fse.existsSync(PROJECT_DIR)) {
             rm_rf(PROJECT_DIR, done);
         } else {
