@@ -146,6 +146,24 @@ describe('BaseManager', function () {
                 });
             });
 
+            describe('gitignore', function () {
+
+                it('should create gitignore file if doesn\'t exist', function () {
+                    fs.statSync(path.join(initProject, '.gitignore'));
+                });
+
+                it('should not create gitignore if it already exists', function (done) {
+                    var projectDir = path.join(TMP_DIR, 'InitNoGitIgnore'),
+                        gitignorePath = path.join(projectDir, '.gitignore');
+                    fs.mkdirSync(projectDir);
+                    fs.writeFileSync(gitignorePath, 'text');
+                    manager.init({ name: projectDir }, function (err) {
+                        assert.equal(fs.readFileSync(gitignorePath, 'utf8'), 'text');
+                        done();
+                    });
+                });
+            });
+
             it('should fail f the dir exists', function () {
                 manager.init({ name: initProject }, function (err) {
                     assert(!!err);
