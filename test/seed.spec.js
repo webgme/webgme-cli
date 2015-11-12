@@ -1,8 +1,8 @@
 /*globals describe,it,before,beforeEach,after*/
 'use strict';
 
-var SeedManager = require('../src/SeedManager'),
-    Logger = require('../src/Logger'),
+var SeedManager = require('../lib/SeedManager'),
+    Logger = require('../lib/Logger'),
     path = require('path'),
     assert = require('assert'),
     utils = require('./res/utils'),

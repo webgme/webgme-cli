@@ -4,8 +4,8 @@ var path = require('path'),
     assert = require('assert'),
     nop = require('nop'),
     fse = require('fs-extra'),
-    Logger = require('../src/Logger'),
-    LayoutManager = require(__dirname+'/../src/LayoutManager'),
+    Logger = require('../lib/Logger'),
+    LayoutManager = require(__dirname+'/../lib/LayoutManager'),
     rm_rf = require('rimraf'),
     _ = require('lodash');
 
@@ -365,9 +365,8 @@ describe('Layout tests', function() {
 
         it('should set the default back to DefaultLayout', function() {
             var configPath = path.join(DISABLE_PROJECT, 'config', 'config.webgme.js'),
-                configTxt = fse.readFileSync(configPath);
+                configTxt = fse.readFileSync(configPath, 'utf8');
 
-            console.log('configTxt:', configTxt.toString());
             assert.equal(configTxt.indexOf('EnabledLayout'), -1);
         });
 

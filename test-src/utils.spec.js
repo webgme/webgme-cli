@@ -3,7 +3,7 @@ var rm_rf = require('rimraf'),
     path = require('path'),
     assert = require('assert'),
     requirejs = require('requirejs'),
-    utils = require('../src/utils'),
+    utils = require('../lib/utils'),
     testUtils = require('./res/utils'),
     fs = require('fs');
 

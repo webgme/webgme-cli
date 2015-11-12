@@ -4,8 +4,8 @@ var path = require('path'),
     assert = require('assert'),
     nop = require('nop'),
     fse = require('fs-extra'),
-    Logger = require('../src/Logger'),
-    VizManager = require(__dirname+'/../src/VisualizerManager'),
+    Logger = require('../lib/Logger'),
+    VizManager = require(__dirname+'/../lib/VisualizerManager'),
     rm_rf = require('rimraf'),
     _ = require('lodash');
 
