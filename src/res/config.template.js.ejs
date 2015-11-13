@@ -47,6 +47,15 @@ var config = require('webgme/config/config.default'),
     }).join(',\n') %>
 };<% } %>
 
+<% if (decorators.length) {
+    var name = null;%>
+// Add decorators to usedDecorators
+    <% for (var i = decorators.length; i--;) {
+        name = decorators[i].split('/').pop();%>
+config.client.usedDecorators.push('<%= name %>');
+    <% } %>
+<% } %>
+
 <% if (typeof defaultLayout !== 'undefined') {%>config.visualization.layout.default = '<%= defaultLayout %>';<% } %>
 <% // mongo uri %>config.mongo.uri = 'mongodb://127.0.0.1:27017/<%= appName.replace(/\./g, '_') %>';
 validateConfig(config);

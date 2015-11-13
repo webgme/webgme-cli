@@ -75,6 +75,11 @@ describe('Decorator tests', function() {
             });
         });
 
+        it('should add the decorator name to usedDecorators', function() {
+            console.log(fse.readFileSync(path.join(PROJECT_DIR, WebGMEConfig), 'utf8'));
+            var config = require(path.join(PROJECT_DIR, WebGMEConfig));
+            assert.notEqual(config.client.usedDecorators.indexOf(DECORATOR_NAME), -1);
+        });
 
         it('should add the decorator (relative) path to the config file', function() {
             var config = require(path.join(PROJECT_DIR, WebGMEConfig));
