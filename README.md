@@ -1,4 +1,7 @@
 [![Build Status](https://travis-ci.org/webgme/webgme-setup-tool.svg?branch=master)](https://travis-ci.org/webgme/webgme-setup-tool)
+[![Version](https://badge.fury.io/js/webgme-setup-tool.svg)](https://www.npmjs.com/package/webgme-setup-tool)
+[![Stories in Ready](https://badge.waffle.io/webgme/webgme-setup-tool.png?label=ready&title=Ready)](https://waffle.io/webgme/webgme-setup-tool)
+
 # WebGME Setup Tool
 The WebGME setup tool is a tool for managing WebGME apps. Specifically, it provides a command line interface for creating, removing, installing from other WebGME apps, (etc) for various WebGME components (currently addons and plugins are supported).
 
