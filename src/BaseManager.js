@@ -138,6 +138,7 @@ BaseManager.prototype._createWebGMEFiles = function(project) {
     // Create webgme config info
     var configDir = path.join(project, 'config');
 
+    // Config files
     fs.mkdirSync(configDir);
     fs.readdirSync(path.join(__dirname, 'res', 'config'))
         .map(R.pipe(R.nthArg(0), path.join.bind(path, 'config')))  // Add 'config/' for each
@@ -148,6 +149,27 @@ BaseManager.prototype._createWebGMEFiles = function(project) {
 
     // Create test fixtures
     BaseManager._copyFileToProject(project, 'test', 'globals.js');
+
+    // Create .gitignore
+    BaseManager._weakCopyFileToProject(project, '', '.gitignore');
+};
+
+/**
+ * Copy the file to the project if the file doesn't already exist
+ *
+ * @param {String} project
+ * @param {String} subPath
+ * @param {String} filename
+ * @return {undefined}
+ */
+BaseManager._weakCopyFileToProject = function(project, subPath, filename) {
+    try {
+        fs.statSync(path.join(project, subPath, filename));
+    } catch (err) {
+        if (err.code === 'ENOENT') {  // File doesn't exist
+            BaseManager._copyFileToProject(project, subPath, filename);
+        }
+    }
 };
 
 BaseManager._copyFileToProject = function(project, subPath, filename) {
