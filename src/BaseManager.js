@@ -84,8 +84,10 @@ BaseManager.prototype.init = function (args, callback) {  // Create new project
         fs.writeFileSync(path.join(project, PROJECT_CONFIG), JSON.stringify(webgmeInfo, null, 2));
         utils.updateWebGMEConfig(project);
 
-        this._logger.write('Created project at '+project+'.\n\n'+
-        'Please run \'npm init\' from the within project to finish configuration.');
+        this._logger.write('Created project at '+project+'.\n\nStart your WebGME ' +
+            'app with \'webgme start\' from the project root.\n'+
+            'It is recommended to run \'npm init\' from the within project ' +
+            'to finish configuration.');
         callback();
     }.bind(this));
 };
