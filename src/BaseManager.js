@@ -18,19 +18,22 @@ var BaseManager = function(logger) {
 
 BaseManager.prototype.start = function (callback) {
     this._logger.write('Installing dependencies...');
-    var result = sync('npm', ['install']).output[0];
 
-    if (result) {
-        this._logger.error('Installation failed: ' + result);
-        callback(result);
-    }
-
-    this._logger.write('Starting app...');
     // Set this up to pass through to stdout
-    var app = spawn('npm', ['start']);
-    app.stdout.pipe(process.stdout);
-    app.stderr.pipe(process.stderr);
-    app.on('close', callback);
+    var install = spawn('npm', ['install']);
+    install.stdout.pipe(process.stdout);
+    install.stderr.pipe(process.stderr);
+    install.on('close', (err) => {
+        if (err) {
+            this._logger.error('Installation failed: ' + err);
+            return callback(err);
+        }
+            this._logger.write('Starting app...');
+        var app = spawn('npm', ['start']);
+        app.stdout.pipe(process.stdout);
+        app.stderr.pipe(process.stderr);
+        app.on('close', callback);
+    });
 };
 
 BaseManager.prototype.init = function (args, callback) {  // Create new project
