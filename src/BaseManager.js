@@ -156,7 +156,7 @@ BaseManager.prototype._createWebGMEFiles = function(project) {
     BaseManager._copyFileToProject(project, 'test', 'globals.js');
 
     // Create .gitignore
-    BaseManager._weakCopyFileToProject(project, '', '.gitignore');
+    BaseManager._weakCreateGitIgnore(project);
 };
 
 /**
@@ -167,12 +167,16 @@ BaseManager.prototype._createWebGMEFiles = function(project) {
  * @param {String} filename
  * @return {undefined}
  */
-BaseManager._weakCopyFileToProject = function(project, subPath, filename) {
+BaseManager._weakCreateGitIgnore = function(project) {
+    var boilerplatePath = path.join(__dirname, 'res', 'gitignore'),
+        dstPath = path.join(project, '.gitignore');
+
     try {
-        fs.statSync(path.join(project, subPath, filename));
+        fs.statSync(dstPath);
     } catch (err) {
         if (err.code === 'ENOENT') {  // File doesn't exist
-            BaseManager._copyFileToProject(project, subPath, filename);
+            fs.createReadStream(boilerplatePath)
+                .pipe(fs.createWriteStream(dstPath));
         }
     }
 };

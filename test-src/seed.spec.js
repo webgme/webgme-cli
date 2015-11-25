@@ -231,6 +231,7 @@ describe('Seed tests', function() {
         describe('rm seed', function() {
             var RM_DIR = path.join(PROJECT_DIR, 'RemoveSeedTests'),
                 RM_SEED = 'test';
+
             before(function(done) {
                 utils.getCleanProject(RM_DIR, function() {
                     manager.rm({name: RM_SEED}, done);
