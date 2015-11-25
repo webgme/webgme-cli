@@ -55,12 +55,15 @@ ComponentManager.prototype._preprocess = function(next, args, callback) {
  */
 ComponentManager.prototype.ls = function(args, callback) {
     var config = utils.getConfig(),
-        plugins = Object.keys(config.components[this._group]).join(' ') || '<none>',
+        components = Object.keys(config.components[this._group]).join(' ') || '<none>',
         deps = Object.keys(config.dependencies[this._group]).join(' ') || '<none>';
 
-    this._logger.write('Detected '+this._group+': '+plugins+
-        '\nThird party '+this._group+': '+deps);
-    callback(null, {components: plugins, dependencies: deps});
+    this._logger.write(
+        this._group+':\n' +
+            '    local: ' + components + '\n' +
+            '    dependencies: ' + deps + '\n'
+    );
+    callback(null, {components: components, dependencies: deps});
 };
 
 ComponentManager.prototype.rm = function(args, callback) {
