@@ -9,6 +9,7 @@ var Command = require('commander').Command,
 program
     .arguments('<visualizerID>')
     .option('--name <visualizerName>', 'Set the visualizer name. Default is the id')
+    .option('--secondary', 'Create visualizer not used for active node visualization')
     .action(function(visualizerID) {
         // FIXME: This is only called if an arg is passed!
         // Otherwise, it fails silently
