@@ -32,7 +32,7 @@ _.extend(VisualizerManager.prototype, ComponentManager.prototype,
 /**
  * Create a new visualizer
  *
- * @param args
+ * @param options
  * @return {undefined}
  */
 VisualizerManager.prototype.new = function(options, callback) {
@@ -41,6 +41,7 @@ VisualizerManager.prototype.new = function(options, callback) {
         visualizerGenerator = new VisualizerGenerator(this._logger, options),
         id = options.visualizerID,
         name = options.name || id,
+        isSecondary = !!options.secondary,
         setupConfig;
 
     visualizerGenerator.main(function(e) {
@@ -59,10 +60,13 @@ VisualizerManager.prototype.new = function(options, callback) {
             src: 'panels/'+id+'/'+id+'Panel',
             title: name,
             panel: paths.panel,
+            secondary: isSecondary,
             widget: paths.widget
         };
         self._register(options.visualizerID, setupConfig);
-        self._addToVisualizersJSON(id, name, setupConfig.src);
+        if (!setupConfig.secondary) {
+            self._addToVisualizersJSON(id, name, setupConfig.src);
+        }
         self._logger.write('Created new visualizer at '+setupConfig.src);
         callback();
     });
@@ -162,7 +166,9 @@ VisualizerManager.prototype.add = function(options, callback) {
     ComponentManager.prototype.add.call(this, options, function(err, result) {
         // Add to the visualizers json
         var id = self._getUniqueVizId(result.id);
-        self._addToVisualizersJSON(id, result.title, result.src);
+        if (!result.secondary) {
+            self._addToVisualizersJSON(id, result.title, result.src);
+        }
         return callback(null, result);
     });
 };

@@ -204,6 +204,36 @@ describe('Viz tests', function() {
         });
     });
 
+    describe('secondary viz', function() {
+        var NEW_VIZ = 'SecondaryViz';
+        before(function(done) {
+            process.chdir(PROJECT_DIR);  // Start in different directory
+            manager.new({visualizerID: NEW_VIZ, secondary: true}, function() {
+                utils.requireReload(
+                    path.join(VizBasePath, 'Visualizers.json'),
+                    path.join(CONFIG_PATH)
+                );
+                done();
+            });
+        });
+
+        it('should not add the viz path to the Visualizers.json', function() {
+            var jsonPath = path.join(VizBasePath, 'Visualizers.json'),
+                visualizers = require(jsonPath),
+                matching = visualizers.filter(function(viz) {
+                    return viz.id === NEW_VIZ;
+                });
+
+            // check that basePath has been added!
+            assert.equal(matching.length, 0);
+        });
+
+        it('should set the viz secondary to false in ' + CONFIG_NAME, function() {
+            var config = require(CONFIG_PATH);
+            assert(config.components.visualizers[NEW_VIZ].secondary);
+        });
+    });
+
     describe('rm viz', function() {
         var VIZ_NAME = 'MyViz';
         before(function(done) {
