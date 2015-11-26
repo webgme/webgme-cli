@@ -94,13 +94,14 @@ ComponentManager.prototype.rm = function(args, callback) {
             }
         };
 
-        paths.forEach(function(pathType) {
-            var componentPath = record[pathType];
-            this._logger.info('Removing '+componentPath);
-            if (fs.existsSync(componentPath)) {
+        if (paths.length) {
+            paths.forEach(function(pathType) {
+                var componentPath = record[pathType];
                 rm_rf(componentPath, finished);
-            }
-        }, this);
+            }, this);
+        } else {
+            callback();
+        }
     } else {
         callback();
     }
