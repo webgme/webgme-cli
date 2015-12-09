@@ -163,6 +163,11 @@ describe('BaseManager', function() {
                         done();
                     });
                 });
+
+                it('should contain blob-local-storage', function() {
+                    var content = fs.readFileSync(path.join(initProject, '.gitignore'), 'utf8');
+                    assert.notEqual(content.indexOf('blob-local-storage'), -1);
+                });
             });
 
             it('should fail f the dir exists', function() {
