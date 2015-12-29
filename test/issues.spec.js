@@ -41,6 +41,10 @@ describe('Misc Issues', function () {
         });
     });
 
+    describe.only('issue 109', function () {
+        it('should not create duplicate paths in requirejs paths', function () {});
+    });
+
     after(function (done) {
         if (fs.existsSync(PROJECT_DIR)) {
             rm_rf(PROJECT_DIR, done);

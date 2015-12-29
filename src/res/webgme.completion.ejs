@@ -1,0 +1,71 @@
+_<%= cmd %>()
+{
+    local cur=${COMP_WORDS[COMP_CWORD]}
+<%
+function createArgsCompletion(anc, info) {
+    var subargs = Object.keys(info),
+        prev = anc.split('/'),
+        result = '',
+        name;
+
+    name = prev[prev.length-1];
+
+    if (!(info instanceof Array)) {  // Options
+        cmds = Object.keys(info);
+    } else {
+        cmds = info;
+    }
+
+    if (!cmds.length) {
+        return '';
+    }
+
+    // Check the args up to this point
+    var conds = [];
+    for (var i = 0; i < prev.length; i++) {
+        conds.push('"${COMP_WORDS[' + i + ']}" == "' + prev[i] + '"');
+    }
+
+    result += '\tif [[ ' + conds.join(' && ') + ' ]]; then\n' +
+        '\t\tCOMPREPLY=( $(compgen -W "' + cmds.join(' ') + '" -- $cur) )\n' +
+        '\tfi\n';
+
+    return result;
+}
+
+function generateCode(root) {
+    var children,
+        name,
+        info,
+        result = '',
+        current = [root],
+        next;
+
+    while (current.length) {
+        next = [];
+
+        for (var i = current.length; i--;) {
+            
+            name = current[i][0];
+            info = current[i][1];
+
+            // Create the code for the given node
+            result += createArgsCompletion(name, info);
+
+            // Add the next ones
+            if (!(info instanceof Array)) {
+                children = Object.keys(info);
+                for (var j = children.length; j--;) {
+                    next.push([name + '/' + children[j], info[children[j]]]);
+                }
+            }
+        }
+        current = next;
+    }
+    return result;
+}
+%>
+<%- generateCode([cmd, args]); %>
+
+}
+complete -F _<%= cmd %> <%= cmd %>
