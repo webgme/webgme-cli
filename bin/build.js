@@ -7,10 +7,12 @@ var spawnSync = require('child_process').spawnSync,
     fse = require('fs-extra'),
     deeplist = require('deep-readdir').deepReaddirSync,
     root = path.join(__dirname, '..'),
-    srcRoot = path.join(root, 'src');
+    from = process.argv[2],
+    to = process.argv[3],
+    srcRoot = path.join(root, from);
 
 // Compile back to ES5
-spawnSync('node', [babelPath, 'src', '-d', 'lib']);
+spawnSync('node', [babelPath, from, '-d', to]);
 
 // Copy the non-js files
 deeplist(srcRoot)
@@ -18,5 +20,5 @@ deeplist(srcRoot)
         return path.extname(file) !== '.js';
     })
     .forEach(function(file) {
-        fse.copySync(file, file.replace(srcRoot, path.join(root, 'lib')));
+        fse.copySync(file, file.replace(srcRoot, path.join(root, to)));
     });
