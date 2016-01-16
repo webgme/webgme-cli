@@ -1,9 +1,0 @@
-{
-  "name": "noncliproj",
-  "scripts": {
-    "start": "node app.js"
-  },
-  "dependencies": {
-  },
-  "version": "1.0.0"
-}
