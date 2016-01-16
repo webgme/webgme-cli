@@ -10,13 +10,17 @@ program
     .arguments('<project>')
     .description('Create a seed from an existing WebGME project')
     .option('-n, --seed-name [name]', 'Create different name for the seed')
-    .option('-s, --source [branch|commit]', 'Branch or commit to use. Default is master')
+    .option('-u, --user [name]', 'User with access to the seed project (if using authentication)')
+    .option('-b, --branch [branch]', 'Branch to use. Default is master')
     .action(function(project) {
         // FIXME: This is only called if an arg is passed!
         // Otherwise, it fails silently
         var manager = new SeedManager();
 
         program.project = project;
-        manager.new(program, nop);
+        manager.new(program, function(err) {
+            // Seed generation has a bug where it needs to be killed manually :/
+            process.exit(!!err);
+        });
     })
     .parse(process.argv);

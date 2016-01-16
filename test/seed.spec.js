@@ -39,44 +39,30 @@ describe('Seed tests', function () {
     });
 
     describe('new seed', function () {
-        var passingPromise = {
-            then: function then(fn) {
-                fn();
-                return { fail: nop };
-            }
-        };
-        var failingPromise = {
-            then: function then() {
-                return { fail: function fail(fn) {
-                        return fn();
-                    } };
-            }
-        };
-
         after(function () {
             manager = new SeedManager(logger);
         });
 
         it('should call the WebGME export script', function (done) {
-            manager._exportProject = function () {
-                return passingPromise;
+            manager._exportProject = function (params, cb) {
+                return cb();
             };
             manager['new']({ project: SEED_NAME }, done);
         });
 
         it('should pass required args to WebGME export script', function (done) {
-            var requiredArgs = ['gmeConfig', 'projectName', 'source', 'outFile'];
-            manager._exportProject = function (params) {
+            var requiredArgs = ['gmeConfig', 'projectName', 'branch', 'user'];
+            manager._exportProject = function (params, cb) {
                 var args = Object.keys(params);
                 assert(_.difference(args, requiredArgs).length === 0);
-                return passingPromise;
+                return cb(null, 'seedData');
             };
             manager['new']({ project: 'myNewSeed' }, done);
         });
 
         it('should save relative path', function (done) {
-            manager._exportProject = function (params) {
-                return passingPromise;
+            manager._exportProject = function (params, cb) {
+                return cb(null, 'test');
             };
             manager['new']({ project: 'myNewSeed2' }, function () {
                 // Check the webgem-setup.json
@@ -90,8 +76,8 @@ describe('Seed tests', function () {
         });
 
         it('should enable seedProjects in config.webgme.js', function (done) {
-            manager._exportProject = function (params) {
-                return passingPromise;
+            manager._exportProject = function (params, cb) {
+                return cb(null);
             };
             manager['new']({ project: 'myNewSeed3' }, function () {
                 // Check the webgem-setup.json
@@ -105,8 +91,8 @@ describe('Seed tests', function () {
 
         it('should not create seed directory on fail', function (done) {
             var seedName = 'failingSeed';
-            manager._exportProject = function (params) {
-                return failingPromise;
+            manager._exportProject = function (params, cb) {
+                return cb(1);
             };
             manager['new']({ project: seedName }, function () {
                 // Check the webgme-setup.json
