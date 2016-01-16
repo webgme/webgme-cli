@@ -1,6 +1,6 @@
 {
   "name": "webgme-setup-tool",
-  "version": "1.4.2",
+  "version": "1.5.0",
   "description": "",
   "main": "index.js",
   "bin": {
@@ -16,7 +16,6 @@
     "build-completion": "node bin/completion.js",
     "postinstall": "node bin/install.js",
     "pretest": "node bin/build.js test-src test",
-    "build-completion": "node bin/completion.js",
     "test-plugin": "node node_modules/mocha/bin/mocha test/plugins/{RemoveFrom,AddTo}Plugin.spec.js"
   },
   "repository": {
