@@ -1,7 +1,8 @@
-# Configuration
+# WebGME Configuration Settings
+On `npm start`, the webgme app will load `config.default.js` which will override the configuration [defaults](https://github.com/webgme/webgme/tree/master/config).
 
-Overwrite/append the [default webgme configuration](https://github.com/webgme/webgme/blob/master/config/config.default.js) in `config.default.js`.
-
-When adding your own paths, make sure to either use `__dirname` or a relative path which will be resolved from your repository's root.
-
-To load another configuration set the environment variable `NODE_ENV` to the wanted configuration, e.g. on windows `set NODE_ENV = app` will load `config.app.js`.
+If `NODE_ENV` is set, it will first try to load the configuration settings from `config/config.ENV.js` where `ENV` is the value of `NODE_ENV`. For example,
+```
+NODE_ENV=debug npm start
+```
+will load the configuration settings from `config/config.debug.js` if it exists and fallback to `config/config.default.js` otherwise
