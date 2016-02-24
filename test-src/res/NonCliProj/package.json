@@ -1,5 +1,5 @@
 {
-  "name": "noncliproj",
+  "name": "project-name",
   "scripts": {
     "start": "node app.js"
   },

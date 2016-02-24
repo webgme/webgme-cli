@@ -125,7 +125,7 @@ ComponentManager.prototype.add = function(args, callback) {
     componentName = args.name;
     project = args.project;
     // Add the project to the package.json
-    var pkgProject = utils.getPackageName(project);
+    var pkgProject = args.packageName || utils.getPackageName(project);
     this._logger.info(
         'Adding '+componentName+' from '+pkgProject);
 
@@ -160,11 +160,12 @@ ComponentManager.prototype.add = function(args, callback) {
                 // the cli's config
                 utils.updateWebGMEConfig();
                 configObject.id = componentName;
+                self._logger.write(`Added ${componentName}!`);
                 return callback(null, configObject);
             });
 
         } else {
-            err = 'Could not find project (' + project + ') !';
+            err = `Could not find project (${project}) !`;
             self._logger.error(err);
             return callback(err);
         }

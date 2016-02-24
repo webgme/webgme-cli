@@ -172,6 +172,7 @@ describe('Layout tests', function() {
                     process.chdir(PROJECT_DIR);
                     emitter.on('error', failFn);
                     manager.add({name: 'DefaultLayout', 
+                                 packageName: 'project-name',
                                  project: otherProject}, done);
                 });
             });
@@ -184,7 +185,7 @@ describe('Layout tests', function() {
 
             it('should add the project to the package.json', function() {
                 var pkg = require(path.join(PROJECT_DIR, 'package.json')),
-                depName = otherProject.split(path.sep).pop().toLowerCase();
+                depName = 'project-name';
                 assert.notEqual(pkg.dependencies[depName], undefined);
             });
 

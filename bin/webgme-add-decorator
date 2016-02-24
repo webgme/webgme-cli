@@ -16,4 +16,5 @@ program.arguments('<name> <project>')
         program.project = project;
         manager.add(program, nop);
     })
+    .option('-n, --package-name [name]', 'App name from that package.json')
     .parse(process.argv);

@@ -153,7 +153,11 @@ describe('Seed tests', function() {
                 this.timeout(10000);
                 process.chdir(PROJECT_DIR);
                 emitter.on('error', assert.bind(assert, false));
-                manager.add({name: OTHER_SEED, project: otherProject}, function() {
+                manager.add({
+                    name: OTHER_SEED,
+                    packageName: 'project-name',
+                    project: otherProject
+                }, function() {
                     utils.requireReload(
                         path.join(PROJECT_DIR, 'package.json')
                     );
@@ -163,7 +167,7 @@ describe('Seed tests', function() {
 
             it('should add the project to the package.json', function() {
                 var pkg = require(path.join(PROJECT_DIR, 'package.json')),
-                depName = otherProject.split(path.sep).pop().toLowerCase();
+                depName = 'project-name';
                 assert.notEqual(pkg.dependencies[depName], undefined);
             });
 

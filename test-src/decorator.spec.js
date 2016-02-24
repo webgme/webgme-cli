@@ -181,6 +181,7 @@ describe('Decorator tests', function() {
                         path.join(PROJECT_DIR, 'package.json')
                     );
                     manager.add({name: otherDecorator, 
+                                 packageName: 'project-name',
                                  project: otherProject}, done);
                 });
             });
@@ -192,7 +193,7 @@ describe('Decorator tests', function() {
 
             it('should add the project to the package.json', function() {
                 var pkg = require(path.join(PROJECT_DIR, 'package.json')),
-                depName = otherProject.split(path.sep).pop().toLowerCase();
+                depName = 'project-name';
                 assert.notEqual(pkg.dependencies[depName], undefined);
             });
 

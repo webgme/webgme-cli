@@ -290,9 +290,13 @@ var getGMEConfigPath = function(project) {
  * @return {String} path containing the item
  */
 var getPathContaining = function(paths, item) {
-    var validPaths = paths.filter(function(p) {
-        return fs.existsSync(p) && fs.readdirSync(p).indexOf(item) + 
-            fs.readdirSync(p).indexOf(item+'.js') !== -2;
+    var validPaths,
+        items;
+
+    validPaths = paths.filter(p => {
+        items = fs.readdirSync(p);
+        return fs.existsSync(p) && items.indexOf(item) + 
+            items.indexOf(item+'.js') !== -2;
     });
     return validPaths.length ? validPaths[0] : null;
 };

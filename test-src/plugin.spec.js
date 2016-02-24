@@ -203,11 +203,12 @@ describe('Plugin tests', function() {
             //});
         });
 
+        // FIXME: This checks that it is noncli tool AND that it takes the packageName option
         describe('projects NOT created with webgme-setup-tool', function() {
             var previousDir, oldConfigPath;
-            otherProject = path.join(__dirname+'res', 'NonCliProj');
             before(function(done) {
                 this.timeout(10000);
+                otherProject = path.join(__dirname, 'res', 'NonCliProj');
                 oldConfigPath = CONFIG_PATH;
                 previousDir = PROJECT_DIR;
                 PROJECT_DIR = path.join(PROJECT_DIR, 'NewProject');
@@ -216,6 +217,7 @@ describe('Plugin tests', function() {
                     process.chdir(PROJECT_DIR);
                     emitter.on('error', assert.bind(assert, false));
                     manager.add({name: OTHER_PLUGIN, 
+                                 packageName: 'project-name',
                                  project: otherProject}, done);
                 });
             });
@@ -227,7 +229,7 @@ describe('Plugin tests', function() {
 
             it('should add the project to the package.json', function() {
                 var pkg = require(path.join(PROJECT_DIR, 'package.json')),
-                depName = otherProject.split(path.sep).pop().toLowerCase();
+                depName = 'project-name';
                 assert.notEqual(pkg.dependencies[depName], undefined);
             });
 
