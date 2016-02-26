@@ -128,6 +128,32 @@ describe('BaseManager', function() {
                 assert(content.split('\n').length > 3);
             });
 
+            // issue 122
+            describe('package json bin scripts', function() {
+                var cmds = [
+                        'apply',
+                        'import',
+                        'export',
+                        'merge',
+                        'plugin',
+                        'users',
+                        'clean_up',
+                        'diff'
+                    ],
+                    scripts;
+
+                before(() => {
+                    var packageJson = path.join(initProject, 'package.json');
+                    scripts = require(packageJson).scripts;
+                });
+
+                cmds.forEach(cmd => {
+                    it(`should have command ${cmd}`, function() {
+                        assert(scripts[cmd]);
+                    });
+                });
+            });
+
             // WebGME config
             describe('WebGME config', function() {
                 var CONFIG_DIR = path.join(initProject, 'config');
