@@ -1,9 +1,9 @@
-[![Build Status](https://travis-ci.org/webgme/webgme-setup-tool.svg?branch=master)](https://travis-ci.org/webgme/webgme-setup-tool)
-[![Version](https://badge.fury.io/js/webgme-setup-tool.svg)](https://www.npmjs.com/package/webgme-setup-tool)
-[![Stories in Ready](https://badge.waffle.io/webgme/webgme-setup-tool.png?label=ready&title=Ready)](https://waffle.io/webgme/webgme-setup-tool)
+[![Build Status](https://travis-ci.org/webgme/webgme-cli.svg?branch=master)](https://travis-ci.org/webgme/webgme-cli)
+[![Version](https://badge.fury.io/js/webgme-cli.svg)](https://www.npmjs.com/package/webgme-cli)
+[![Stories in Ready](https://badge.waffle.io/webgme/webgme-cli.png?label=ready&title=Ready)](https://waffle.io/webgme/webgme-cli)
 
-# WebGME Setup Tool
-The WebGME setup tool is a tool for managing WebGME apps. Specifically, it provides a command line interface for creating, removing, installing from other WebGME apps, (etc) for various WebGME components (currently addons and plugins are supported).
+# WebGME CLI
+The WebGME cli is a tool for managing WebGME apps. Specifically, it provides a command line interface for creating, removing, installing from other WebGME apps, (etc) for various WebGME components (currently addons and plugins are supported).
 
 # Quick Start
 WebGME apps require [NodeJS](https://nodejs.org/en/download/) and [MongDB](https://www.mongodb.org/downloads#production) installed on the host system (the server).
@@ -12,7 +12,7 @@ WebGME apps require [NodeJS](https://nodejs.org/en/download/) and [MongDB](https
 First install the project with 
 
 ```
-npm install -g webgme-setup-tool
+npm install -g webgme-cli
 ```
 
 Next, create a new WebGME app:
@@ -51,4 +51,4 @@ webgme add plugin <plugin> <github user>/<github project>
 
 + __Tried loading "coreplugins/XXXXGenerator/XXXXGenerator" at xxxxx/src/../node_modules/webgme/src/plugin/coreplugins/...__
 
-    + This usually happens after updating a clone of the webgme-setup-tool and is caused by an outdated version of the webgme. That is, this happens when the webgme-setup-tool has been updated to support a feature that isn't supported in the currently installed webgme dependency. Running `npm update` from the project root should fix it.
+    + This usually happens after updating a clone of the webgme-cli and is caused by an outdated version of the webgme. That is, this happens when the webgme-cli has been updated to support a feature that isn't supported in the currently installed webgme dependency. Running `npm update` from the project root should fix it.
