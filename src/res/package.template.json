@@ -13,7 +13,7 @@
     "clean_up": "node ./node_modules/webgme/src/bin/clean_up.js"
   },
   "version": "1.0.0",
-  "dependencies": {
+  "peerDependencies": {
     "webgme": "<%= webgmeVersion %>"
   },
   "devDependencies": {

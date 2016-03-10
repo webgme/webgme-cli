@@ -97,9 +97,9 @@ describe('BaseManager', function() {
                 assert.equal(pkg.name, 'Init.Project'.toLowerCase());
             });
 
-            it('should add the webgme as a dependency', function() {
+            it('should add the webgme as a peer dependency', function() {
                 var packageJSON = path.join(initProject, 'package.json'),
-                    deps = require(packageJSON).dependencies;
+                    deps = require(packageJSON).peerDependencies;
 
                 assert(deps.hasOwnProperty('webgme'));
             });
@@ -110,7 +110,7 @@ describe('BaseManager', function() {
                 var packageJSON = path.join(initProject, 'package.json'),
                     toolJson = path.join(__dirname, '..', 'package.json'),
                     toolDeps = require(toolJson).dependencies,
-                    deps = require(packageJSON).dependencies;
+                    deps = require(packageJSON).peerDependencies;
 
                 assert.equal(deps.webgme, toolDeps.webgme);
             });
