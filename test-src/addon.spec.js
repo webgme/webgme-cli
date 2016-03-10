@@ -38,7 +38,7 @@ describe('Addon tests', function() {
     describe('new addon', function() {
         before(function(done) {
             process.chdir(PROJECT_DIR);  // Start in different directory
-            manager.new({addOnId: ADDON_NAME, meta: true}, done);
+            manager.new({addOnId: ADDON_NAME, meta: true, private: true}, done);
         });
 
         it('should create the addon source file', function() {
@@ -70,6 +70,11 @@ describe('Addon tests', function() {
         it('should record the addon in webgme-setup.json', function() {
             var config = require(CONFIG_PATH);
             assert.notEqual(config.components.addons[ADDON_NAME], undefined);
+        });
+
+        it('should support "private" option', function() {
+            var config = require(CONFIG_PATH);
+            assert.equal(config.components.addons[ADDON_NAME].private, true);
         });
 
         describe('2nd addon', function() {

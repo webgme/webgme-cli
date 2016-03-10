@@ -31,6 +31,9 @@ describe('Viz tests', function() {
         VIZ_SRC = path.join(VizBasePath, 'panels', VIZ_NAME, VIZ_NAME+'Panel.js');
 
     before(function(done) {
+        VIZ_NAME = 'MyNewViz';
+        VizBasePath = path.join(PROJECT_DIR, 'src', 'visualizers');
+        VIZ_SRC = path.join(VizBasePath, 'panels', VIZ_NAME, VIZ_NAME+'Panel.js');
         utils.getCleanProject(PROJECT_DIR, function() {
             manager = new VizManager(logger);
             emitter = logger._emitter;
@@ -41,8 +44,9 @@ describe('Viz tests', function() {
     describe('new viz options', function() {
         before(function(done) {
             process.chdir(PROJECT_DIR);  // Start in different directory
-            manager.new({name: 'hahaha', visualizerID: VIZ_NAME}, function() {
+            manager.new({name: 'hahaha', visualizerID: VIZ_NAME, private: true}, function() {
                 utils.requireReload(path.join(VizBasePath, 'Visualizers.json'));
+                utils.requireReload(path.join(PROJECT_DIR, CONFIG_NAME));
                 done();
             });
         });
@@ -57,6 +61,13 @@ describe('Viz tests', function() {
             // check that basePath has been added!
             assert.equal(matching.length, 1);
             assert.equal(matching[0].title, 'hahaha');
+        });
+
+        it('should use the private option', function() {
+            var config = require(path.join(PROJECT_DIR, CONFIG_NAME));
+
+            // check that basePath has been added!
+            assert.equal(config.components.visualizers[VIZ_NAME].private, true);
         });
 
     });

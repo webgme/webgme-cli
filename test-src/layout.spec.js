@@ -39,7 +39,7 @@ describe('Layout tests', function() {
     describe('new layout', function() {
         before(function(done) {
             process.chdir(PROJECT_DIR);  // Start in different directory
-            manager.new({layoutID: LAYOUT_NAME}, done);
+            manager.new({layoutID: LAYOUT_NAME, private: true}, done);
         });
 
         it('should create the layout source file', function() {
@@ -76,6 +76,11 @@ describe('Layout tests', function() {
         it('should record the layout in webgme-setup.json', function() {
             var config = require(CONFIG_PATH);
             assert.notEqual(config.components.layouts[LAYOUT_NAME], undefined);
+        });
+
+        it('should support private option', function() {
+            var config = require(CONFIG_PATH);
+            assert.equal(config.components.layouts[LAYOUT_NAME].private, true);
         });
 
         describe('2nd layout', function() {

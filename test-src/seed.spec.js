@@ -78,6 +78,21 @@ describe('Seed tests', function() {
             });
         });
 
+        it('should support "private" option', function(done) {
+            manager._exportProject = function(params, cb) {
+                return cb(null, 'test');
+            };
+            manager.new({project: 'myNewSeed2', private: true}, function() {
+                // Check the webgem-setup.json
+                var configContent = fse.readFileSync(CONFIG_PATH,'utf8'),
+                    config = JSON.parse(configContent),
+                    isPrivate = config.components.seeds.myNewSeed2.private;
+
+                assert(isPrivate === true);
+                done();
+            });
+        });
+
         it('should enable seedProjects in config.webgme.js', function(done) {
             manager._exportProject = function(params, cb) {
                 return cb(null);

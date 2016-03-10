@@ -38,7 +38,7 @@ describe('Plugin tests', function() {
     describe('new plugin', function() {
         before(function(done) {
             process.chdir(PROJECT_DIR);  // Start in different directory
-            manager.new({pluginID: PLUGIN_NAME, meta: true}, done);
+            manager.new({pluginID: PLUGIN_NAME, private: true}, done);
         });
 
         it('should not contain meta option', function() {
@@ -89,6 +89,11 @@ describe('Plugin tests', function() {
         it('should record the plugin in webgme-setup.json', function() {
             var config = require(CONFIG_PATH);
             assert.notEqual(config.components.plugins[PLUGIN_NAME], undefined);
+        });
+
+        it('should support "private" option', function() {
+            var config = require(CONFIG_PATH);
+            assert.equal(config.components.plugins[PLUGIN_NAME].private, true);
         });
 
         describe('2nd plugin', function() {

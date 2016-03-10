@@ -42,16 +42,26 @@ describe('Decorator tests', function() {
             manager.new({decoratorName: RAW_DECORATOR_NAME, meta: true}, done);
         });
 
-        describe('duplicate "Decorator"', function() {
+        describe('Decorator options', function() {
+            var name;
             before(function(done) {
-                var name = 'ANewDecorator';
+                name = 'ANewDecorator';
                 process.chdir(PROJECT_DIR);  // Start in different directory
-                manager.new({decoratorName: name, meta: true}, done);
+                manager.new({decoratorName: name, meta: true, private: true}, function() {
+
+                    utils.requireReload(path.join(PROJECT_DIR, CONFIG_NAME));
+                    done();
+                });
             });
 
             it('should recognize "Decorator" in name and not duplicate', function() {
                 var decDir = path.join(PROJECT_DIR, 'src', 'decorators', 'ANewDecorator');
                 assert(fse.existsSync(decDir));
+            });
+
+            it('should support private option', function() {
+                var config = require(path.join(PROJECT_DIR, CONFIG_NAME));
+                assert.equal(config.components.decorators[name].private, true);
             });
         });
 
