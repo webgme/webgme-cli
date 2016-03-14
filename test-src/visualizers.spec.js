@@ -75,6 +75,11 @@ describe('Viz tests', function() {
             assert(fse.existsSync(VIZ_SRC));
         });
 
+        it('should add panelPaths', function() {
+            var config = require(path.join(PROJECT_DIR, WebGMEConfig));
+            assert.notEqual(config.visualization.panelPaths.indexOf('src/visualizers/panels'), -1);
+        });
+
         it('should add panels and widgets to requirejsPaths', function() {
             var config = require(path.join(PROJECT_DIR, WebGMEConfig));
             assert.equal(config.requirejsPaths.widgets, './src/visualizers/widgets');
