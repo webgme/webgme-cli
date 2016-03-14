@@ -38,6 +38,9 @@ var config = require('webgme/config/config.default'),
     printConfigPaths('visualization.decoratorPaths', decorators.map(dirname)) +
     printBasePaths('seedProjects', seeds) %>
 <% if (addons.length > 0) { %>config.addOn.enable = true;<%}%>
+
+<%= printConfigPaths('visualization.panelPaths', visualizers.map(dirname)) %>
+
 // Visualizer descriptors
 <% if (visualizers.length > 0) { %>config.visualization.visualizerDescriptors.push('./src/visualizers/Visualizers.json');<%}%>
 // Add requirejs paths

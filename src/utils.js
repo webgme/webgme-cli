@@ -155,7 +155,8 @@ var getWebGMEConfigContent = function(startPath) {
     var arrays,
         config = getConfig(startPath),
         paths = {},
-        configGroupPaths = ['components', 'dependencies']
+        categories = ['components', 'dependencies'],
+        configGroupPaths = categories
             .map(function(type) {
                 return getPathsFromConfigGroup(config[type]);
             }
@@ -171,6 +172,23 @@ var getWebGMEConfigContent = function(startPath) {
         paths[type] = arrays.reduce(R.concat)  // Merge all paths
             .map(R.replace.bind(R, /\\/g, '/'));  // Convert to use '/' for path separator
     });
+
+    // Update visualizers to use the 'panel' entry (if applicable)
+    if (config.components.visualizers) {
+        // add the components
+        let local = Object.keys(config.components.visualizers)
+            .map(name => config.components.visualizers[name].panel);
+
+        // and the dependencies
+        paths.visualizers = Object.keys(config.dependencies.visualizers)
+            .map(name => [
+                'node_modules',
+                config.dependencies.visualizers[name].project,
+                config.dependencies.visualizers[name].panel].join('/'))
+            .concat(local);
+
+    }
+
 
     // Set the requirejsPaths to be an array of all dependency paths
     paths.requirejsPaths = getRequireJSPaths(config);
