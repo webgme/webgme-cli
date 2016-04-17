@@ -4,6 +4,7 @@
 var _ = require('lodash'),
     path = require('path'),
     fs = require('fs'),
+    rm_rf = require('rimraf'),
     sync = require('child_process').spawnSync,
     spawn = require('child_process').spawn,
     exists = require('exists-file'),
@@ -64,8 +65,13 @@ BaseManager.prototype.init = function (args, callback) {  // Create new project
 
     mkdir(project, function(err) {
         if (err) {
-            this._logger.error('Error: '+err);
-            return callback(err);
+            this._logger.error(`Creating project failed: ${err}`);
+            return rm_rf(project, e => {
+                if (e) {
+                    this._logger.error(`Cleanup failed: ${e}`);
+                }
+                return callback(err);
+            });
         }
 
         // Create the package.json
