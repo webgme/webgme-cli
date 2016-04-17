@@ -52,9 +52,10 @@ describe('BaseManager', function() {
 
             before(function(done) {
                 process.chdir(TMP_DIR);
-                manager.init({name: initProject}, function() {
+                manager.init({name: initProject}, function(err) {
                     process.chdir(initProject);
-                    done();
+                    assert(!err, 'init failed: ' + err);
+                    done(err);
                 });
             });
 
