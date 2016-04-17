@@ -4,6 +4,7 @@
 var _ = require('lodash'),
     fs = require('fs'),
     path = require('path'),
+    exists = require('exists-file'),
     assert = require('assert'),
     R = require('ramda'),
     PROJECT_CONFIG = 'webgme-setup.json';
@@ -25,7 +26,7 @@ var getRootPath = function(startPath) {
 
 var isProjectRoot = function(abspath) {
     // Check for webgme-setup.json file
-    if (!fs.existsSync(abspath)) {
+    if (!exists(abspath)) {
         return null;
     }
 
@@ -61,7 +62,7 @@ var createDir = function(dir) {
 
     while (i++ < dirs.length) {
         shortDir = dirs.slice(0,i).join(path.sep);
-        if (!fs.existsSync(shortDir)) {  // FIXME: deprecated
+        if (!exists(shortDir)) {  // FIXME: deprecated
             fs.mkdirSync(shortDir);
         }
     }
@@ -309,7 +310,7 @@ var getGMEConfigPath = function(project) {
  */
 var getPathContaining = function(paths, item) {
     var validPaths = paths.filter(function(p) {
-        return fs.existsSync(p) && fs.readdirSync(p).indexOf(item) + 
+        return exists(p) && fs.readdirSync(p).indexOf(item) + 
             fs.readdirSync(p).indexOf(item+'.js') !== -2;
     });
     return validPaths.length ? validPaths[0] : null;
@@ -364,6 +365,6 @@ module.exports = {
     saveFilesFromBlobClient: saveFilesFromBlobClient,
     saveFile: saveFile,
     loadPaths: loadPaths,
-    mkdir: createDir,
-    getPackageName: getPackageName
+    getPackageName: getPackageName,
+    mkdir: createDir
 };

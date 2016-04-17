@@ -12,6 +12,7 @@
 var _ = require('lodash'),
     R = require('ramda'),
     path = require('path'),
+    exists = require('exists-file'),
     rm_rf = require('rimraf'),
     fs = require('fs'),
     utils = require('./utils'),
@@ -68,7 +69,7 @@ DecoratorManager.prototype._getPathFromGME = function(installInfo) {
         componentPath,
         otherConfig;
 
-    if (fs.existsSync(gmeConfigPath)) {
+    if (exists(gmeConfigPath)) {
         otherConfig = require(gmeConfigPath);
         componentPath = utils.getPathContaining(otherConfig.visualization.decoratorPaths.map(
         function(p) {

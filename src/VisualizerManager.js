@@ -14,6 +14,7 @@ var _ = require('lodash'),
     path = require('path'),
     rm_rf = require('rimraf'),
     fs = require('fs'),
+    exists = require('exists-file'),
     utils = require('./utils'),
     ComponentManager = require('./ComponentManager'),
     VisualizerGenerator = require('./shim/VisualizerGenerator'),
@@ -76,7 +77,7 @@ VisualizerManager.prototype._addToVisualizersJSON = function(id, title, panelPat
         currentJson = [],
         visDefinition;
 
-    if (fs.existsSync(visualizersPath)) {
+    if (exists(visualizersPath)) {
         currentJson = require(visualizersPath);
     }
 
@@ -125,7 +126,7 @@ VisualizerManager.prototype._getObjectFromCliConfig = function(installInfo) {
     // webgme-setup-tool as they are not contained like plugins, addons,
     // or seeds
 
-    if (fs.existsSync(gmeCliConfigPath)) {
+    if (exists(gmeCliConfigPath)) {
         otherConfig = JSON.parse(fs.readFileSync(gmeCliConfigPath, 'utf-8'));
         if (otherConfig.components[this._group][name]) {
             return otherConfig.components[this._group][name];
@@ -193,7 +194,7 @@ VisualizerManager.prototype._getVisualizers = function() {
     var visualizersPath = path.join(utils.getRootPath(), 'src', 'visualizers', 'Visualizers.json'),
         currentJson = [];
 
-    if (fs.existsSync(visualizersPath)) {
+    if (exists(visualizersPath)) {
         currentJson = require(visualizersPath);
     }
     return currentJson;
