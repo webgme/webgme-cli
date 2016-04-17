@@ -51,7 +51,7 @@ DecoratorManager.prototype.new = function(options, callback) {
 
         // Get the src, test paths
         var setupConfig = R.mapObjIndexed(function(empty, type) {
-            return path.join(type, 'decorators', name+'Decorator');
+            return `${type}/decorators/${name}Decorator`;
         }, {src: null});
 
         // Store the decorator info in the webgme-setup.json file

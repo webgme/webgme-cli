@@ -75,7 +75,7 @@ PluginManager.prototype.new = function(options, callback) {
 
         // Get the src, test paths
         var paths = R.mapObjIndexed(function(empty, type) {
-            return path.join(type, 'plugins', config.pluginID);
+            return `${type}/plugins/${config.pluginID}`;
         }, {src: null, test: null});
 
         // Store the plugin info in the webgme-setup.json file
