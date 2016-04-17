@@ -29,7 +29,7 @@ PluginGenerator.prototype.main = function(callback) {
     var self = this;
     WebGMEPluginGenerator.prototype.main.call(this, function(e, result) {
         if (e) {
-            this.logger.error(e);
+            self.logger.error(e);
             callback(e);
         }
 

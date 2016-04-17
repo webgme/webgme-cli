@@ -18,8 +18,7 @@ var _ = require('lodash'),
     ComponentManager = require('./ComponentManager'),
     DecoratorGenerator = require('./shim/DecoratorGenerator'),
     Enableable = require('./mixins/Enableable/Enableable'), 
-    PluginHelpers = require('./shim/PluginHelpers'),
-    RAW_CONFIG = DecoratorGenerator.prototype.getConfigStructure();
+    PluginHelpers = require('./shim/PluginHelpers');
 
 var DecoratorManager = function(logger) {
     ComponentManager.call(this, 'decorator', logger);

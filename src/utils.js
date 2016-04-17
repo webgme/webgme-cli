@@ -338,6 +338,7 @@ var loadPaths = function(requirejs) {
         nodeRequire: require,
         baseUrl: __dirname,
         paths: {
+            text: __dirname+'/../node_modules/webgme/src/client/lib/require/require-text/text',
             coreplugins: __dirname+'/../node_modules/webgme/src/plugin/coreplugins',
             plugin: __dirname + '/../node_modules/webgme/src/plugin',
             common: __dirname + '/../node_modules/webgme/src/common',
