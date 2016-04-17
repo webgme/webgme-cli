@@ -51,7 +51,7 @@ VisualizerManager.prototype.new = function(options, callback) {
 
         // Get the src, test paths
         var paths = R.mapObjIndexed(function(empty, type) {
-            return path.join('src', 'visualizers', type+'s', id);
+            return `src/visualizers/${type}s/id`;
         }, {widget: null, panel: null});
 
         // Store the visualizer info in the webgme-setup.json file

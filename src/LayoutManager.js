@@ -45,7 +45,7 @@ LayoutManager.prototype.new = function(options, callback) {
 
         // Get the src, test paths
         var layoutConfig = R.mapObjIndexed(function(empty, type) {
-            return path.join(type, 'layouts', options.layoutID);
+            return `${type}/layouts/${options.layoutID}`;
         }, {src: null});
 
         // Store the layout info in the webgme-setup.json file

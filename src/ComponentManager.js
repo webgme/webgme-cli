@@ -86,7 +86,12 @@ ComponentManager.prototype.rm = function(args, callback) {
 
         paths = Object.keys(record)
             .filter(key => {
-                return (typeof record[key]) === 'string' && exists(record[key]);
+                if ((typeof record[key]) !== 'string') {
+                    return false;
+                }
+
+                var filepath = record[key].replace(/\//g, path.sep);
+                return exists(filepath);
             });
         remaining = paths.length;
         finished = function() {

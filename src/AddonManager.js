@@ -73,7 +73,7 @@ AddonManager.prototype.new = function(options, callback) {
 
         // Get the src, test paths
         var setupConfig = R.mapObjIndexed(function(empty, type) {
-            return path.join(type, 'addons', name);
+            return `${type}/addons/${name}`;
         }, {src: null});
 
         // Store the addon info in the webgme-setup.json file
