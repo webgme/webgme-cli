@@ -6,6 +6,7 @@ var _ = require('lodash'),
     fs = require('fs'),
     sync = require('child_process').spawnSync,
     spawn = require('child_process').spawn,
+    exists = require('exists-file'),
     R = require('ramda'),
     mkdir = require('mkdirp'),
     Logger = require('./Logger'),
@@ -48,13 +49,13 @@ BaseManager.prototype.init = function (args, callback) {  // Create new project
     if (!args.name) {  // Creating in current directory
         // Check if the project contains webgme-setup.json file
         var setupJsonPath = path.join(process.cwd(), PROJECT_CONFIG);
-        if (fs.existsSync(setupJsonPath)) {
+        if (exists(setupJsonPath)) {
             err = 'Cannot create project here. Project already exists.';
             this._logger.error(err);
             return callback(err);
         }
     } else {  // Check that the target directory doesn't exist
-        if (fs.existsSync(project)) {
+        if (exists(project)) {
             err = 'Cannot create '+args.name+'. File exists.';
             this._logger.error(err);
             return callback(err);
@@ -107,7 +108,7 @@ BaseManager.prototype._createPkgJson = function(project, name) {
         pkgJson;
 
     // Load existing package.json, if exists
-    if (fs.existsSync(outputPkgJson)) {
+    if (exists(outputPkgJson)) {
         originalPkgJson = require(outputPkgJson);
         // We will remove the require cache for the package.json since
         // we are changing it now

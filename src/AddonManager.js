@@ -15,6 +15,7 @@ var _ = require('lodash'),
     rm_rf = require('rimraf'),
     fs = require('fs'),
     utils = require('./utils'),
+    exists = require('exists-file'),
     ComponentManager = require('./ComponentManager'),
     AddonGenerator = require('./shim/AddonGenerator'),
     Enableable = require('./mixins/Enableable/Enableable'), 
@@ -90,7 +91,7 @@ AddonManager.prototype._getPathFromGME = function(installInfo) {
         componentPath,
         otherConfig;
 
-    if (fs.existsSync(gmeConfigPath)) {
+    if (exists(gmeConfigPath)) {
         otherConfig = require(gmeConfigPath);
         componentPath = utils.getPathContaining(otherConfig.visualization.addonPaths.map(
         function(p) {

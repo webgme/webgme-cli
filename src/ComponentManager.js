@@ -15,6 +15,7 @@ var utils = require('./utils'),
     plural = require('plural'),
     fs = require('fs'),
     path = require('path'),
+    exists = require('exists-file'),
     childProcess = require('child_process'),
     spawn = childProcess.spawn,
     Logger = require(__dirname + '/Logger');
@@ -85,7 +86,7 @@ ComponentManager.prototype.rm = function(args, callback) {
 
         paths = Object.keys(record)
             .filter(key => {
-                return fs.existsSync(record[key]);
+                return (typeof record[key]) === 'string' && exists(record[key]);
             });
         remaining = paths.length;
         finished = function() {
@@ -189,7 +190,7 @@ ComponentManager.prototype._getJsonForConfig = function(installInfo, callback) {
         if (!path.isAbsolute(componentPath)) {
             componentPath = path.join(dependencyRoot, componentPath);
         }
-        if (!fs.existsSync(componentPath)) {
+        if (!exists(componentPath)) {
             componentPath += '.js';
         }
         // If componentPath is not a directory, take the containing directory
@@ -225,7 +226,7 @@ ComponentManager.prototype._getPathFromCliConfig = function(installInfo) {
         otherConfig,
         gmeCliConfigPath = utils.getConfigPath(pkgProject.toLowerCase());
 
-    if (fs.existsSync(gmeCliConfigPath)) {
+    if (exists(gmeCliConfigPath)) {
         otherConfig = JSON.parse(fs.readFileSync(gmeCliConfigPath, 'utf-8'));
         if (otherConfig.components[this._group][name]) {
             return otherConfig.components[this._group][name].src;
@@ -241,7 +242,7 @@ ComponentManager.prototype._getPathFromGME = function(installInfo) {
         componentPath,
         otherConfig;
 
-    if (fs.existsSync(gmeConfigPath)) {
+    if (exists(gmeConfigPath)) {
         otherConfig = require(gmeConfigPath);
         componentPath = utils.getPathContaining(otherConfig[this._webgmeName].basePaths.map(
         function(p) {

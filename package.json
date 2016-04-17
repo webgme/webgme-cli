@@ -33,6 +33,7 @@
     "change-case": "^2.3.0",
     "commander": "brollb/commander.js",
     "deep-readdir": "^0.2.0",
+    "exists-file": "^1.0.0",
     "fs-extra": "^0.24.0",
     "lodash": "^3.9.3",
     "mkdirp": "^0.5.1",
