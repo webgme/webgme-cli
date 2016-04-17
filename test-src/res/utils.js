@@ -5,21 +5,29 @@
 var fse = require('fs-extra'),
     rm_rf = require('rimraf'),
     esprima = require('esprima'),
-    path = require('path'),
-    BASE_PROJECT = path.join(__dirname, 'BasicProject');
+    path = require('path');
 
-var getCleanProject = function(projectDir, done) {
-    var after = function() {
+var getCleanProject = function(projectDir, source, done) {
+    var after,
+        BaseProject;
+
+    if (!done) {
+        done = source;
+        source = 'BasicProject';
+    }
+
+    BaseProject = path.join(__dirname, source);
+    after = function() {
         process.chdir(projectDir);
         done();
     };
 
     if (fse.existsSync(projectDir)) {
         rm_rf(projectDir, function() {
-            fse.copy(BASE_PROJECT, projectDir, after);
+            fse.copy(BaseProject, projectDir, after);
         });
     } else {
-        fse.copy(BASE_PROJECT, projectDir, after);
+        fse.copy(BaseProject, projectDir, after);
     }
 };
 

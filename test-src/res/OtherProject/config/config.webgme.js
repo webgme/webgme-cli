@@ -10,11 +10,15 @@ var config = require('webgme/config/config.default'),
 // The paths can be loaded from the webgme-setup.json
 config.plugin.basePaths.push('src/plugin');
 config.addOn.basePaths.push('src/addons');
-config.visualization.decoratorPaths.push('src/decorators');
 config.visualization.layout.basePaths.push('src/layouts');
+config.visualization.decoratorPaths.push('src/decorators');
 config.seedProjects.basePaths.push('src/seed/OtherSeed');
 
-config.addOn.enable = true
+config.addOn.enable = true;
+
+config.visualization.panelPaths.push('src/visualizers/panels');
+
+
 // Visualizer descriptors
 config.visualization.visualizerDescriptors.push('./src/visualizers/Visualizers.json');
 // Add requirejs paths
@@ -23,6 +27,7 @@ config.requirejsPaths = {
   'widgets': './src/visualizers/widgets'
 };
 
-config.mongo.uri = 'mongodb://127.0.0.1:27017/otherproject'
+
+config.mongo.uri = 'mongodb://127.0.0.1:27017/otherproject';
 validateConfig(config);
 module.exports = config;

@@ -164,11 +164,28 @@ VisualizerManager.prototype.add = function(options, callback) {
     var self = this;
     ComponentManager.prototype.add.call(this, options, function(err, result) {
         // Add to the visualizers json
-        var id = self._getUniqueVizId(result.id);
+        var id = self._getUniqueVizId(result.id),
+            visDir = path.join(utils.getRootPath(), 'src', 'visualizers'),
+            visJsonPath = path.join(visDir, 'Visualizers.json'),
+            file;
+
         if (!result.secondary) {
             self._addToVisualizersJSON(id, result.title, result.src);
+            return callback(null, result);
         }
-        return callback(null, result);
+
+        // make sure viz json exists
+        fs.stat(visJsonPath, function(e, file) {
+            if (e) {
+                if (e.code === 'ENOENT') {
+                    utils.mkdir(visDir);
+                    return fs.writeFile(visJsonPath, '[]', (err) => callback(err, result));
+                } else {
+                    return callback(e, result);
+                }
+            }
+            return callback(null, result);
+        });
     });
 };
 
