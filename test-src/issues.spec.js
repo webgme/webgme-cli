@@ -6,10 +6,14 @@ var path = require('path'),
     rm_rf = require('rimraf'),
     Logger = require('../lib/Logger'),
     PluginManager = require('../lib/PluginManager'),
+    VizManager = require('../lib/VisualizerManager'),
     _ = require('lodash');
 
 var logger = new Logger(),
-    manager = new PluginManager(logger),
+    manager = {
+        plugin: new PluginManager(logger),
+        viz: new VizManager(logger),
+    },
     emitter = logger._emitter;
 
 var WebGMEConfig = path.join('config', 'config.webgme.js');
@@ -26,8 +30,8 @@ describe('Misc Issues', function() {
     describe('issue 1', function() {
         before(function(done) {
             process.chdir(PROJECT_DIR);
-            manager.new({pluginID: 'Plugin1'}, function() {
-                manager.new({pluginID: 'Plugin2'}, done);
+            manager.plugin.new({pluginID: 'Plugin1'}, function() {
+                manager.plugin.new({pluginID: 'Plugin2'}, done);
             });
         });
 
@@ -36,6 +40,24 @@ describe('Misc Issues', function() {
                 gmeConfig = fs.readFileSync(gmeConfigPath, 'utf8'),
                 pluginPaths = /'src\/plugins'/g;
             assert(gmeConfig.match(pluginPaths).length === 1);
+        });
+    });
+
+    describe('issue 129', function() {
+        var OTHER_VIZ = 'Secondary',
+            otherProject = path.join(__dirname, 'res', 'OtherProject');
+
+        before(function(done) {
+            utils.getCleanProject(PROJECT_DIR, 'EmptyProject', function() {
+                manager.viz.add({name: OTHER_VIZ, 
+                                 project: otherProject}, done);
+            });
+        });
+
+        // issue 129
+        it('should create empty Visualizers.json', function() {
+            var vizjson = require(PROJECT_DIR + '/src/visualizers/Visualizers.json');
+            assert.equal(vizjson.length, 0);
         });
     });
 

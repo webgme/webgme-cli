@@ -21,6 +21,13 @@
         "src": "panels/OtherViz/OtherVizPanel",
         "panel": "src/visualizers/panels/OtherViz",
         "widget": "src/visualizers/widgets/OtherViz"
+      },
+      "Secondary": {
+        "src": "panels/Secondary/SecondaryPanel",
+        "title": "Secondary",
+        "panel": "src/visualizers/panels/Secondary",
+        "secondary": true,
+        "widget": "src/visualizers/widgets/Secondary"
       }
     },
     "decorators": {

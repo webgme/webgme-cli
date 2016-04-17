@@ -61,7 +61,7 @@ var createDir = function(dir) {
 
     while (i++ < dirs.length) {
         shortDir = dirs.slice(0,i).join(path.sep);
-        if (!fs.existsSync(shortDir)) {
+        if (!fs.existsSync(shortDir)) {  // FIXME: deprecated
             fs.mkdirSync(shortDir);
         }
     }
