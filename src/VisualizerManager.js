@@ -112,6 +112,10 @@ VisualizerManager.prototype._getUniqueVizId = function(id, visualizers) {
 VisualizerManager.prototype._getJsonForConfig = function(installInfo, callback) {
     var vizObject = this._getObjectFromCliConfig(installInfo);
 
+    if (!vizObject) {
+        return callback('Could not find the given visualizer');
+    }
+
     vizObject.project = installInfo.pkg;
     return callback(null, vizObject);
 };
@@ -164,6 +168,9 @@ VisualizerManager.prototype.rm = function(options, callback) {
 VisualizerManager.prototype.add = function(options, callback) {
     var self = this;
     ComponentManager.prototype.add.call(this, options, function(err, result) {
+        if (err) {
+            return callback(err);
+        }
         // Add to the visualizers json
         var id = self._getUniqueVizId(result.id),
             visDir = path.join(utils.getRootPath(), 'src', 'visualizers'),
