@@ -17,8 +17,7 @@ var _ = require('lodash'),
     utils = require('./utils'),
     ComponentManager = require('./ComponentManager'),
     LayoutGenerator = require('./shim/LayoutGenerator'),
-    PluginHelpers = require('./shim/PluginHelpers'),
-    RAW_CONFIG = LayoutGenerator.prototype.getConfigStructure();
+    PluginHelpers = require('./shim/PluginHelpers');
 
 var LayoutManager = function(logger) {
     ComponentManager.call(this, 'layout', logger);

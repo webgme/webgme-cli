@@ -18,8 +18,7 @@ var _ = require('lodash'),
     ComponentManager = require('./ComponentManager'),
     VisualizerGenerator = require('./shim/VisualizerGenerator'),
     Enableable = require('./mixins/Enableable/Enableable'), 
-    PluginHelpers = require('./shim/PluginHelpers'),
-    RAW_CONFIG = VisualizerGenerator.prototype.getConfigStructure();
+    PluginHelpers = require('./shim/PluginHelpers');
 
 var VisualizerManager = function(logger) {
     ComponentManager.call(this, 'visualizer', logger);

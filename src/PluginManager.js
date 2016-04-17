@@ -19,7 +19,8 @@ var _ = require('lodash'),
     PluginGenerator = require('./shim/PluginGenerator'),
     Enableable = require('./mixins/Enableable/Enableable'), 
     PluginHelpers = require('./shim/PluginHelpers'),
-    RAW_CONFIG = PluginGenerator.prototype.getConfigStructure();
+    metadata = require('webgme/src/plugin/coreplugins/PluginGenerator/metadata.json'),
+    RAW_CONFIG = metadata.configStructure;
 
 var PluginManager = function(logger) {
     ComponentManager.call(this, 'plugin', logger);
