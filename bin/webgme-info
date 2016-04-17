@@ -1,0 +1,99 @@
+#!/usr/bin/env node
+
+// print the versions of:
+//  - the cli tool
+//  - webgme in the cli
+//  - webgme (in the given project)
+//  - node
+//  - mongo
+//  - mongo uri's
+
+'use strict';
+var Command = require('commander').Command,
+    program = new Command(),
+    spawn = require('child_process').spawn,
+    path = require('path'),
+    fs = require('fs'),
+    dirname = __dirname.replace(new RegExp(path.sep, 'g'), '/'),
+    utils = require('../lib/utils'),
+    exists = require('exists-file'),
+    versions = {};
+
+program
+    .option('-o,--output, <filename>', 'Store info as json')
+    .parse(process.argv);
+
+// Get all the versions!
+// cli tool
+var pkgJson = require(dirname + '/../package.json'),
+    appRoot,
+    jsonPath,
+    job;
+
+versions.cli = pkgJson.version;
+
+// cli tool's webgme
+pkgJson = require(dirname + '/../node_modules/webgme/package.json');
+versions['cli-webgme'] = pkgJson.version;
+
+// webgme in given project
+appRoot = utils.getRootPath(process.cwd());
+if (appRoot) {
+    jsonPath = path.join(appRoot, 'node_modules', 'webgme', 'package.json');
+    if (exists(jsonPath)) {
+        jsonPath = jsonPath.replace(new RegExp(path.sep, 'g'), '/');
+        pkgJson = require(jsonPath);
+        versions['app-webgme'] = pkgJson.version;
+    }
+}
+
+// node
+versions.node = process.version;
+
+// npm
+var jobs = 0;
+versions.npm = '';
+job = spawn('npm', ['-v']); 
+jobs++;
+job.stdout.on('data', function(buffer) {
+    versions.npm += buffer.toString();
+});
+job.on('close', function(code) {
+    if (code === 1) {
+        versions.npm = 'n/a';
+    } else {
+        versions.npm = versions.npm.replace(/\n/g, '');
+    }
+    done();
+});
+
+// mongo
+var output = '';
+jobs++;
+job = spawn('mongod', ['-v']); 
+job.stdout.on('data', function(buffer) {
+    output += buffer.toString();
+});
+job.on('close', function(code) {
+    if (code === 1) {
+        versions.mongo = 'n/a';
+    } else {
+        versions.mongo = output.match(/version (v[0-9]+\.[0-9]+\.[0-9]+)/)[1];
+    }
+    done();
+});
+
+function done() {
+    if (--jobs > 0) {
+        return;
+    }
+
+    // Print the versions or write to file
+    if (program.output) {
+        fs.writeFileSync(program.output, JSON.stringify(versions, null, 2));
+    } else {
+        Object.keys(versions).forEach(function(app) {
+            console.log(app + ': ' + versions[app]);
+        });
+    }
+}

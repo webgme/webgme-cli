@@ -37,6 +37,9 @@ program
     .alias('i');
 
 program
+    .command('info', 'Get installation info');
+
+program
     .command('start', 'Start the existing WebGME app')
     .alias('s')
     .parse(process.argv);

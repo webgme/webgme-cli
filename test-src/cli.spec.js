@@ -11,6 +11,7 @@ var spawn = require('child_process').spawn,
     TMP_DIR = path.join(__dirname, '..', 'test-tmp'),
     cliCalls = [
         'init',
+        'info',
         'start',
 
         'new',
