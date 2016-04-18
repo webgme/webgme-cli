@@ -29,7 +29,7 @@
   },
   "homepage": "https://github.com/webgme/webgme-cli#readme",
   "dependencies": {
-    "babel": "^5.8.23",
+    "babel": "^5.8.38",
     "change-case": "^2.3.0",
     "commander": "brollb/commander.js",
     "deep-readdir": "^0.2.0",
