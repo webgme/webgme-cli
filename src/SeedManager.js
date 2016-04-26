@@ -28,14 +28,34 @@ SeedManager.prototype.new = function(args, callback) {
         name = (args.seedName || projectName).replace(/\.js(on)?$/,''),
         branch = args.branch || 'master',  // branch or commit
         fileDir = path.join(this._getSaveLocation(),name),
-        filePath = path.join(fileDir, name+'.zip'),
+        filePath = path.join(fileDir, name+'.webgmex'),
         user = args.user || null,
         result;
 
     // This is lazily loaded because the load takes a couple seconds. This
     // causes a delay for calling 'new' but no other commands
     if (!this._exportProject) {
-        this._exportProject = require(__dirname+'/shim/export.js');
+        exportCli = require('webgme/src/bin/export');
+        this._exportProject = function (parameters, callback) {
+            var args = [
+                'node', 'export.js',
+                '--project-name', parameters.projectName,
+                '--out-file', filePath
+            ];
+
+            if (parameters.user) {
+                args.push('--user');
+                args.push(parameters.user);
+            }
+
+            if (parameters.branch) {
+                args.push('--source');
+                args.push(parameters.branch);
+            }
+            exportCli.main(args)
+                .then(callback)
+                .catch(callback);
+        };
     }
 
     // Seeds have their own individual dirs to make sure that
@@ -52,11 +72,13 @@ SeedManager.prototype.new = function(args, callback) {
                 return callback(err);
             }
 
-            fs.writeFileSync(filePath, data);
+            //fs.writeFileSync(filePath, data);
             this._logger.write('Created '+this._name+' at '+filePath);
             // Save the relative file dir
             fileDir = path.relative(utils.getRootPath(), fileDir);
-            fileDir = fileDir.replace(new RegExp(path.sep, 'g'), '/');
+            if (path.sep === '\\') {
+                fileDir = fileDir.replace(/\\/g, '/');
+            }
             this._register(name, {src: fileDir});
             callback();
         });
