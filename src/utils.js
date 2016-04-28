@@ -353,6 +353,13 @@ var loadPaths = function(requirejs) {
     });
 };
 
+var normalizePath = function(dirs) {
+    if (path.sep === '\\') {
+        return dirs.replace(/\\/g, '/');
+    }
+    return dirs;
+};
+
 module.exports = {
     PROJECT_CONFIG: PROJECT_CONFIG,
     saveConfig: saveConfig,
@@ -366,5 +373,6 @@ module.exports = {
     saveFile: saveFile,
     loadPaths: loadPaths,
     getPackageName: getPackageName,
+    normalize: normalizePath,
     mkdir: createDir
 };
