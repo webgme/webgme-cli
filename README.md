@@ -5,6 +5,14 @@
 # WebGME CLI
 The WebGME cli is a tool for managing WebGME apps. Specifically, it provides a command line interface for creating, removing, installing from other WebGME apps, (etc) for various WebGME components (currently addons and plugins are supported).
 
+A "component" in webgme is general term for one of the following:
+- [plugin](https://github.com/webgme/webgme/wiki/GME-Plugins)
+- [decorator](https://github.com/webgme/webgme/wiki/GME-Decorators)
+- [visualizer](https://github.com/webgme/webgme/wiki/GME-Visualizers)
+- addon - event driven logic running on the server w/ access to the model
+- seed - a project used as a template for new webgme models
+- layout
+
 # Quick Start
 WebGME apps require [NodeJS](https://nodejs.org/en/download/) and [MongDB](https://www.mongodb.org/downloads#production) installed on the host system (the server).
 
