@@ -5,8 +5,7 @@ var _ = require('lodash'),
     path = require('path'),
     fs = require('fs'),
     rm_rf = require('rimraf'),
-    sync = require('child_process').spawnSync,
-    spawn = require('child_process').spawn,
+    spawn = require('child_process').exec,
     exists = require('exists-file'),
     R = require('ramda'),
     mkdir = require('mkdirp'),
@@ -22,7 +21,7 @@ BaseManager.prototype.start = function (callback) {
     this._logger.write('Installing dependencies...');
 
     // Set this up to pass through to stdout
-    var install = spawn('npm', ['install']);
+    var install = spawn('npm install');
     install.stdout.pipe(process.stdout);
     install.stderr.pipe(process.stderr);
     install.on('close', (err) => {
@@ -31,7 +30,7 @@ BaseManager.prototype.start = function (callback) {
             return callback(err);
         }
             this._logger.write('Starting app...');
-        var app = spawn('npm', ['start']);
+        var app = spawn('npm start');
         app.stdout.pipe(process.stdout);
         app.stderr.pipe(process.stderr);
         app.on('close', callback);
