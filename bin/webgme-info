@@ -14,8 +14,8 @@ var Command = require('commander').Command,
     spawn = require('child_process').spawn,
     path = require('path'),
     fs = require('fs'),
-    dirname = __dirname.replace(new RegExp(path.sep, 'g'), '/'),
     utils = require('../lib/utils'),
+    dirname = utils.normalize(__dirname),
     exists = require('exists-file'),
     versions = {};
 
@@ -41,7 +41,7 @@ appRoot = utils.getRootPath(process.cwd());
 if (appRoot) {
     jsonPath = path.join(appRoot, 'node_modules', 'webgme', 'package.json');
     if (exists(jsonPath)) {
-        jsonPath = jsonPath.replace(new RegExp(path.sep, 'g'), '/');
+        jsonPath = utils.normalize(jsonPath);
         pkgJson = require(jsonPath);
         versions['app-webgme'] = pkgJson.version;
     }

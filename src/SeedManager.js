@@ -76,9 +76,7 @@ SeedManager.prototype.new = function(args, callback) {
             this._logger.write('Created '+this._name+' at '+filePath);
             // Save the relative file dir
             fileDir = path.relative(utils.getRootPath(), fileDir);
-            if (path.sep === '\\') {
-                fileDir = fileDir.replace(/\\/g, '/');
-            }
+            fileDir = utils.normalize(fileDir);
             this._register(name, {src: fileDir});
             callback();
         });
