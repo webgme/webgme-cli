@@ -124,9 +124,8 @@ ComponentManager.prototype.add = function(args, callback) {
         job;
 
     if (!(args.name && args.project)) {
-    // FIXME: This shouldn't log to commandline
-        return this._logger.error(
-        'Usage: webgme add '+this._name+' ['+this._name+'] [project]');
+        // FIXME: This shouldn't log to commandline
+        return this._logger.error(`Usage: webgme add ${this._name} [${this._name}] [project]`);
     }
     componentName = args.name;
     project = args.project;
@@ -137,11 +136,11 @@ ComponentManager.prototype.add = function(args, callback) {
 
     // Add the component to the webgme config component paths
     // FIXME: Call this without --save then later save it
-    job = spawn('npm install '+project+' --save', {cwd: projectRoot});
+    job = spawn(`npm install ${project} --save`, {cwd: projectRoot});
 
-    this._logger.info('npm install '+project+' --save');
-    this._logger.infoStream(job.stdout);
-    this._logger.infoStream(job.stderr);
+    this._logger.info(`npm install ${project} --save`);
+    this._logger.writeStream(job.stdout);
+    this._logger.errorStream(job.stderr);
 
     job.on('close', function(code) {
         var err,

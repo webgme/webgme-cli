@@ -152,7 +152,6 @@ describe('Seed tests', function() {
                 otherProject = path.join(__dirname, 'res', 'NonCliProj');
                 this.timeout(10000);
                 process.chdir(PROJECT_DIR);
-                emitter.on('error', assert.bind(assert, false));
                 manager.add({name: OTHER_SEED, project: otherProject}, function() {
                     utils.requireReload(
                         path.join(PROJECT_DIR, 'package.json')
@@ -242,7 +241,6 @@ describe('Seed tests', function() {
             before(function(done) {
                 this.timeout(5000);
                 process.chdir(PROJECT_DIR);
-                emitter.on('error', assert.bind(assert, false));
                 manager.add({name: OTHER_SEED, project: cliProject}, done);
             });
 
@@ -328,11 +326,10 @@ describe('Seed tests', function() {
                 it('should not list seeds in wrong directory ', function(done) {
                     process.chdir(__dirname);
 
-                    try {
-                        manager.ls({}, nop);  // This should error
-                    } catch(e) {
+                    manager.ls({}, err => {
+                        assert.notEqual(err.indexOf('Could not find a project'), -1);
                         done();
-                    }
+                    });  // This should error
                 });
             });
         });

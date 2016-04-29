@@ -297,7 +297,6 @@ describe('Viz tests', function() {
             before(function(done) {
                 this.timeout(5000);
                 process.chdir(PROJECT_DIR);
-                emitter.on('error', assert.bind(assert, false));
                 manager.add({name: OTHER_VIZ, 
                              project: otherProject}, function() {
 

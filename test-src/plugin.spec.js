@@ -214,7 +214,6 @@ describe('Plugin tests', function() {
                 CONFIG_PATH = path.join(PROJECT_DIR, CONFIG_NAME),
                 utils.getCleanProject(PROJECT_DIR, function() {
                     process.chdir(PROJECT_DIR);
-                    emitter.on('error', assert.bind(assert, false));
                     manager.add({name: OTHER_PLUGIN, 
                                  project: otherProject}, done);
                 });
@@ -283,7 +282,6 @@ describe('Plugin tests', function() {
             before(function(done) {
                 this.timeout(5000);
                 process.chdir(PROJECT_DIR);
-                emitter.on('error', assert.bind(assert, false));
                 manager.add({name: OTHER_PLUGIN, 
                              project: otherProject}, function() {
                     utils.requireReload(

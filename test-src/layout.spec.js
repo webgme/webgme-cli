@@ -21,8 +21,7 @@ var TMP_DIR = path.join(__dirname, '..', 'test-tmp'),
     CONFIG_PATH = path.join(PROJECT_DIR, CONFIG_NAME),
     OTHER_PROJECT = path.join(__dirname, 'res', 'OtherProject'),
     OTHER_LAYOUT = 'OtherLayout',
-    otherProject,
-    failFn = assert.bind(assert, false);
+    otherProject;
 
 describe('Layout tests', function() {
     'use strict';
@@ -170,7 +169,6 @@ describe('Layout tests', function() {
                 CONFIG_PATH = path.join(PROJECT_DIR, CONFIG_NAME),
                 utils.getCleanProject(PROJECT_DIR, function() {
                     process.chdir(PROJECT_DIR);
-                    emitter.on('error', failFn);
                     manager.add({name: 'DefaultLayout', 
                                  project: otherProject}, done);
                 });
@@ -179,7 +177,6 @@ describe('Layout tests', function() {
             after(function() {
                 PROJECT_DIR = previousDir;
                 CONFIG_PATH = oldConfigPath;
-                emitter.removeListener('error', failFn);
             });
 
             it('should add the project to the package.json', function() {
@@ -240,7 +237,6 @@ describe('Layout tests', function() {
                 this.timeout(5000);
                 otherProject = path.join(__dirname, 'res', 'OtherProject');
                 process.chdir(PROJECT_DIR);
-                emitter.on('error', failFn);
                 manager.add({name: OTHER_LAYOUT, 
                              project: otherProject}, function() {
                     utils.requireReload(
@@ -248,10 +244,6 @@ describe('Layout tests', function() {
                     );
                     done();
                 });
-            });
-
-            after(function() {
-                emitter.removeListener('error', failFn);
             });
 
             it('should add the project to the package.json', function() {
