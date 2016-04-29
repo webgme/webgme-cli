@@ -17,7 +17,7 @@ var utils = require('./utils'),
     path = require('path'),
     exists = require('exists-file'),
     childProcess = require('child_process'),
-    spawn = childProcess.spawn,
+    spawn = childProcess.exec,
     Logger = require(__dirname + '/Logger');
 
 var ComponentManager = function(name, logger) {
@@ -137,8 +137,7 @@ ComponentManager.prototype.add = function(args, callback) {
 
     // Add the component to the webgme config component paths
     // FIXME: Call this without --save then later save it
-    job = spawn('npm', ['install', project, '--save'],
-        {cwd: projectRoot}); 
+    job = spawn('npm install '+project+' --save', {cwd: projectRoot});
 
     this._logger.info('npm install '+project+' --save');
     this._logger.infoStream(job.stdout);
