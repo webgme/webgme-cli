@@ -15,5 +15,27 @@ program
 
         program.decoratorName = decoratorName;
         manager.new(program, nop);
-    })
-    .parse(process.argv);
+    });
+
+// Get the config
+var options = DecoratorManager.prototype._getOptions()
+    .filter(function(opt) {  // Remove the id
+        return opt.name !== '--decorator-name';
+    }),
+    args,
+    regex;
+
+for (var i = options.length; i--;) {
+    args = [options[i].name, options[i].desc];
+    if (options[i].type !== 'boolean') {
+        args[0] += ' <value>';
+    }
+
+    if (options[i].items) {
+        regex = new RegExp('^(' + options[i].items.join('|') + ')$');
+        args.push(regex);
+    }
+    program.option.apply(program, args);
+}
+
+program.parse(process.argv);
