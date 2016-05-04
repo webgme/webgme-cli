@@ -19,7 +19,9 @@ var _ = require('lodash'),
     ComponentManager = require('./ComponentManager'),
     DecoratorGenerator = require('./shim/DecoratorGenerator'),
     Enableable = require('./mixins/Enableable/Enableable'), 
-    PluginHelpers = require('./shim/PluginHelpers');
+    PluginHelpers = require('./shim/PluginHelpers'),
+    metadata = require('webgme/src/plugin/coreplugins/DecoratorGenerator/metadata.json'),
+    RAW_CONFIG = metadata.configStructure;
 
 var DecoratorManager = function(logger) {
     ComponentManager.call(this, 'decorator', logger);
@@ -28,6 +30,20 @@ var DecoratorManager = function(logger) {
 
 _.extend(DecoratorManager.prototype, ComponentManager.prototype,
     Enableable.prototype);
+
+/**
+ * Functions to create the config flag from the WebGME's 
+ * DecoratorGenerator options. They are organized by type.
+ *
+ * @return {undefined}
+ */
+DecoratorManager.prototype._getOptions = function() {
+    return RAW_CONFIG.map(function(config) {
+        return PluginHelpers.getConfigValue[config.valueType](config);
+    }).filter(function(opt) {
+        return opt.name.indexOf('meta') === -1;
+    });
+};
 
 /**
  * Create a new decorator
