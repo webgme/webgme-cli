@@ -93,7 +93,7 @@ AddonManager.prototype._getPathFromGME = function(installInfo) {
 
     if (exists(gmeConfigPath)) {
         otherConfig = require(gmeConfigPath);
-        componentPath = utils.getPathContaining(otherConfig.visualization.addonPaths.map(
+        componentPath = utils.getPathContaining(otherConfig.addOn.basePaths.map(
         function(p) {
             if (!path.isAbsolute(p)) {
                 return path.join(path.dirname(gmeConfigPath), p);
