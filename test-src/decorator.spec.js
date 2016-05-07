@@ -176,7 +176,6 @@ describe('Decorator tests', function() {
                 CONFIG_PATH = path.join(PROJECT_DIR, CONFIG_NAME),
                 utils.getCleanProject(PROJECT_DIR, function() {
                     process.chdir(PROJECT_DIR);
-                    emitter.on('error', assert.bind(assert, false));
                     utils.requireReload(
                         path.join(PROJECT_DIR, 'package.json')
                     );
@@ -248,7 +247,6 @@ describe('Decorator tests', function() {
                 this.timeout(5000);
                 otherProject = path.join(__dirname, 'res', 'OtherProject');
                 process.chdir(PROJECT_DIR);
-                emitter.on('error', assert.bind(assert, false));
                 manager.add({name: OTHER_DECORATOR, 
                              project: otherProject}, function() {
                     utils.requireReload(
