@@ -113,7 +113,7 @@ ComponentManager.prototype.rm = function(args, callback) {
     }
 };
 
-ComponentManager.prototype.add = function(args, callback) {
+ComponentManager.prototype.import = function(args, callback) {
     var self = this,
         project,
         componentName,
@@ -124,8 +124,8 @@ ComponentManager.prototype.add = function(args, callback) {
         job;
 
     if (!(args.name && args.project)) {
-        // FIXME: This shouldn't log to commandline
-        return this._logger.error(`Usage: webgme add ${this._name} [${this._name}] [project]`);
+        return this._logger.error(
+            'Usage: webgme import '+this._name+' ['+this._name+'] [project]');
     }
     componentName = args.name;
     project = args.project;

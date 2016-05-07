@@ -165,9 +165,9 @@ VisualizerManager.prototype.rm = function(options, callback) {
     fs.writeFileSync(visJsonPath, JSON.stringify(visJson, null, 2));
 };
 
-VisualizerManager.prototype.add = function(options, callback) {
+VisualizerManager.prototype.import = function(options, callback) {
     var self = this;
-    ComponentManager.prototype.add.call(this, options, function(err, result) {
+    ComponentManager.prototype.import.call(this, options, function(err, result) {
         if (err) {
             return callback(err);
         }

@@ -188,19 +188,13 @@ describe('Plugin tests', function() {
         });
     });
 
-    describe('add plugin', function() {
+    describe('import plugin', function() {
 
         describe('errors', function() {
             it('should not miss plugin or project', function(done) {
                 emitter.once('error', done.bind(this, null));
-                manager.add({name: OTHER_PLUGIN}, nop);
+                manager.import({name: OTHER_PLUGIN}, nop);
             });
-
-            // FIXME
-            //it('should fail if project is missing plugin', function(done) {
-                //emitter.once('error', done.bind(this,null));
-                //callWebGME({_: ['node', 'webgme', 'add', 'plugin', 'blah', OTHER_PROJECT]});
-            //});
         });
 
         describe('projects NOT created with webgme-setup-tool', function() {
@@ -214,7 +208,7 @@ describe('Plugin tests', function() {
                 CONFIG_PATH = path.join(PROJECT_DIR, CONFIG_NAME),
                 utils.getCleanProject(PROJECT_DIR, function() {
                     process.chdir(PROJECT_DIR);
-                    manager.add({name: OTHER_PLUGIN, 
+                    manager.import({name: OTHER_PLUGIN, 
                                  project: otherProject}, done);
                 });
             });
@@ -282,7 +276,7 @@ describe('Plugin tests', function() {
             before(function(done) {
                 this.timeout(5000);
                 process.chdir(PROJECT_DIR);
-                manager.add({name: OTHER_PLUGIN, 
+                manager.import({name: OTHER_PLUGIN, 
                              project: otherProject}, function() {
                     utils.requireReload(
                         path.join(PROJECT_DIR, 'package.json')

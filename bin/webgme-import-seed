@@ -1,19 +1,17 @@
 #!/usr/bin/env node
 /*jshint node: true*/
-
 'use strict';
 var Command = require('commander').Command,
     program = new Command(),
-    utils = require('../lib/utils'),
-    nop = require('nop'),
-    LayoutManager = require('../lib/LayoutManager');
+    SeedManager = require('../lib/SeedManager'),
+    nop = require('nop');
 
-var manager = new LayoutManager();
+var manager = new SeedManager();
 
 program.arguments('<name> <project>')
     .action(function(name, project) {
         program.name = name;
         program.project = project;
-        manager.add(program, nop);
+        manager.import(program, nop);
     })
     .parse(process.argv);

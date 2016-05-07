@@ -277,19 +277,13 @@ describe('Viz tests', function() {
         });
     });
 
-    describe('add viz', function() {
+    describe('import viz', function() {
 
         describe('errors', function() {
             it('should not miss viz or project', function(done) {
                 emitter.once('error', done.bind(this, null));
-                manager.add({name: OTHER_VIZ}, nop);
+                manager.import({name: OTHER_VIZ}, nop);
             });
-
-            // FIXME
-            //it('should fail if project is missing viz', function(done) {
-                //emitter.once('error', done.bind(this,null));
-                //callWebGME({_: ['node', 'webgme', 'add', 'viz', 'blah', OTHER_PROJECT]});
-            //});
         });
 
         describe('projects created with webgme-setup-tool', function() {
@@ -297,7 +291,7 @@ describe('Viz tests', function() {
             before(function(done) {
                 this.timeout(5000);
                 process.chdir(PROJECT_DIR);
-                manager.add({name: OTHER_VIZ, 
+                manager.import({name: OTHER_VIZ, 
                              project: otherProject}, function() {
 
                     utils.requireReload(

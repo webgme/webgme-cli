@@ -106,7 +106,7 @@ describe('Seed tests', function() {
         });
     });
 
-    describe('add seed', function() {
+    describe('import seed', function() {
 
         describe('errors', function() {
             before(function() {
@@ -115,13 +115,13 @@ describe('Seed tests', function() {
 
             it('should not be missing seed or project', function(done) {
                 emitter.once('error', done.bind(this, undefined));
-                manager.add({project: OTHER_PROJECT}, nop);
+                manager.import({project: OTHER_PROJECT}, nop);
             });
 
             it('should have seed from project', function(done) {
                 this.timeout(4000);
                 emitter.once('error', done.bind(this, undefined));
-                manager.add({name: 'blah', project: OTHER_PROJECT}, nop);
+                manager.import({name: 'blah', project: OTHER_PROJECT}, nop);
             });
         });
 
@@ -130,7 +130,7 @@ describe('Seed tests', function() {
                 otherProject = path.join(__dirname,'res', 'NotANodeProj');
                 this.timeout(10000);
                 process.chdir(PROJECT_DIR);
-                manager.add({name: OTHER_SEED, project: otherProject}, function(err) {
+                manager.import({name: OTHER_SEED, project: otherProject}, function(err) {
                     assert(err);
                     done();
                 });
@@ -140,7 +140,7 @@ describe('Seed tests', function() {
                 otherProject = path.join(__dirname, 'res', 'InvalidProject');
                 this.timeout(10000);
                 process.chdir(PROJECT_DIR);
-                manager.add({name: OTHER_SEED, project: otherProject}, function(err) {
+                manager.import({name: OTHER_SEED, project: otherProject}, function(err) {
                     assert(err);
                     done();
                 });
@@ -152,7 +152,7 @@ describe('Seed tests', function() {
                 otherProject = path.join(__dirname, 'res', 'NonCliProj');
                 this.timeout(10000);
                 process.chdir(PROJECT_DIR);
-                manager.add({name: OTHER_SEED, project: otherProject}, function() {
+                manager.import({name: OTHER_SEED, project: otherProject}, function() {
                     utils.requireReload(
                         path.join(PROJECT_DIR, 'package.json')
                     );
@@ -241,7 +241,7 @@ describe('Seed tests', function() {
             before(function(done) {
                 this.timeout(5000);
                 process.chdir(PROJECT_DIR);
-                manager.add({name: OTHER_SEED, project: cliProject}, done);
+                manager.import({name: OTHER_SEED, project: cliProject}, done);
             });
 
             it('should add the project to the package.json', function() {

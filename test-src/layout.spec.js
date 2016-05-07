@@ -142,19 +142,13 @@ describe('Layout tests', function() {
         });
     });
 
-    describe('add layout', function() {
+    describe('import layout', function() {
 
         describe('errors', function() {
             it('should not miss layout or project', function(done) {
                 emitter.once('error', done.bind(this, null));
-                manager.add({name: OTHER_LAYOUT}, nop);
+                manager.import({name: OTHER_LAYOUT}, nop);
             });
-
-            // FIXME
-            //it('should fail if project is missing layout', function(done) {
-                //emitter.once('error', done.bind(this,null));
-                //callWebGME({_: ['node', 'webgme', 'add', 'layout', 'blah', OTHER_PROJECT]});
-            //});
         });
 
         describe('projects NOT created with webgme-setup-tool', function() {
@@ -169,7 +163,7 @@ describe('Layout tests', function() {
                 CONFIG_PATH = path.join(PROJECT_DIR, CONFIG_NAME),
                 utils.getCleanProject(PROJECT_DIR, function() {
                     process.chdir(PROJECT_DIR);
-                    manager.add({name: 'DefaultLayout', 
+                    manager.import({name: 'DefaultLayout', 
                                  project: otherProject}, done);
                 });
             });
@@ -237,7 +231,7 @@ describe('Layout tests', function() {
                 this.timeout(5000);
                 otherProject = path.join(__dirname, 'res', 'OtherProject');
                 process.chdir(PROJECT_DIR);
-                manager.add({name: OTHER_LAYOUT, 
+                manager.import({name: OTHER_LAYOUT, 
                              project: otherProject}, function() {
                     utils.requireReload(
                         path.join(PROJECT_DIR, 'package.json')
