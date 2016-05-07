@@ -5,10 +5,10 @@ var path = require('path'),
     rm_rf = require('rimraf'),
     testUtils = require('./res/utils'),
     utils = require('./../lib/utils'),
-    PluginManager = require(__dirname+'/../lib/PluginManager'),
+    AddonManager = require(__dirname+'/../lib/AddonManager'),
     _ = require('lodash');
 
-var pluginManager = new PluginManager(),
+var addonManager = new AddonManager(),
     WebGMEConfig = 'config.webgme.js',
     TMP_DIR = path.join(__dirname, '..', 'test-tmp'),
     PROJECT_DIR = path.join(TMP_DIR, 'EnablableProject');
@@ -16,7 +16,7 @@ var pluginManager = new PluginManager(),
 describe('enable/disable', function() {
     'use strict';
 
-    var pluginName = 'NewPlugin';
+    var addonName = 'NewAddon';
     before(function(done) {
         testUtils.getCleanProject(PROJECT_DIR, done);
     });
@@ -35,15 +35,15 @@ describe('enable/disable', function() {
     describe('enable plugin', function() {
         it('should invoke pluginRunner.run', function(done) {
             called = false;
-            pluginManager._pluginRunner = mockPluginRunner;
-            pluginManager.enable({name: pluginName, project: 'dummyproject'}, function() {
+            addonManager._pluginRunner = mockPluginRunner;
+            addonManager.enable({name: addonName, project: 'dummyproject'}, function() {
                 assert(called);
                 done();
             });
         });
 
         it('should require "name" and "project"', function(done) {
-            pluginManager.enable({project: 'dummyproject'}, function(err) {
+            addonManager.enable({project: 'dummyproject'}, function(err) {
                 assert(err);
                 done();
             });
@@ -54,8 +54,8 @@ describe('enable/disable', function() {
         it('should invoke pluginRunner.run', function(done) {
 
             called = false;
-            pluginManager._pluginRunner = mockPluginRunner;
-            pluginManager.disable({name: pluginName, project: 'dummyproject'}, function() {
+            addonManager._pluginRunner = mockPluginRunner;
+            addonManager.disable({name: addonName, project: 'dummyproject'}, function() {
                 assert(called);
                 done();
             });

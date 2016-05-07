@@ -17,18 +17,15 @@ var _ = require('lodash'),
     utils = require('./utils'),
     ComponentManager = require('./ComponentManager'),
     PluginGenerator = require('./shim/PluginGenerator'),
-    Enableable = require('./mixins/Enableable/Enableable'), 
     PluginHelpers = require('./shim/PluginHelpers'),
     metadata = require('webgme/src/plugin/coreplugins/PluginGenerator/metadata.json'),
     RAW_CONFIG = metadata.configStructure;
 
 var PluginManager = function(logger) {
     ComponentManager.call(this, 'plugin', logger);
-    Enableable.call(this, 'validPlugins');
 };
 
-_.extend(PluginManager.prototype, ComponentManager.prototype,
-    Enableable.prototype);
+_.extend(PluginManager.prototype, ComponentManager.prototype);
 
 /**
  * Functions to create the config flag from the WebGME's 
