@@ -6,9 +6,10 @@
 */
 
 define([
-    'plugin/PluginConfig',
     'plugin/PluginBase',
-], function (PluginConfig, PluginBase) {
+], function (
+    PluginBase
+) {
     'use strict';
 
     /**
@@ -21,47 +22,29 @@ define([
     var AddToPlugin = function () {
         // Call base class' constructor.
         PluginBase.call(this);
+        this.pluginMetadata = {
+            name: 'ComponentEnabler',
+            version: '2.0.0',
+            configStructure: [
+                { name: 'field',
+                  displayName: 'Field',
+                  description: 'Field of root node to add to',
+                  value: null,
+                  valueType: 'string',
+                  readOnly: false },
+                { name: 'attribute',
+                  displayName: 'Attribute',
+                  description: 'Attribute to add to field',
+                  value: '',
+                  valueType: 'string',
+                  readOnly: false }
+            ]
+        };
     };
 
     // Prototypal inheritance from PluginBase.
     AddToPlugin.prototype = Object.create(PluginBase.prototype);
     AddToPlugin.prototype.constructor = AddToPlugin;
-
-    /**
-    * Gets the name of the AddToPlugin.
-    * @returns {string} The name of the plugin.
-    * @public
-    */
-    AddToPlugin.prototype.getName = function () {
-        return 'ComponentEnabler';
-    };
-
-    /**
-    * Gets the semantic version (semver.org) of the AddToPlugin.
-    * @returns {string} The version of the plugin.
-    * @public
-    */
-    AddToPlugin.prototype.getVersion = function () {
-        return '0.1.0';
-    };
-
-    AddToPlugin.prototype.getConfigStructure = function () {
-        // Get the field and the attribute
-        return [
-            { name: 'field',
-              displayName: 'Field',
-              description: 'Field of root node to add to',
-              value: null,
-              valueType: 'string',
-              readOnly: false },
-            { name: 'attribute',
-              displayName: 'Attribute',
-              description: 'Attribute to add to field',
-              value: '',
-              valueType: 'string',
-              readOnly: false }
-        ];
-    };
 
     /**
     * Main function for the plugin to execute. This will perform the execution.
