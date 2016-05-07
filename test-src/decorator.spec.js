@@ -148,19 +148,13 @@ describe('Decorator tests', function() {
         });
     });
 
-    describe('add decorator', function() {
+    describe('import decorator', function() {
 
         describe('errors', function() {
             it('should not miss decorator or project', function(done) {
                 emitter.once('error', done.bind(this, null));
-                manager.add({name: OTHER_DECORATOR}, nop);
+                manager.import({name: OTHER_DECORATOR}, nop);
             });
-
-            // FIXME
-            //it('should fail if project is missing decorator', function(done) {
-                //emitter.once('error', done.bind(this,null));
-                //callWebGME({_: ['node', 'webgme', 'add', 'decorator', 'blah', OTHER_PROJECT]});
-            //});
         });
 
         describe('projects NOT created with webgme-setup-tool', function() {
@@ -180,7 +174,7 @@ describe('Decorator tests', function() {
                     utils.requireReload(
                         path.join(PROJECT_DIR, 'package.json')
                     );
-                    manager.add({name: otherDecorator, 
+                    manager.import({name: otherDecorator, 
                                  project: otherProject}, done);
                 });
             });
@@ -249,7 +243,7 @@ describe('Decorator tests', function() {
                 otherProject = path.join(__dirname, 'res', 'OtherProject');
                 process.chdir(PROJECT_DIR);
                 emitter.on('error', assert.bind(assert, false));
-                manager.add({name: OTHER_DECORATOR, 
+                manager.import({name: OTHER_DECORATOR, 
                              project: otherProject}, function() {
                     utils.requireReload(
                         path.join(PROJECT_DIR, 'package.json')

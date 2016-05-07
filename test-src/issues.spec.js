@@ -49,7 +49,7 @@ describe('Misc Issues', function() {
 
         before(function(done) {
             utils.getCleanProject(PROJECT_DIR, 'EmptyProject', function() {
-                manager.viz.add({name: OTHER_VIZ, 
+                manager.viz.import({name: OTHER_VIZ, 
                                  project: otherProject}, done);
             });
         });

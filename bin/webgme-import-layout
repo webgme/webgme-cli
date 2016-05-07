@@ -6,14 +6,14 @@ var Command = require('commander').Command,
     program = new Command(),
     utils = require('../lib/utils'),
     nop = require('nop'),
-    AddonManager = require('../lib/AddonManager');
+    LayoutManager = require('../lib/LayoutManager');
 
-var manager = new AddonManager();
+var manager = new LayoutManager();
 
 program.arguments('<name> <project>')
     .action(function(name, project) {
         program.name = name;
         program.project = project;
-        manager.add(program, nop);
+        manager.import(program, nop);
     })
     .parse(process.argv);

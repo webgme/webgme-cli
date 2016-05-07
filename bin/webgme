@@ -9,8 +9,8 @@ var Command = require('commander').Command,
 // TODO: Verify that we are in a project
 program
     .version('v'+version)
-    .command('add <component>', 'Add a WebGME component from another project')
-    .alias('a');
+    .command('import <component>', 'Import a WebGME component from another project')
+    .alias('m');
 
 program
     .command('new <component>', 'Create new WebGME component')
