@@ -46,8 +46,6 @@ var spawn = require('child_process').spawn,
         'import plugin',
         'rm plugin',
         'ls plugin',
-        'enable plugin',
-        'disable plugin',
 
         'new viz',
         'import viz',
