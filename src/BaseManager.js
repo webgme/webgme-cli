@@ -4,8 +4,8 @@
 var _ = require('lodash'),
     path = require('path'),
     fs = require('fs'),
+    npm = require('npm'),
     rm_rf = require('rimraf'),
-    spawn = require('child_process').exec,
     exists = require('exists-file'),
     R = require('ramda'),
     mkdir = require('mkdirp'),
@@ -21,19 +21,23 @@ BaseManager.prototype.start = function (callback) {
     this._logger.write('Installing dependencies...');
 
     // Set this up to pass through to stdout
-    var install = spawn('npm install');
-    install.stdout.pipe(process.stdout);
-    install.stderr.pipe(process.stderr);
-    install.on('close', (err) => {
+    npm.load({}, err => {
         if (err) {
-            this._logger.error('Installation failed: ' + err);
             return callback(err);
         }
-            this._logger.write('Starting app...');
-        var app = spawn('npm start');
-        app.stdout.pipe(process.stdout);
-        app.stderr.pipe(process.stderr);
-        app.on('close', callback);
+
+        npm.install(err => {
+            if (err) {
+                return callback(err);
+            }
+            npm.install('webgme', err => {
+                if (err) {
+                    return callback(err);
+                }
+                npm.start();
+            });
+
+        });
     });
 };
 
