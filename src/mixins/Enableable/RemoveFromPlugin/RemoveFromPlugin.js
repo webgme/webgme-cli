@@ -6,9 +6,10 @@
 */
 
 define([
-    'plugin/PluginConfig',
-    'plugin/PluginBase',
-], function (PluginConfig, PluginBase) {
+    'plugin/PluginBase'
+], function (
+    PluginBase
+) {
     'use strict';
 
     /**
@@ -21,47 +22,29 @@ define([
     var RemoveFromPlugin = function () {
         // Call base class' constructor.
         PluginBase.call(this);
+        this.pluginMetadata = {
+            name: 'ComponentDisabler',
+            version: '2.0.0',
+            configStructure: [
+                { name: 'field',
+                  displayName: 'Field',
+                  description: 'Field of root node to add to',
+                  value: null,
+                  valueType: 'string',
+                  readOnly: false },
+                { name: 'attribute',
+                  displayName: 'Attribute',
+                  description: 'Attribute to add to field',
+                  value: '',
+                  valueType: 'string',
+                  readOnly: false }
+            ]
+        };
     };
 
     // Prototypal inheritance from PluginBase.
     RemoveFromPlugin.prototype = Object.create(PluginBase.prototype);
     RemoveFromPlugin.prototype.constructor = RemoveFromPlugin;
-
-    /**
-    * Gets the name of the RemoveFromPlugin.
-    * @returns {string} The name of the plugin.
-    * @public
-    */
-    RemoveFromPlugin.prototype.getName = function () {
-        return 'ComponentDisabler';
-    };
-
-    /**
-    * Gets the semantic version (semver.org) of the RemoveFromPlugin.
-    * @returns {string} The version of the plugin.
-    * @public
-    */
-    RemoveFromPlugin.prototype.getVersion = function () {
-        return '0.1.0';
-    };
-
-    RemoveFromPlugin.prototype.getConfigStructure = function () {
-        // Get the field and the attribute
-        return [
-            { name: 'field',
-              displayName: 'Field',
-              description: 'Field of root node to add to',
-              value: null,
-              valueType: 'string',
-              readOnly: false },
-            { name: 'attribute',
-              displayName: 'Attribute',
-              description: 'Attribute to add to field',
-              value: '',
-              valueType: 'string',
-              readOnly: false }
-        ];
-    };
 
     /**
     * Main function for the plugin to execute. This will perform the execution.

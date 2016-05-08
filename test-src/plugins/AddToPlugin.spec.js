@@ -4,10 +4,12 @@
  */
 
 'use strict';
-var testFixture = require('../res/globals');
+var testFixture = require('../res/globals'),
+    path = require('path');
 
 describe('AddToPlugin', function () {
     var Q = require('q'),
+        WEBGME_ROOT = path.join(__dirname, '..', '..', 'node_modules', 'webgme'),
         gmeConfig = testFixture.getGmeConfig(),
         expect = testFixture.expect,
         logger = testFixture.logger.fork('AddToPlugin'),
@@ -60,6 +62,7 @@ describe('AddToPlugin', function () {
     };
 
     before(function (done) {
+        process.chdir(WEBGME_ROOT);
         testFixture.clearDBAndGetGMEAuth(gmeConfig, projectName)
             .then(function (gmeAuth_) {
                 gmeAuth = gmeAuth_;
@@ -69,7 +72,7 @@ describe('AddToPlugin', function () {
             })
             .then(function () {
                 var importParam = {
-                    projectSeed: testFixture.path.join(testFixture.SEED_DIR, 'EmptyProject.json'),
+                    projectSeed: path.join(testFixture.SEED_DIR, 'EmptyProject.webgmex'),
                     projectName: projectName,
                     branchName: 'master',
                     logger: logger,
