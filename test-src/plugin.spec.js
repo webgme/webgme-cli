@@ -95,7 +95,10 @@ describe('Plugin tests', function() {
             var secondPluginName = 'ABrandNewPlugin';
             before(function(done) {
                 process.chdir(PROJECT_DIR);  // Start in different directory
-                manager.new({pluginID: secondPluginName}, done);
+                manager.new({
+                    pluginID: secondPluginName,
+                    templateType: 'Python'
+                }, done);
             });
 
             it('should have both dirs in src/plugins', function() {
@@ -106,6 +109,20 @@ describe('Plugin tests', function() {
                     .forEach(function(pluginPath) {
                         assert(fse.existsSync(pluginPath));
                     });
+            });
+
+            it('should run "combine_templates"', function() {
+                var templates;
+                templates = path.join(
+                    PROJECT_DIR,
+                    'src',
+                    'plugins',
+                    secondPluginName,
+                    'Templates',
+                    'Templates.js'
+                );
+                console.log('checking', templates);
+                assert(fse.existsSync(templates));
             });
         });
 
