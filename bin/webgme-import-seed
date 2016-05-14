@@ -9,6 +9,7 @@ var Command = require('commander').Command,
 var manager = new SeedManager();
 
 program.arguments('<name> <project>')
+    .option('-d,--dev', 'Import component for dev use only')
     .action(function(name, project) {
         program.name = name;
         program.project = project;

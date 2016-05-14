@@ -43,6 +43,33 @@ describe('Misc Issues', function() {
         });
     });
 
+    // import --dev
+    describe('import --dev', function() {
+        var OTHER_PLUGIN = 'OtherPlugin',
+            otherProject = path.join(__dirname, 'res', 'NonCliProj');
+
+        before(function(done) {
+            process.chdir(PROJECT_DIR);
+            manager.plugin.import({
+                name: OTHER_PLUGIN, 
+                project: otherProject,
+                dev: true
+            }, () => {
+                utils.requireReload(
+                    path.join(PROJECT_DIR, 'package.json')
+                );
+                done();
+            });
+        });
+
+        it('should add project to devDependencies', function() {
+            var pkgJsonPath = path.join(PROJECT_DIR, 'package.json'),
+                pkgJson = require(pkgJsonPath);
+
+            assert(pkgJson.devDependencies.noncliproj);
+        });
+    });
+
     describe('issue 129', function() {
         var OTHER_VIZ = 'Secondary',
             otherProject = path.join(__dirname, 'res', 'OtherProject');

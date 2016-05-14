@@ -121,24 +121,27 @@ ComponentManager.prototype.import = function(args, callback) {
         pkgContent,
         projectRoot = utils.getRootPath(),
         pkg,
+        cmd,
         job;
 
     if (!(args.name && args.project)) {
-        return this._logger.error(
-            'Usage: webgme import '+this._name+' ['+this._name+'] [project]');
+        return this._logger.error(`Usage: webgme import ${this._name} [${this._name}] [project]`);
     }
     componentName = args.name;
     project = args.project;
+    cmd = args.dev ?
+        `npm install ${project} --save-dev`:
+        `npm install ${project} --save`;
+
     // Add the project to the package.json
     var pkgProject = utils.getPackageName(project);
-    this._logger.info(
-        'Adding '+componentName+' from '+pkgProject);
+    this._logger.info(`Adding ${componentName} from ${pkgProject}`);
 
     // Add the component to the webgme config component paths
     // FIXME: Call this without --save then later save it
-    job = spawn(`npm install ${project} --save`, {cwd: projectRoot});
+    job = spawn(cmd, {cwd: projectRoot});
 
-    this._logger.info(`npm install ${project} --save`);
+    this._logger.info(cmd);
     this._logger.writeStream(job.stdout);
     this._logger.errorStream(job.stderr);
 
