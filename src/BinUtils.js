@@ -1,7 +1,8 @@
 'use strict';
 
 var fs = require('fs'),
-    path = require('path');
+    path = require('path'),
+    _ = require('lodash');
 
 // TODO: Find a better spot for this...
 var alias = {
@@ -26,6 +27,28 @@ var getSupportedSubCommands = function(dir) {
         });
 };
 
+var createSubCommands = function(dir, args, descTs) {
+    'use strict';
+    var Command = require('commander').Command,
+        program = new Command(),
+        descT = _.template(descTs),
+        components = getSupportedSubCommands(dir),
+        component = process.argv[2];
+
+    components.forEach(component =>
+        program.command(`${component.cmd} ${args}`, descT(component))
+    );
+
+    // If component is invalid, fail with error
+    if (components.indexOf(component) === -1) {
+        // Show the help message
+        process.argv[2] = '--help';
+    }
+
+    program.parse(process.argv);
+};
+
 module.exports = {
-    getSupportedSubCommands: getSupportedSubCommands
+    getSupportedSubCommands,
+    createSubCommands
 };

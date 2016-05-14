@@ -1,13 +1,5 @@
 #!/usr/bin/env node
 
 'use strict';
-var Command = require('commander').Command,
-    program = new Command(),
-    components = require('../lib/BinUtils').getSupportedSubCommands(__dirname);
-
-for (var i = components.length; i--;) {
-    program
-        .command(components[i].cmd + ' <name>', 'Remove a '+components[i].name+'s')
-}
-
-program.parse(process.argv);
+require('../lib/BinUtils')
+    .createSubCommands(__dirname, '<name>', 'Remove a <%= name %>');

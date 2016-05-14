@@ -1,14 +1,8 @@
 #!/usr/bin/env node
 
 'use strict';
-var Command = require('commander').Command,
-    program = new Command();
-
 require('../lib/BinUtils')
-    .getSupportedSubCommands(__dirname)
-    .forEach(function(component) {
-        program
-            .command(component.cmd + ' <name> <app>', 'Add a new ' + component.name + ' from another app')
-    });
-
-program.parse(process.argv);
+    .createSubCommands(__dirname,
+        '<name> <app>',
+        'Import a new <%= name %> from another app'
+    );

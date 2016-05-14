@@ -1,15 +1,6 @@
 #!/usr/bin/env node
 
+
 'use strict';
-var Command = require('commander').Command,
-    program = new Command();
-
 require('../lib/BinUtils')
-    .getSupportedSubCommands(__dirname)
-    .forEach(function(component) {
-        program
-            .command(component.cmd + ' <name> <project>', 'Disable an existing '+component.name)
-    });
-
-program
-    .parse(process.argv);
+    .createSubCommands(__dirname, '<name> <project>', 'Disable an existing <%= name %>');
