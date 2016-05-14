@@ -12,8 +12,10 @@
 var _ = require('lodash'),
     R = require('ramda'),
     path = require('path'),
+    exists = require('exists-file'),
     rm_rf = require('rimraf'),
     fs = require('fs'),
+    childProcess = require('child_process'),
     utils = require('./utils'),
     ComponentManager = require('./ComponentManager'),
     PluginGenerator = require('./shim/PluginGenerator'),
@@ -65,7 +67,8 @@ PluginManager.prototype.new = function(options, callback) {
         config = this._parseConfig(options),
         pluginGenerator = new PluginGenerator(this._logger, config);
 
-    pluginGenerator.main(function(e) {
+    console.log('config:', config);
+    pluginGenerator.main(e => {
         if (e) {
             return callback(e);
         }
@@ -80,10 +83,39 @@ PluginManager.prototype.new = function(options, callback) {
             src: paths.src,
             test: paths.test
         };
-        self._register(config.pluginID, pluginConfig);
-        self._logger.write('Created new plugin at '+paths.src);
-        callback();
+        this._register(config.pluginID, pluginConfig);
+        this._logger.write('Created new plugin at '+paths.src);
+        // If templates were generated, run `combine_templates`
+        this._combineTemplates(paths.src, callback);
     });
+};
+
+PluginManager.prototype._combineTemplates = function(srcPath, callback) {
+    var root = utils.getRootPath(),
+        scriptDir = path.join(root, srcPath, 'Templates'),
+        scriptPath = path.join(scriptDir, 'combine_templates.js'),
+        job;
+
+    if (exists(scriptPath)) {
+        job = childProcess.fork(scriptPath, [], {
+            cwd: scriptDir,
+            silent: true
+        });
+        this._logger.write('running "combine_templates"...');
+        this._logger.writeStream(job.stdout);
+        this._logger.errorStream(job.stderr);
+
+        job.on('close', code => {
+            var err = null;
+            if (code !== 0) {  // Failure...
+                err = `Could not combine templates for plugin`;
+                this._logger.error(err);
+            }
+            callback(err);
+        });
+    } else {
+        callback(null);
+    }
 };
 
 module.exports = PluginManager;
