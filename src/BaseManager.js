@@ -143,10 +143,10 @@ BaseManager.prototype._createPkgJson = function(project, name) {
 BaseManager._createBasicFileStructure = function(project) {
     var dirs = ['src', 'test'];
 
-        dirs.forEach(function(dir) {
-            var absDir = path.join(project, dir);
-            fs.mkdirSync(absDir);
-        });
+    dirs.forEach(dir => {
+        var absDir = path.join(project, dir);
+        fs.mkdirSync(absDir);
+    });
 };
 
 BaseManager.prototype._createWebGMEFiles = function(project) {
@@ -166,7 +166,23 @@ BaseManager.prototype._createWebGMEFiles = function(project) {
     BaseManager._copyFileToProject(project, 'test', 'globals.js');
 
     // Create .gitignore
-    BaseManager._weakCreateGitIgnore(project);
+    BaseManager._createGitIgnore(project);
+
+    // Create README.md
+    BaseManager._createReadme(project);
+};
+
+BaseManager._createReadme = function(project) {
+    var boilerplatePath = path.join(__dirname, 'res', 'README.md.ejs'),
+        readme = _.template(fs.readFileSync(boilerplatePath, 'utf8')),
+        dstPath = path.join(project, 'README.md'),
+        content = {
+            name: path.basename(project)
+        };
+
+    if (!exists(dstPath)) {
+        fs.writeFileSync(dstPath, readme(content));
+    }
 };
 
 /**
@@ -177,17 +193,13 @@ BaseManager.prototype._createWebGMEFiles = function(project) {
  * @param {String} filename
  * @return {undefined}
  */
-BaseManager._weakCreateGitIgnore = function(project) {
+BaseManager._createGitIgnore = function(project) {
     var boilerplatePath = path.join(__dirname, 'res', 'gitignore'),
         dstPath = path.join(project, '.gitignore');
 
-    try {
-        fs.statSync(dstPath);
-    } catch (err) {
-        if (err.code === 'ENOENT') {  // File doesn't exist
-            fs.createReadStream(boilerplatePath)
-                .pipe(fs.createWriteStream(dstPath));
-        }
+    if (!exists(dstPath)) {
+        fs.createReadStream(boilerplatePath)
+            .pipe(fs.createWriteStream(dstPath));
     }
 };
 

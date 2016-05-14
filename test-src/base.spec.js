@@ -83,8 +83,8 @@ describe('BaseManager', function() {
                     .forEach(assert);
             });
 
-            it('should create a webgme-setup.json file in project root', function() {
-                assert(fs.existsSync(path.join(initProject, 'webgme-setup.json')));
+            it(`should create a ${SETUP_CONFIG} file in project root`, function() {
+                assert(fs.existsSync(path.join(initProject, SETUP_CONFIG)));
             });
 
             it('should initialize an npm project', function() {
@@ -122,8 +122,8 @@ describe('BaseManager', function() {
             });
 
             // issue 15
-            it('should pretty printed webgme-setup.json', function() {
-                var config = path.join(initProject, 'webgme-setup.json'),
+            it(`should pretty printed ${SETUP_CONFIG}`, function() {
+                var config = path.join(initProject, SETUP_CONFIG),
                     content = fs.readFileSync(config, 'utf8');
                 // Check that it is printed on multiple lines
                 assert(content.split('\n').length > 3);
@@ -180,6 +180,10 @@ describe('BaseManager', function() {
                     fs.statSync(path.join(initProject, '.gitignore'));
                 });
 
+                it('should create README file if doesn\'t exist', function() {
+                    fs.statSync(path.join(initProject, 'README.md'));
+                });
+
                 it('should not create gitignore if it already exists', function(done) {
                     var projectDir = path.join(TMP_DIR, 'InitNoGitIgnore'),
                         gitignorePath = path.join(projectDir, '.gitignore');
@@ -217,7 +221,7 @@ describe('BaseManager', function() {
                 });
             });
 
-            it('should fail if dir has webgme-setup.json', function(done) {
+            it(`should fail if dir has ${SETUP_CONFIG}`, function(done) {
                 TMP_PROJECT_DIR = path.join(TMP_DIR, 'InitNoArgsFail');
                 fs.mkdirSync(TMP_PROJECT_DIR);
                 process.chdir(TMP_PROJECT_DIR);
