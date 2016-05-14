@@ -122,4 +122,14 @@ describe('cli', function() {
             testCliCall(['ls'], testFn, done);
         });
     });
+
+    describe('invalid component', function() {
+        it('should print all installed/dependent components', function(done) {
+            var testFn = function(res, err, done) {
+                assert.notEqual(res.indexOf('Usage'), -1);
+                done();
+            };
+            testCliCall(['new', 'pasdfl'], testFn, done);
+        });
+    });
 });
