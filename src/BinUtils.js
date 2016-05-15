@@ -28,7 +28,6 @@ var getSupportedSubCommands = function(dir) {
 };
 
 var createSubCommands = function(dir, args, descTs) {
-    'use strict';
     var Command = require('commander').Command,
         program = new Command(),
         descT = _.template(descTs),
@@ -40,7 +39,7 @@ var createSubCommands = function(dir, args, descTs) {
     );
 
     // If component is invalid, fail with error
-    if (components.indexOf(component) === -1) {
+    if (components.map(c => c.cmd).indexOf(component) === -1) {
         // Show the help message
         process.argv[2] = '--help';
     }

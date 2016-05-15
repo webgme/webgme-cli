@@ -5,6 +5,7 @@ var SeedManager = require('../lib/SeedManager'),
     assert = require('assert'),
     utils = require('./res/utils'),
     fse = require('fs-extra'),
+    exists = require('exists-file'),
     rm_rf = require('rimraf'),
     nop = require('nop'),
     _ = require('lodash');
@@ -36,9 +37,41 @@ describe('Seed tests', function() {
         utils.getCleanProject(PROJECT_DIR, done);
     });
 
+    // Create a seed from file
     describe('new seed', function() {
+
         after(function() {
             manager = new SeedManager(logger);
+        });
+
+        describe('from file', function() {
+            it('should create the seed', function(done) {
+                var seedName = 'asdf1234',
+                    seedmanager = new SeedManager(logger);
+
+                seedmanager.new({
+                    project: seedName,
+                    seedName: seedName,
+                    file: path.join(
+                        __dirname,
+                        '..',
+                        'node_modules',
+                        'webgme',
+                        'seeds',
+                        'EmptyProject.webgmex'
+                    )
+                }, () => {
+                    var generatedPath = path.join(
+                        PROJECT_DIR,
+                        'src',
+                        'seeds',
+                        seedName,
+                        seedName + '.webgmex'
+                    );
+                    assert(exists(generatedPath));
+                    done();
+                });
+            });
         });
 
         it('should call the WebGME export script', function(done) {
@@ -104,6 +137,7 @@ describe('Seed tests', function() {
                 done();
             });
         });
+
     });
 
     describe('import seed', function() {

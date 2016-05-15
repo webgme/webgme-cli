@@ -2,7 +2,8 @@
 'use strict';
 
 var path = require('path'),
-    fs = require('fs'),
+    fse = require('fs-extra'),
+    exists = require('exists-file'),
     _ = require('lodash'),
     utils = require('./utils'),
     ComponentManager = require('./ComponentManager');
@@ -29,9 +30,25 @@ SeedManager.prototype.new = function(args, callback) {
         branch = args.branch || 'master',  // branch or commit
         fileDir = path.join(this._getSaveLocation(),name),
         filePath = path.join(fileDir, name+'.webgmex'),
+        sourceFile = args.file,
         user = args.user || null,
         result;
 
+    if (sourceFile) {
+        if (!exists(sourceFile)) {
+            var error = 'Seed file does not exist.';
+            this._logger.error(error);
+            fse.rmdirSync(fileDir);
+            return callback(error);
+        }
+
+        return fse.copy(sourceFile, filePath, err => {
+            if (err) {
+                fse.rmdirSync(fileDir);
+            }
+            this._saveSeed(name, filePath, callback);
+        });
+    }
     // This is lazily loaded because the load takes a couple seconds. This
     // causes a delay for calling 'new' but no other commands
     if (!this._exportProject) {
@@ -63,23 +80,23 @@ SeedManager.prototype.new = function(args, callback) {
     this._logger.info(`About to create a seed from ${branch} of ${projectName}`);
 
     this._exportProject({gmeConfig, user, branch, projectName}, (err, data) => {
-        // Save the data as <projectName>.zip in the filePath
-                         //source: source, 
-                         //outFile: filePath})
-            if (err) {
-                this._logger.error('Could not create '+this._name+': '+err);
-                fs.rmdirSync(fileDir);
-                return callback(err);
-            }
+        if (err) {
+            this._logger.error('Could not create '+this._name+': '+err);
+            fse.rmdirSync(fileDir);
+            return callback(err);
+        }
 
-            //fs.writeFileSync(filePath, data);
-            this._logger.write('Created '+this._name+' at '+filePath);
-            // Save the relative file dir
-            fileDir = path.relative(utils.getRootPath(), fileDir);
-            fileDir = utils.normalize(fileDir);
-            this._register(name, {src: fileDir});
-            callback();
-        });
+        this._saveSeed(name, filePath, callback);
+    });
+};
+
+SeedManager.prototype._saveSeed = function(name, filePath, callback) {
+    // Save the relative file dir
+    var fileDir = path.relative(utils.getRootPath(), path.basename(filePath));
+    fileDir = utils.normalize(fileDir);
+    this._logger.write('Created '+this._name+' at '+filePath);
+    this._register(name, {src: fileDir});
+    callback();
 };
 
 SeedManager.prototype.new.options = [

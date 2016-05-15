@@ -12,6 +12,7 @@ program
     .option('-n, --seed-name [name]', 'Create different name for the seed')
     .option('-u, --user [name]', 'User with access to the seed project (if using authentication)')
     .option('-b, --branch [branch]', 'Branch to use. Default is master')
+    .option('-f, --file <file path>', 'Create seed from existing project file')
     .action(function(project) {
         // FIXME: This is only called if an arg is passed!
         // Otherwise, it fails silently
