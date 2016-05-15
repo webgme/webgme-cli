@@ -2,12 +2,17 @@
 
 var fs = require('fs'),
     path = require('path'),
+    utils = require('./utils'),
     _ = require('lodash');
 
 // TODO: Find a better spot for this...
 var alias = {
-    viz: 'visualizer'
-};
+        viz: 'visualizer'
+    },
+    rAlias = {};
+
+// Create the reverse alias map
+Object.keys(alias).forEach(a => rAlias[alias[a]] = a);
 
 var getSupportedSubCommands = function(dir) {
     var filename = process.argv[1].split(path.sep).pop(),
@@ -27,7 +32,23 @@ var getSupportedSubCommands = function(dir) {
         });
 };
 
-var createSubCommands = function(dir, args, descTs) {
+var getComponentFromName = function(name, config) {
+    var types = ['components', 'dependencies'],
+        components = Object.keys(config.components),
+        cmpnt;
+
+    for (var t = types.length; t--;) {
+        for (var c = components.length; c--;) {
+            cmpnt = components[c];
+            if (config[types[t]][cmpnt][name]) {
+                return cmpnt;
+            }
+        }
+    }
+    return null;
+};
+
+var createSubCommands = function(dir, args, descTs, inferrable) {
     var Command = require('commander').Command,
         program = new Command(),
         descT = _.template(descTs),
@@ -39,9 +60,32 @@ var createSubCommands = function(dir, args, descTs) {
     );
 
     // If component is invalid, fail with error
-    if (components.map(c => c.cmd).indexOf(component) === -1) {
-        // Show the help message
-        process.argv[2] = '--help';
+    var componentNames = {};
+    components.forEach(c => componentNames[c.cmd] = true);
+
+    if (!componentNames[component]) {
+        var config = utils.getConfig();
+        if (inferrable && config) {  // Try to infer the component. Assume name is provided
+            var name = process.argv[2],
+                nameIndex = 2,
+                aliased = Object.keys(alias).map(a => alias[a]);
+
+            while (process.argv[nameIndex] && process.argv[nameIndex][0] === '-') {  // skip options
+                nameIndex++;
+            }
+            component = getComponentFromName(name, config);
+            if (component) {
+                // Adjust plurality, etc
+                component = [component, component.replace(/s$/, '')]
+                    .find(c => componentNames[c] || aliased.find(a => c === a));
+
+            } 
+
+            process.argv.splice(2, 0, rAlias[component] || component || '--help');
+        } else {
+            // Show the help message
+            process.argv[2] = '--help';
+        }
     }
 
     program.parse(process.argv);

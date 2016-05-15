@@ -78,7 +78,13 @@ var saveFilesFromBlobClient = function(blobClient) {
 /* * * * * * * Config Settings * * * * * * * */
 var getConfig = function(startPath) {
     var root = getRootPath(startPath),
-        config = fs.readFileSync(path.join(root, PROJECT_CONFIG));
+        config;
+
+    if (!root) {
+        return null;
+    }
+
+    config = fs.readFileSync(path.join(root, PROJECT_CONFIG));
     return JSON.parse(config);
 };
 

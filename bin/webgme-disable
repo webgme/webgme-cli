@@ -3,4 +3,4 @@
 
 'use strict';
 require('../lib/BinUtils')
-    .createSubCommands(__dirname, '<name> <project>', 'Disable an existing <%= name %>');
+    .createSubCommands(__dirname, '<name> <project>', 'Disable an existing <%= name %>', true);
