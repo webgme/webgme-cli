@@ -17,25 +17,49 @@ var BaseManager = function(logger) {
     this._logger = logger || new Logger();
 };
 
-BaseManager.prototype.start = function (callback) {
-    this._logger.write('Installing dependencies...');
+BaseManager.prototype.start = function (options, callback) {
+    var root = utils.getRootPath();
 
-    // Set this up to pass through to stdout
+    if (!root) {
+        var err = `No webgme app found!`;
+        this._logger.error(err);
+        return callback(err);
+    }
+
+    if (options.hard) {
+        this._logger.write('Removing installed modules');
+        rm_rf(path.join(root, 'node_modules'), this._start.bind(this, root, callback));
+    } else {
+        this._start(root, callback);
+    }
+};
+
+BaseManager.prototype._start = function (root, callback) {
+    var webgmePath = path.join(root, 'node_modules', 'webgme');
     npm.load({}, err => {
         if (err) {
             return callback(err);
         }
 
+        this._logger.write('Installing dependencies...');
         npm.install(err => {
             if (err) {
                 return callback(err);
             }
-            npm.install('webgme', err => {
-                if (err) {
-                    return callback(err);
-                }
+            if (!exists(webgmePath)) {
+                this._logger.write('Installing webgme...');
+                npm.install('webgme', err => {
+                    if (err) {
+                        return callback(err);
+                    }
+                    npm.start();
+                    callback();
+                });
+            } else {
+                this._logger.write('Webgme already installed. Skipping explicit install...');
                 npm.start();
-            });
+                return callback();
+            }
 
         });
     });

@@ -8,8 +8,9 @@ var Command = require('commander').Command,
     nop = require('nop');
 
 program
+    .option('-h, --hard', 'Force reinstall all dependencies')
     .parse(process.argv);
 
 if (program.args.length === 0) {  // action will not be called
-    manager.start(nop);
+    manager.start(program, nop);
 }
