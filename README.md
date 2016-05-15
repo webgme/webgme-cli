@@ -42,18 +42,21 @@ Now, open a browser and navigate to `http://localhost:8888` to get started!
 Additional useful commands include
 ```
 webgme new plugin MyNewPlugin
-webgme ls plugin
-webgme rm plugin MyNewPlugin
-
 webgme new addon MyNewAddOn
-webgme rm addon MyNewAddOn
+
+webgme ls
+
+webgme rm MyNewPlugin
+webgme rm MyNewAddOn
 ```
 
-It currently supports adding plugins or addons from github repositories which are either created with this tool or contain a WebGME `config.js` file in the project root:
+It currently supports adding plugins or addons from npm or github repositories which are either created with this tool or contain a WebGME `config.js` file in the project root:
 
 ```
-webgme add plugin <plugin> <github user>/<github project>
+webgme add plugin <plugin> <project>
 ```
+
+where `<project>` is either `<github user>/<github repo>` or the npm project name.
 
 # FAQ
 
