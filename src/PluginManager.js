@@ -67,7 +67,6 @@ PluginManager.prototype.new = function(options, callback) {
         config = this._parseConfig(options),
         pluginGenerator = new PluginGenerator(this._logger, config);
 
-    console.log('config:', config);
     pluginGenerator.main(e => {
         if (e) {
             return callback(e);

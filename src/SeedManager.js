@@ -92,7 +92,7 @@ SeedManager.prototype.new = function(args, callback) {
 
 SeedManager.prototype._saveSeed = function(name, filePath, callback) {
     // Save the relative file dir
-    var fileDir = path.relative(utils.getRootPath(), path.basename(filePath));
+    var fileDir = path.relative(utils.getRootPath(), path.dirname(filePath));
     fileDir = utils.normalize(fileDir);
     this._logger.write('Created '+this._name+' at '+filePath);
     this._register(name, {src: fileDir});

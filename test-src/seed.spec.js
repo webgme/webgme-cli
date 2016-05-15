@@ -111,6 +111,21 @@ describe('Seed tests', function() {
             });
         });
 
+        it('should save to src/seeds', function(done) {
+            manager._exportProject = function(params, cb) {
+                return cb(null, 'test');
+            };
+            manager.new({project: 'myNewSeed2'}, function() {
+                // Check the webgem-setup.json
+                var configContent = fse.readFileSync(CONFIG_PATH,'utf8'),
+                    config = JSON.parse(configContent),
+                    srcPath = config.components.seeds.myNewSeed2.src;
+
+                assert.notEqual(srcPath.indexOf(path.join('src', 'seeds')), -1);
+                done();
+            });
+        });
+
         it('should enable seedProjects in config.webgme.js', function(done) {
             manager._exportProject = function(params, cb) {
                 return cb(null);
