@@ -38,12 +38,14 @@ var ComponentManager = function(name, logger) {
 
 ComponentManager.prototype._preprocess = function(next, args, callback) {
     // Check for project directory
-    if (utils.getRootPath() === null) {
+    var rootPath = utils.getRootPath();
+    if (rootPath === null) {
         var err = 'Could not find a project in current or any parent directories';
         this._logger.error(err);
         return callback(err);
     }
     this._prepareWebGmeConfig();
+    process.chdir(rootPath);
     next(args, callback);
 };
 
