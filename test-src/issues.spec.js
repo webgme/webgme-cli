@@ -2,6 +2,7 @@
 var path = require('path'),
     utils = require('./res/utils'),
     assert = require('assert'),
+    exists = require('exists-file'),
     fs = require('fs'),
     rm_rf = require('rimraf'),
     Logger = require('../lib/Logger'),
@@ -85,6 +86,33 @@ describe('Misc Issues', function() {
         it('should create empty Visualizers.json', function() {
             var vizjson = require(PROJECT_DIR + '/src/visualizers/Visualizers.json');
             assert.equal(vizjson.length, 0);
+        });
+    });
+
+    // issue 173
+    describe('action from non-project-root', function() {
+        var pluginName = 'Plugin173',
+            projConfigPath = path.join(PROJECT_DIR, 'webgme-setup.json');
+        before(function(done) {
+            process.chdir(path.join(PROJECT_DIR, 'src'));
+            manager.plugin.new({
+                pluginID: pluginName
+            }, (err) => {
+                assert(!err, err);
+                utils.requireReload(
+                    projConfigPath
+                );
+                done();
+            });
+        });
+
+        it('should create new plugin from non-project-root', function() {
+            var projConfig = require(projConfigPath),
+                relPath = projConfig.components.plugins[pluginName].src,
+                pluginPath = path.join(PROJECT_DIR, relPath);
+                
+
+            assert(exists(pluginPath));
         });
     });
 
