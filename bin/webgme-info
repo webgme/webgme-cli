@@ -70,7 +70,7 @@ job.on('close', function(code) {
 // mongo
 var output = '';
 jobs++;
-job = spawn('mongod -v');
+job = spawn('mongod -version');
 job.stdout.on('data', function(buffer) {
     output += buffer.toString();
 });
