@@ -79,11 +79,11 @@ describe('Plugin tests', function() {
             assert(!fse.existsSync(metaPath));
         });
 
-        it('should add the plugin (relative) path to the config file', function() {
-            var config = require(path.join(PROJECT_DIR, WebGMEConfig));
-            // check that basePath has been added!
-            var relativeBase = PluginBasePath.replace(PROJECT_DIR+path.sep, '');
-            assert.notEqual(config.plugin.basePaths.indexOf(relativeBase), -1);
+        it('should add the plugin path to the config file', function() {
+            var config = require(path.join(PROJECT_DIR, WebGMEConfig)),
+                foundPath = utils.hasBasePath(config.plugin.basePaths, PluginBasePath);
+
+            assert(foundPath);
         });
 
         it('should record the plugin in webgme-setup.json', function() {

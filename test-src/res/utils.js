@@ -49,8 +49,18 @@ var requireReload = function() {
     }
 };
 
+var hasBasePath = function(basePaths, tgtPath) {
+    for (var i = basePaths.length; i--;) {
+        if (path.resolve(basePaths[i]) === tgtPath) {
+            return true;
+        }
+    }
+    return false;
+};
+
 module.exports = {
     getCleanProject: getCleanProject,
     isValidJs: isValidJs,
+    hasBasePath: hasBasePath,
     requireReload: requireReload
 };
