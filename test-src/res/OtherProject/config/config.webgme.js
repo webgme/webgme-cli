@@ -6,7 +6,6 @@
 var config = require('webgme/config/config.default'),
     validateConfig = require('webgme/config/validator');
 
-
 // The paths can be loaded from the webgme-setup.json
 config.plugin.basePaths.push('src/plugin');
 config.addOn.basePaths.push('src/addons');
@@ -18,6 +17,8 @@ config.addOn.enable = true;
 
 config.visualization.panelPaths.push('src/visualizers/panels');
 
+
+config.rest.components['routers/OtherRouter'] = __dirname + '/../src/routers/OtherRouter/OtherRouter.js'
 
 // Visualizer descriptors
 config.visualization.visualizerDescriptors.push('./src/visualizers/Visualizers.json');

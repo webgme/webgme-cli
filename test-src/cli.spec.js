@@ -21,6 +21,11 @@ var spawn = require('child_process').spawn,
         'enable',
         'disable',
 
+        'mount',
+        'new router',
+        'rm router',
+        'ls router',
+
         'new layout',
         'import layout',
         'rm layout',

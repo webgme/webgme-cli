@@ -1,10 +1,8 @@
 /*globals define*/
 'use strict';
 
-var TEST_FIXTURE_DIR = '../../globals',
-    _ = require('lodash'),
+var _ = require('lodash'),
     R = require('ramda'),
-    path = require('path'),
     utils = require('../utils'),
     PluginShim = require('./PluginShim'),
     requirejs = require('requirejs'),

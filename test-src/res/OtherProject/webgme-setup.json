@@ -44,6 +44,12 @@
       "OtherLayout": {
         "src": "src/layouts/OtherLayout"
       }
+    },
+    "routers": {
+      "OtherRouter": {
+        "src": "src/routers/OtherRouter",
+        "mount": "routers/OtherRouter"
+      }
     }
   },
   "dependencies": {
@@ -53,6 +59,7 @@
     "visualizers": {},
     "decorators": {},
     "addons": {},
-    "layouts": {}
+    "layouts": {},
+    "routers": {}
   }
 }
