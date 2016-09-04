@@ -60,11 +60,11 @@ describe('Addon tests', function() {
             assert.equal(content.indexOf('New Addon'), -1);
         });
 
-        it('should add the addon (relative) path to the config file', function() {
-            var config = require(path.join(PROJECT_DIR, WebGMEConfig));
-            // check that basePath has been added!
-            var relativeBase = AddonBasePath.replace(PROJECT_DIR+path.sep, '');
-            assert.notEqual(config.addOn.basePaths.indexOf(relativeBase), -1);
+        it('should add the addon path to the config file', function() {
+            var config = require(path.join(PROJECT_DIR, WebGMEConfig)),
+                foundPath = utils.hasBasePath(config.addOn.basePaths, AddonBasePath);
+
+            assert(foundPath);
         });
 
         it('should record the addon in webgme-setup.json', function() {

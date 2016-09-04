@@ -76,11 +76,11 @@ describe('Decorator tests', function() {
         });
 
 
-        it('should add the decorator (relative) path to the config file', function() {
-            var config = require(path.join(PROJECT_DIR, WebGMEConfig));
-            // check that basePath has been added!
-            var relativeBase = DecoratorBasePath.replace(PROJECT_DIR+path.sep, '');
-            assert.notEqual(config.visualization.decoratorPaths.indexOf(relativeBase), -1);
+        it('should add the base path to the config file', function() {
+            var config = require(path.join(PROJECT_DIR, WebGMEConfig)),
+                foundPath = utils.hasBasePath(config.visualization.decoratorPaths, DecoratorBasePath);
+
+            assert(foundPath);
         });
 
         it('should record the decorator in webgme-setup.json', function() {
