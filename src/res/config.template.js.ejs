@@ -30,7 +30,6 @@ var printConfigPaths = function(name, paths) {
 var config = require('webgme/config/config.default'),
     validateConfig = require('webgme/config/validator');
 
-<% // FIXME: This needs to be restructured... %>
 // The paths can be loaded from the webgme-setup.json
 <%= printBasePaths('plugin', plugins.map(dirname)) +
     printBasePaths('addOn', addons.map(dirname)) +
@@ -40,6 +39,10 @@ var config = require('webgme/config/config.default'),
 <% if (addons.length > 0) { %>config.addOn.enable = true;<%}%>
 
 <%= printConfigPaths('visualization.panelPaths', visualizers.map(dirname)) %>
+
+<%= routers.map(function(r) {
+    return 'config.rest.components[\'' + r[0] + '\'] = __dirname + \'/../' + r[1] + '\'';
+}).join('\n') %>
 
 // Visualizer descriptors
 <% if (visualizers.length > 0) { %>config.visualization.visualizerDescriptors.push('./src/visualizers/Visualizers.json');<%}%>

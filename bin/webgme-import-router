@@ -1,0 +1,20 @@
+#!/usr/bin/env node
+/*jshint node: true*/
+
+'use strict';
+var Command = require('commander').Command,
+    program = new Command(),
+    utils = require('../lib/utils'),
+    nop = require('nop'),
+    RouterManager = require('../lib/RouterManager');
+
+var manager = new RouterManager();
+
+program.arguments('<name> <project>')
+    .option('-d,--dev', 'Import component for dev use only')
+    .action(function(name, project) {
+        program.name = name;
+        program.project = project;
+        manager.import(program, nop);
+    })
+    .parse(process.argv);

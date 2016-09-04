@@ -35,6 +35,12 @@
         "src": "src/layouts/EnabledLayout",
         "enabled": true
       }
+    },
+    "routers": {
+      "MyRouter": {
+        "src": "src/routers/MyRouter",
+        "mount": "routers/MyRouter"
+      }
     }
   },
   "dependencies": {
@@ -44,6 +50,7 @@
     "visualizers": {},
     "decorators": {},
     "addOns": {},
-    "layouts": {}
+    "layouts": {},
+    "routers": {}
   }
 }

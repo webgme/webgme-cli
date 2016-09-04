@@ -6,10 +6,13 @@ var Command = require('commander').Command,
     allActions = ['new', 'add', 'remove', 'ls'];
 
 /* * * * * * * * * * Components * * * * * * * * * */
-// TODO: Verify that we are in a project
 program
     .version('v'+version)
     .command('import <component>', 'Import a WebGME component from another project')
+    .alias('m');
+
+program
+    .command('mount <router> <endpoint>', 'Mount REST router at the given endpoint')
     .alias('m');
 
 program
@@ -43,6 +46,3 @@ program
     .command('start', 'Start the existing WebGME app')
     .alias('s')
     .parse(process.argv);
-
-// TODO: Create custom help message from all actions and components
-// Use the description from the action (in the component file)

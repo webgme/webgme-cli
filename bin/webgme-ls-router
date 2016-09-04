@@ -1,0 +1,10 @@
+#!/usr/bin/env node
+
+'use strict';
+var utils = require('../lib/utils'),
+    nop = require('nop'),
+    RouterManager = require('../lib/RouterManager');
+
+var manager = new RouterManager();
+
+manager.ls({}, nop);

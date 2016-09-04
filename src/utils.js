@@ -122,6 +122,18 @@ var updateWebGMEConfig = function(startPath) {
         });
     }
 
+    // Add router info
+    content.routers = [];
+    Object.keys(config).forEach(type => {
+        Object.keys(config[type].routers || {}).forEach(name => {
+            var router = config[type].routers[name],
+                src = router.src || router.path;
+
+            src = src.replace(/\/$/, '');
+            content.routers.push([router.mount, `${src}/${name}.js`]);
+        });
+    });
+
     // Create the WebGME config file
     fs.writeFileSync(configPath, template(content));
 };
