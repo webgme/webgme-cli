@@ -12,6 +12,7 @@ A "component" in webgme is general term for one of the following:
 - [visualizer](https://github.com/webgme/webgme/wiki/GME-Visualizers)
 - addon - event driven logic running on the server w/ access to the model
 - seed - a project used as a template for new webgme models
+- router - express router providing additional REST endpoints
 - layout
 
 # Quick Start
