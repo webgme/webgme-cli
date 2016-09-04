@@ -1,5 +1,6 @@
-[![Build Status](https://travis-ci.org/webgme/webgme-cli.svg?branch=master)](https://travis-ci.org/webgme/webgme-cli)
 [![Version](https://badge.fury.io/js/webgme-cli.svg)](https://www.npmjs.com/package/webgme-cli)
+[![Build Status](https://travis-ci.org/webgme/webgme-cli.svg?branch=master)](https://travis-ci.org/webgme/webgme-cli)
+[![Code Climate](https://codeclimate.com/github/webgme/webgme-cli/badges/gpa.svg)](https://codeclimate.com/github/webgme/webgme-cli)
 [![Stories in Ready](https://badge.waffle.io/webgme/webgme-cli.png?label=ready&title=Ready)](https://waffle.io/webgme/webgme-cli)
 
 # WebGME CLI
