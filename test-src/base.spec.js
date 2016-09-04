@@ -129,7 +129,6 @@ describe('BaseManager', function() {
                 assert(content.split('\n').length > 3);
             });
 
-            // issue 122
             describe('package json bin scripts', function() {
                 var cmds = [
                         'apply',
@@ -137,6 +136,7 @@ describe('BaseManager', function() {
                         'export',
                         'merge',
                         'plugin',
+                        'pluginHook',
                         'users',
                         'clean_up',
                         'diff'
