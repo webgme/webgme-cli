@@ -9,6 +9,7 @@
     "import": "node ./node_modules/webgme/src/bin/import.js",
     "merge": "node ./node_modules/webgme/src/bin/merge.js",
     "plugin": "node ./node_modules/webgme/src/bin/run_plugin.js",
+    "pluginHook": "node ./node_modules/webgme/src/bin/plugin_hook.js",
     "users": "node ./node_modules/webgme/src/bin/usermanager.js",
     "clean_up": "node ./node_modules/webgme/src/bin/clean_up.js"
   },
