@@ -38,7 +38,7 @@ VisualizerGenerator.prototype.main = function(callback) {
     WebGMEVisualizerGenerator.prototype.main.call(this, function(e, result) {
         if (e) {
             this.logger.error(e);
-            callback(e);
+            return callback(e);
         }
 
         // Fix any file names

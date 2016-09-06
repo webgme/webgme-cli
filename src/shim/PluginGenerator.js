@@ -30,7 +30,7 @@ PluginGenerator.prototype.main = function(callback) {
     WebGMEPluginGenerator.prototype.main.call(this, function(e, result) {
         if (e) {
             self.logger.error(e);
-            callback(e);
+            return callback(e);
         }
 
         // Fix any file names
