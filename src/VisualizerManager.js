@@ -73,12 +73,15 @@ VisualizerManager.prototype.new = function(options, callback) {
 };
 
 VisualizerManager.prototype._addToVisualizersJSON = function(id, title, panelPath) {
-    var visualizersPath = path.join(utils.getRootPath(), 'src', 'visualizers', 'Visualizers.json'),
+    var vizDir = path.join(utils.getRootPath(), 'src', 'visualizers'),
+        visualizersPath = path.join(vizDir, 'Visualizers.json'),
         currentJson = [],
         visDefinition;
 
     if (exists(visualizersPath)) {
         currentJson = require(visualizersPath);
+    } else {
+        utils.mkdir(vizDir);
     }
 
     visDefinition = {
@@ -180,20 +183,20 @@ VisualizerManager.prototype.import = function(options, callback) {
         if (!result.secondary) {
             self._addToVisualizersJSON(id, result.title, result.src);
             return callback(null, result);
-        }
-
-        // make sure viz json exists
-        fs.stat(visJsonPath, function(e, file) {
-            if (e) {
-                if (e.code === 'ENOENT') {
-                    utils.mkdir(visDir);
-                    return fs.writeFile(visJsonPath, '[]', (err) => callback(err, result));
-                } else {
-                    return callback(e, result);
+        } else {
+            // make sure viz json exists
+            fs.stat(visJsonPath, function(e, file) {
+                if (e) {
+                    if (e.code === 'ENOENT') {
+                        utils.mkdir(visDir);
+                        return fs.writeFile(visJsonPath, '[]', (err) => callback(err, result));
+                    } else {
+                        return callback(e, result);
+                    }
                 }
-            }
-            return callback(null, result);
-        });
+                return callback(null, result);
+            });
+        }
     });
 };
 
