@@ -30,7 +30,7 @@ LayoutGenerator.prototype.main = function(callback) {
     WebGMELayoutGenerator.prototype.main.call(this, function(e, result) {
         if (e) {
             this.logger.error(e);
-            callback(e);
+            return callback(e);
         }
 
         // Fix any file names
