@@ -48,7 +48,7 @@
     "routers": {
       "OtherRouter": {
         "src": "src/routers/OtherRouter",
-        "mount": "routers/OtherRouter"
+        "mount": "other/mount/point"
       }
     }
   },

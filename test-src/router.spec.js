@@ -187,7 +187,8 @@ describe('Router tests', function() {
                              project: otherProject}, function() {
 
                     utils.requireReload(
-                        path.join(PROJECT_DIR, 'package.json')
+                        path.join(PROJECT_DIR, 'package.json'),
+                        `${PROJECT_DIR}/${WebGMEConfig}`
                     );
                     done();
                 });
@@ -206,10 +207,20 @@ describe('Router tests', function() {
                 assert.notEqual(config.dependencies.routers[OTHER_ROUTER], undefined);
             });
 
+            it('should add the mount point to the '+CONFIG_NAME, function() {
+                var configText = fse.readFileSync(CONFIG_PATH),
+                    config = JSON.parse(configText),
+                    mntPt = 'other/mount/point';
+
+                console.log(config.dependencies.routers);
+                assert.equal(config.dependencies.routers[OTHER_ROUTER].mount, mntPt);
+            });
+
             it('should add the path to the webgme config', function() {
                 var config = require(path.join(PROJECT_DIR, WebGMEConfig)),
-                paths = config.addOn.basePaths.join(';');
-                assert.notEqual(paths.indexOf(otherProject.split(path.sep)[1]), -1);
+                    mntPt = 'other/mount/point';
+
+                assert.notEqual(config.rest.components[mntPt], undefined);
             });
 
             describe('rm dependency router', function() {
@@ -219,14 +230,17 @@ describe('Router tests', function() {
                 });
 
                 it('should remove the path from the webgme config', function() {
-                    var config = require(path.join(PROJECT_DIR, WebGMEConfig)),
-                    paths = config.addOn.basePaths.join(';');
-                    assert.equal(paths.indexOf(OTHER_ROUTER), -1);
+                    var configTxt,
+                        mntPt = 'other/mount/point';
+
+                    configTxt = fse.readFileSync(path.join(PROJECT_DIR, WebGMEConfig), 'utf8');
+                    assert.equal(configTxt.indexOf(mntPt), -1);
                 });
 
-                it('should remove router entry from '+CONFIG_NAME, function() {
+                it(`should remove router entry from ${CONFIG_NAME}`, function() {
                     var configText = fse.readFileSync(CONFIG_PATH),
                         config = JSON.parse(configText);
+
                     assert.equal(config.dependencies.routers[OTHER_ROUTER], undefined);
                 });
 
