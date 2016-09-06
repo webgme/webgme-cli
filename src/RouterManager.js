@@ -106,4 +106,20 @@ RouterManager.prototype.mount = function(options, callback) {
     return callback(null);
 };
 
+RouterManager.prototype._getJsonForConfig = function(installInfo, callback) {
+    ComponentManager.prototype._getJsonForConfig.call(this, installInfo, (err, json) => {
+        if (err) {
+            return callback(err);
+        }
+
+        // Check for the webgme-setup.json
+        var projConfigPath = utils.getConfigPath(json.project.toLowerCase()),
+            setupJson = JSON.parse(fs.readFileSync(projConfigPath));
+
+        json.mount = setupJson.components.routers[installInfo.name].mount;
+
+        return callback(null, json);
+    });
+};
+
 module.exports = RouterManager;
