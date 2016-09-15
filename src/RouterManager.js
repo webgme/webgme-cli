@@ -62,6 +62,7 @@ RouterManager.prototype.new = function(options, callback) {
         // Get the src, test paths
         setupConfig = {
             src: `src/routers/${name}`,
+            test: `test/routers/${name}`,
             mount: `routers/${name}`
         };
 

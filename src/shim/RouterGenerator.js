@@ -26,7 +26,10 @@ _.extend(RouterGenerator.prototype, PluginShim.prototype, WebGMEGenerator.protot
 
 // Helper function
 var fixFilePath = function(routerName, file) {
-    file.name = `src/routers/${routerName}/${file.name}`;
+    var isTestFile = /\.spec\.js$/,
+        base = isTestFile.test(file.name) ? 'test' : 'src';
+
+    file.name = `${base}/routers/${routerName}/${file.name}`;
 };
 
 // Make the src/plugins test/plugins directories as needed
