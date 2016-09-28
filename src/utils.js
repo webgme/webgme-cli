@@ -349,7 +349,7 @@ var getPackageName = function(npmPackage) {
     }
 
     // Github url: project/repo
-    return npmPackage.split('/').pop();
+    return npmPackage.split('/').pop().replace(/#.*$/, '');
 };
 
 var loadPaths = function(requirejs) {

@@ -53,6 +53,33 @@ describe('utils', function() {
         });
     });
 
+    describe('getPackageName', function() {
+        it('should resolve basic github repo', function() {
+            var name = utils.getPackageName('webgme/formula');
+            assert.equal(name, 'formula');
+        });
+
+        it('should resolve github repo w/ branch', function() {
+            var name = utils.getPackageName('webgme/formula#router_update');
+            assert.equal(name, 'formula');
+        });
+
+        it('should resolve relative file path', function() {
+            var name = utils.getPackageName('../webgme/formula');
+            assert.equal(name, 'formula');
+        });
+
+        it('should resolve absolute file path', function() {
+            var name = utils.getPackageName('/home/brian/projects/webgme/formula');
+            assert.equal(name, 'formula');
+        });
+
+        it('should file path from home dir', function() {
+            var name = utils.getPackageName('~/projects/webgme/formula');
+            assert.equal(name, 'formula');
+        });
+    });
+
     after(function(done) {
         rm_rf(TMP_DIR, done);
         

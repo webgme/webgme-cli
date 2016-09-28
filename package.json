@@ -11,11 +11,12 @@
   },
   "scripts": {
     "test-win": "node node_modules/mocha/bin/mocha test/*.js",
-    "test": "mkdir test-tmp; node node_modules/mocha/bin/mocha test/*.js && node node_modules/mocha/bin/mocha test/plugins/{RemoveFrom,AddTo}Plugin.spec.js",
+    "pretest-basic": "node bin/build.js test-src test",
+    "test-basic": "mkdir test-tmp; node node_modules/mocha/bin/mocha test/*.js",
+    "test": "npm run test-basic && node node_modules/mocha/bin/mocha test/plugins/{RemoveFrom,AddTo}Plugin.spec.js",
     "test-cover": "mkdir test-tmp; node node_modules/istanbul/lib/cli.js --hook-run-in-context cover node_modules/mocha/bin/_mocha -- -R spec test/*.js",
     "build-completion": "node bin/completion.js",
     "postinstall": "node bin/install.js",
-    "pretest": "node bin/build.js test-src test",
     "test-plugin": "node node_modules/mocha/bin/mocha test/plugins/{RemoveFrom,AddTo}Plugin.spec.js"
   },
   "repository": {
