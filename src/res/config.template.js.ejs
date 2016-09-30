@@ -23,11 +23,12 @@ var printBasePaths = function(name, paths) {
 var printConfigPaths = function(name, paths) {
   paths = _.uniq(paths);
   var text =  paths.map(function(path) {
-    return 'config.'+name+'.push(__dirname + \'/../'+path+'\');'
+    return 'config.'+name+'.push(path.join(__dirname, \'..\', \'', + path + '\'));'
   }).join('\n');
   return text.length ? text+'\n' : text;
 }; %>
 var config = require('webgme/config/config.default'),
+    path = require('path'),
     validateConfig = require('webgme/config/validator');
 
 // The paths can be loaded from the webgme-setup.json
