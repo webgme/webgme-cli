@@ -48,20 +48,38 @@ var getComponentFromName = function(name, config) {
     return null;
 };
 
-var createSubCommands = function(dir, args, descTs, inferrable) {
+var createCommands = function(components, defArgs, descTs, opts) {
     var Command = require('commander').Command,
-        program = new Command(),
-        descT = _.template(descTs),
-        components = getSupportedSubCommands(dir),
+        program = opts.program || new Command(),
+        customDescs = opts.descs || {},
+        customArgs = opts.args || {},
+        descT,
+        args;
+
+    components.forEach(component => {
+        descT = _.template(customDescs.hasOwnProperty(component.name) ?
+            customDescs[component.name] : descTs);
+        args = customArgs.hasOwnProperty(component.name) ?
+            customArgs[component.name] : defArgs;
+        program.command(`${component.cmd} ${args}`, descT(component));
+    });
+
+    return program;
+};
+
+var createSubCommands = function(dir, defArgs, descTs, opts) {
+    var components = getSupportedSubCommands(dir),
+        componentNames = {},
+        program,
+        inferrable,
         component = process.argv[2];
 
-    components.forEach(component =>
-        program.command(`${component.cmd} ${args}`, descT(component))
-    );
+    opts = opts || {};
+    inferrable = !opts.explicit;
 
     // If component is invalid, fail with error
-    var componentNames = {};
-    components.forEach(c => componentNames[c.cmd] = true);
+    components.forEach(c => componentNames[c.cmd] = c);
+    program = createCommands(_.values(componentNames), defArgs, descTs, opts);
 
     if (!componentNames[component]) {
         var config = utils.getConfig();
