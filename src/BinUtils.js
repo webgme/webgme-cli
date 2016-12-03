@@ -12,7 +12,7 @@ var alias = {
     rAlias = {};
 
 // Create the reverse alias map
-Object.keys(alias).forEach(a => rAlias[alias[a]] = a);
+Object.keys(alias).forEach(function(a) {rAlias[alias[a]] = a});
 
 var getSupportedSubCommands = function(dir) {
     var filename = process.argv[1].split(path.sep).pop(),
@@ -48,20 +48,34 @@ var getComponentFromName = function(name, config) {
     return null;
 };
 
-var createSubCommands = function(dir, args, descTs, inferrable) {
+var createSubCommands = function(dir, defArgs, descTs, opts) {
     var Command = require('commander').Command,
-        program = new Command(),
-        descT = _.template(descTs),
         components = getSupportedSubCommands(dir),
+        program,
+        inferrable,
+        customDescs,
+        customArgs,
+        descT,
+        args,
         component = process.argv[2];
 
-    components.forEach(component =>
-        program.command(`${component.cmd} ${args}`, descT(component))
-    );
+    opts = opts || {};
+    program = opts.program || new Command(),
+    inferrable = !opts.explicit;
+    customDescs = opts.descs || {};
+    customArgs = opts.args || {};
 
     // If component is invalid, fail with error
     var componentNames = {};
-    components.forEach(c => componentNames[c.cmd] = true);
+    components.forEach(c => componentNames[c.cmd] = c);
+
+    _.values(componentNames).forEach(component => {
+        descT = _.template(customDescs.hasOwnProperty(component.name) ?
+            customDescs[component.name] : descTs);
+        args = customArgs.hasOwnProperty(component.name) ?
+            customArgs[component.name] : defArgs;
+        program.command(`${component.cmd} ${args}`, descT(component));
+    });
 
     if (!componentNames[component]) {
         var config = utils.getConfig();

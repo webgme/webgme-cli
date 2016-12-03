@@ -2,7 +2,6 @@
 'use strict';
 
 var spawnSync = require('child_process').spawnSync,
-    os = require('os'),
     path = require('path');
 
 // Run the build on the src

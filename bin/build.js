@@ -12,7 +12,8 @@ var spawnSync = require('child_process').spawnSync,
     srcRoot = path.join(root, from);
 
 // Compile back to ES5
-spawnSync('node', [babelPath, from, '-d', to]);
+var err = spawnSync('node', [babelPath, from, '-d', to]).stderr;
+console.log('err', err.toString());
 
 // Copy the non-js files
 deeplist(srcRoot)

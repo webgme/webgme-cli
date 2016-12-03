@@ -2,47 +2,38 @@
 
 var Command = require('commander').Command,
     program = new Command(),
-    version = require('../package.json').version,
-    allActions = ['new', 'add', 'remove', 'ls'];
+    version = require('../package.json').version;
 
 /* * * * * * * * * * Components * * * * * * * * * */
+var descs = {
+        mount: 'Mount REST router at the given endpoint',
+        init: 'Initialize a new WebGME app',
+        import: 'Import a WebGME component from another project',
+        info: 'Get installation info',
+        ls: 'List all WebGME components',
+        rm: 'Remove a WebGME component',
+        new: 'Create a new WebGME component',
+        start:'Start the existing WebGME app'
+    },
+    args = {
+        mount: '<router> <endpoint>',
+        init: '[name]',
+        info: undefined,
+        start: undefined
+    };
+
 program
     .version('v'+version)
-    .command('import <component>', 'Import a WebGME component from another project')
-    .alias('m');
 
-program
-    .command('mount <router> <endpoint>', 'Mount REST router at the given endpoint')
-    .alias('m');
-
-program
-    .command('new <component>', 'Create new WebGME component')
-    .alias('n');
-
-program
-    .command('ls <component>', 'List all WebGME components')
-    .alias('l');
-
-program
-    .command('rm <component>', 'Remove a WebGME component')
-    .alias('r');
-
-program
-    .command('enable <component>', 'Enable a WebGME component')
-    .alias('e');
-
-program
-    .command('disable <component>', 'Disable a WebGME component')
-    .alias('d');
-
-program
-    .command('init [name]', 'Initialize new WebGME app')
-    .alias('i');
-
-program
-    .command('info', 'Get installation info');
-
-program
-    .command('start', 'Start the existing WebGME app')
-    .alias('s')
-    .parse(process.argv);
+require('../lib/BinUtils')
+    .createSubCommands(
+        __dirname,
+        '<component>',
+        '<%= name[0].toUpperCase() + name.substring(1) %> a WebGME component',
+        {
+            program: program,
+            descs: descs,
+            args: args,
+            explicit: true
+        }
+    );

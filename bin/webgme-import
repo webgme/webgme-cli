@@ -4,5 +4,6 @@
 require('../lib/BinUtils')
     .createSubCommands(__dirname,
         '<name> <app>',
-        'Import a new <%= name %> from another app'
+        'Import a new <%= name %> from another app',
+        {explicit: true}
     );
