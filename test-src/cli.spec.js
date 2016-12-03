@@ -137,4 +137,14 @@ describe('cli', function() {
             testCliCall(['new', 'pasdfl'], testFn, done);
         });
     });
+
+    describe('invalid action', function() {
+        it('should print all accepted actions', function(done) {
+            var testFn = function(res, err, done) {
+                assert.notEqual(res.indexOf('Usage'), -1);
+                done();
+            };
+            testCliCall(['pasdfl'], testFn, done);
+        });
+    });
 });
