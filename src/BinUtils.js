@@ -12,7 +12,7 @@ var alias = {
     rAlias = {};
 
 // Create the reverse alias map
-Object.keys(alias).forEach(function(a) {rAlias[alias[a]] = a});
+Object.keys(alias).forEach(a => rAlias[alias[a]] = a);
 
 var getSupportedSubCommands = function(dir) {
     var filename = process.argv[1].split(path.sep).pop(),
