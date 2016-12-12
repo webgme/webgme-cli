@@ -12,9 +12,8 @@ var manager = new VisualizerManager();
 
 program.arguments('<name> <project>')
     .option('-d,--dev', 'Import component for dev use only')
-    .option('-n,--name [pkg-name]', 'Set installed package name (in package.json)')
+    .option('-p,--package-name [pkg-name]', 'Set installed package name (in package.json)')
     .action(function(name, project) {
-        program.pkgName = program.name;
         program.name = name;
         program.project = project;
         manager.import(program, nop);
