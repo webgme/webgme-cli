@@ -225,7 +225,7 @@ ComponentManager.prototype._getPathFromDependency = function(installInfo, callba
         return callback(err);
     }
 
-    return callback(null, componentPath);
+    return callback(null, componentPath.replace(/\\/g, '/'));
 };
 
 ComponentManager.prototype._getPathFromCliConfig = function(installInfo) {

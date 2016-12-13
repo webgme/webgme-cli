@@ -93,6 +93,7 @@ describe('Misc Issues', function() {
     describe('action from non-project-root', function() {
         var pluginName = 'Plugin173',
             projConfigPath = path.join(PROJECT_DIR, 'webgme-setup.json');
+
         before(function(done) {
             process.chdir(path.join(PROJECT_DIR, 'src'));
             manager.plugin.new({
@@ -113,6 +114,20 @@ describe('Misc Issues', function() {
                 
 
             assert(exists(pluginPath));
+        });
+    });
+
+    describe('win32 compatibility', function() {
+
+        it('should convert \\ to /', function(done) {
+            var plugin = new PluginManager(logger);
+
+            plugin._getPathFromCliConfig = () => '.\\src\\plugins\\TestPlugin\\TestPlugin.js';
+            plugin._getPathFromDependency({}, (err, dir) => {
+                assert(!err);
+                assert.equal(dir.indexOf('\\'), -1);
+                done();
+            });
         });
     });
 
