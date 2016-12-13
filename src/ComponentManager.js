@@ -136,7 +136,7 @@ ComponentManager.prototype.import = function(args, callback) {
         `npm install ${project} --save`;
 
     // Add the project to the package.json
-    var pkgProject = utils.getPackageName(project);
+    var pkgProject = args.packageName || utils.getPackageName(project);
     this._logger.info(`Adding ${componentName} from ${pkgProject}`);
 
     // Add the component to the webgme config component paths

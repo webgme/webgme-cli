@@ -4,6 +4,7 @@
 
 var spawn = require('child_process').spawn,
     path = require('path'),
+    fs = require('fs'),
     R = require('ramda'),
     assert = require('assert'),
     utils = require(__dirname+'/res/utils'),
@@ -146,5 +147,23 @@ describe('cli', function() {
             };
             testCliCall(['pasdfl'], testFn, done);
         });
+    });
+
+    describe('--package-name option on import', function() {
+        var binDir = path.join(__dirname, '..', 'bin'),
+            files = fs.readdirSync(binDir),
+            testFn = function(response, err, end) {
+                assert.notEqual(response.indexOf('--package-name'), -1, response);
+                end();
+            };
+        
+        files
+            .map(name => name.split('-'))
+            .filter(cmds => cmds.length === 3 && cmds[1] === 'import')
+            .forEach(cmds => {
+                cmds.shift();
+                it(`should have --package-name for ${cmds[1]}`,
+                    testCliCall.bind(null, cmds, testFn));
+            });
     });
 });
