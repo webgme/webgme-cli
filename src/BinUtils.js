@@ -100,9 +100,13 @@ var createSubCommands = function(dir, defArgs, descTs, opts) {
             } 
 
             process.argv.splice(2, 0, rAlias[component] || component || '--help');
-        } else {
+        } else if (process.argv.indexOf('--version') === -1) {
             // Show the help message
-            process.argv[2] = '--help';
+            process.argv = [
+                process.argv[0],
+                process.argv[1],
+                '--help'
+            ];
         }
     }
 
