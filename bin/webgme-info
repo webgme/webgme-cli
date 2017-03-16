@@ -95,5 +95,28 @@ function done() {
         Object.keys(versions).forEach(function(app) {
             console.log(app + ': ' + versions[app]);
         });
+
+        checkForUpdates(function(updatesAvailable) {
+            if (updatesAvailable) {
+                console.log('');
+                console.log('A new version of webgme-cli is available. Install with:');
+                console.log('');
+                console.log('    npm install -g webgme-cli');
+                console.log('');
+            }
+        });
     }
+}
+
+function checkForUpdates(cb) {
+    var version = '',
+        job = spawn('npm view webgme-cli version');
+
+    job.stdout.on('data', function(buffer) {
+        version += buffer.toString();
+    });
+    job.on('close', function(code) {
+        version = version.replace(/\n$/, '');
+        cb(versions.cli !== version);
+    });
 }
