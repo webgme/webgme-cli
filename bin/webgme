@@ -10,6 +10,7 @@ var descs = {
         init: 'Initialize a new WebGME app',
         import: 'Import a WebGME component from another project',
         info: 'Get installation info',
+        refresh: 'Regenerate WebGME configuration',
         ls: 'List all WebGME components',
         rm: 'Remove a WebGME component',
         new: 'Create a new WebGME component',
