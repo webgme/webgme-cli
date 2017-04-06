@@ -16,7 +16,7 @@ A "component" in webgme is general term for one of the following:
 - layout
 
 # Quick Start
-WebGME apps require [NodeJS](https://nodejs.org/en/download/) and [MongDB](https://www.mongodb.org/downloads#production) installed on the host system (the server).
+WebGME apps require [NodeJS](https://nodejs.org/en/download/) and [MongDB](https://www.mongodb.org/downloads#production) installed on the host system (the server). It is recommended to use [nvm](https://github.com/creationix/nvm) for installing NodeJS.
 
 ## Setting up a WebGME app
 First install the project with 
