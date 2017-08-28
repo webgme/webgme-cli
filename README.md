@@ -55,7 +55,7 @@ webgme rm MyNewAddOn
 It currently supports adding plugins or addons from npm or github repositories which are either created with this tool or contain a WebGME `config.js` file in the project root:
 
 ```
-webgme add plugin <plugin> <project>
+webgme import plugin <plugin> <project>
 ```
 
 where `<project>` is either `<github user>/<github repo>` or the npm project name.
