@@ -1,4 +1,5 @@
-*.swp
+.github/
+
 *.swo
 # Logs
 logs
