@@ -20,7 +20,7 @@ var _ = require('lodash'),
     ComponentManager = require('./ComponentManager'),
     RouterGenerator = require('./shim/RouterGenerator'),
     PluginHelpers = require('./shim/PluginHelpers'),
-    metadata = require('webgme/src/plugin/coreplugins/RestRouterGenerator/metadata.json'),
+    metadata = require('webgme-engine/src/plugin/coreplugins/RestRouterGenerator/metadata.json'),
     RAW_CONFIG = metadata.configStructure;
 
 var RouterManager = function(logger) {

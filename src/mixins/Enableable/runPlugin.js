@@ -43,9 +43,9 @@ main = function (argv, callback) {
 };
 
 runPlugin = function(gmeConfig, pluginConfig, projectOptions, callback) {
-    var webgme = require('webgme'),
-        PluginCliManager = require('webgme/src/plugin/climanager'),
-        Project = require('webgme/src/server/storage/userproject'),
+    var webgme = require('webgme-engine'),
+        PluginCliManager = webgme.PluginCliManager,
+        Project = require('webgme-engine/src/server/storage/userproject'),
         logger = webgme.Logger.create('gme:bin:import', gmeConfig.bin.log);
     var storage,
         project;

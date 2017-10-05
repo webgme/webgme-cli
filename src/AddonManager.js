@@ -20,7 +20,7 @@ var _ = require('lodash'),
     AddonGenerator = require('./shim/AddonGenerator'),
     Enableable = require('./mixins/Enableable/Enableable'), 
     PluginHelpers = require('./shim/PluginHelpers'),
-    metadata = require('webgme/src/plugin/coreplugins/AddOnGenerator/metadata.json'),
+    metadata = require('webgme-engine/src/plugin/coreplugins/AddOnGenerator/metadata.json'),
     RAW_CONFIG = metadata.configStructure;
 
 var AddonManager = function(logger) {

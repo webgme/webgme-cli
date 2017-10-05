@@ -20,7 +20,7 @@ var _ = require('lodash'),
     DecoratorGenerator = require('./shim/DecoratorGenerator'),
     Enableable = require('./mixins/Enableable/Enableable'), 
     PluginHelpers = require('./shim/PluginHelpers'),
-    metadata = require('webgme/src/plugin/coreplugins/DecoratorGenerator/metadata.json'),
+    metadata = require('webgme-engine/src/plugin/coreplugins/DecoratorGenerator/metadata.json'),
     RAW_CONFIG = metadata.configStructure;
 
 var DecoratorManager = function(logger) {

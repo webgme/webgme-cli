@@ -52,7 +52,7 @@ SeedManager.prototype.new = function(args, callback) {
     // This is lazily loaded because the load takes a couple seconds. This
     // causes a delay for calling 'new' but no other commands
     if (!this._exportProject) {
-        var exportCli = require('webgme/src/bin/export');
+        var exportCli = require('webgme-engine/src/bin/export');
         this._exportProject = function (parameters, callback) {
             var args = [
                 'node', 'export.js',

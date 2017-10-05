@@ -357,16 +357,16 @@ var loadPaths = function(requirejs) {
         nodeRequire: require,
         baseUrl: __dirname,
         paths: {
-            text: __dirname+'/../node_modules/webgme/src/client/lib/require/require-text/text',
-            coreplugins: __dirname+'/../node_modules/webgme/src/plugin/coreplugins',
-            plugin: __dirname + '/../node_modules/webgme/src/plugin',
-            common: __dirname + '/../node_modules/webgme/src/common',
+            text: __dirname+'/../node_modules/webgme-engine/src/common/lib/requirejs/text',
+            coreplugins: __dirname+'/../node_modules/webgme-engine/src/plugin/coreplugins',
+            plugin: __dirname + '/../node_modules/webgme-engine/src/plugin',
+            common: __dirname + '/../node_modules/webgme-engine/src/common',
 
-            'plugin/PluginGenerator/PluginGenerator': __dirname + '/../node_modules/webgme/src/plugin/coreplugins/PluginGenerator/',
-            'plugin/AddOnGenerator/AddOnGenerator': __dirname + '/../node_modules/webgme/src/plugin/coreplugins/AddOnGenerator/',
-            'plugin/DecoratorGenerator/DecoratorGenerator': __dirname + '/../node_modules/webgme/src/plugin/coreplugins/DecoratorGenerator/',
-            'plugin/LayoutGenerator/LayoutGenerator': __dirname + '/../node_modules/webgme/src/plugin/coreplugins/LayoutGenerator/',
-            'plugin/VisualizerGenerator/VisualizerGenerator': __dirname + '/../node_modules/webgme/src/plugin/coreplugins/VisualizerGenerator/'
+            'plugin/PluginGenerator/PluginGenerator': __dirname + '/../node_modules/webgme-engine/src/plugin/coreplugins/PluginGenerator/',
+            'plugin/AddOnGenerator/AddOnGenerator': __dirname + '/../node_modules/webgme-engine/src/plugin/coreplugins/AddOnGenerator/',
+            'plugin/DecoratorGenerator/DecoratorGenerator': __dirname + '/../node_modules/webgme-engine/src/plugin/coreplugins/DecoratorGenerator/',
+            'plugin/LayoutGenerator/LayoutGenerator': __dirname + '/../node_modules/webgme-engine/src/plugin/coreplugins/LayoutGenerator/',
+            'plugin/VisualizerGenerator/VisualizerGenerator': __dirname + '/../node_modules/webgme-engine/src/plugin/coreplugins/VisualizerGenerator/'
         }
     });
 };

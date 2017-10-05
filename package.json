@@ -46,7 +46,7 @@
     "ramda": "^0.15.1",
     "requirejs": "^2.1.18",
     "rimraf": "^2.4.0",
-    "webgme": "^2.0.0"
+    "webgme-engine": "^2.0.0"
   },
   "devDependencies": {
     "chai": "^3.0.0",
