@@ -106,7 +106,7 @@ describe('BaseManager', function() {
             });
 
             // issue 51
-            it('should use the same version of webgme as the setup tool', function() {
+            it.skip('should use the same version of webgme as the setup tool', function() {
                 // Compare the package.json values
                 var packageJSON = path.join(initProject, 'package.json'),
                     toolJson = path.join(__dirname, '..', 'package.json'),
