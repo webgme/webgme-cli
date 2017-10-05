@@ -106,14 +106,14 @@ describe('BaseManager', function() {
             });
 
             // issue 51
-            it.skip('should use the same version of webgme as the setup tool', function() {
+            it('should use the same major version of webgme as the setup tool has for webgme-engine', function() {
                 // Compare the package.json values
                 var packageJSON = path.join(initProject, 'package.json'),
                     toolJson = path.join(__dirname, '..', 'package.json'),
                     toolDeps = require(toolJson).dependencies,
                     deps = require(packageJSON).peerDependencies;
 
-                assert.equal(deps.webgme, toolDeps.webgme);
+                assert.equal(deps.webgme, toolDeps['webgme-engine']);
             });
 
             it('should create webgme app.js file', function() {
