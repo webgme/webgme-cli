@@ -75,7 +75,7 @@ describe('Seed tests', function() {
             });
 
             it('should fail if seed file doesn\'t exist', function(done) {
-                var seedName = 'asdf1234',
+                var seedName = 'notRealSeed',
                     seedmanager = new SeedManager(logger);
 
                 seedmanager.new({
