@@ -56,11 +56,11 @@ describe('Seed tests', function() {
                         __dirname,
                         '..',
                         'node_modules',
-                        'webgme',
+                        'webgme-engine',
                         'seeds',
                         'EmptyProject.webgmex'
                     )
-                }, () => {
+                }, err => {
                     var generatedPath = path.join(
                         PROJECT_DIR,
                         'src',
