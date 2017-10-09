@@ -87,7 +87,7 @@ describe('Seed tests', function() {
                         'node_modules',
                         'webgme',
                         'seeds',
-                        'EmptyProject.webgmex'
+                        'NOT_REAL_FILE.webgmex'
                     )
                 }, err => {
                     var generatedPath = path.join(
