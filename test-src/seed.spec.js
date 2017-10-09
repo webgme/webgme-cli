@@ -98,7 +98,7 @@ describe('Seed tests', function() {
                         seedName + '.webgmex'
                     );
                     assert(!exists(generatedPath));
-                    assert(err.includes('file does not exist'));
+                    assert(err.indexOf('file does not exist') > -1);
                     done();
                 });
             });
