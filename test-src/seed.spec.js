@@ -56,11 +56,11 @@ describe('Seed tests', function() {
                         __dirname,
                         '..',
                         'node_modules',
-                        'webgme',
+                        'webgme-engine',
                         'seeds',
                         'EmptyProject.webgmex'
                     )
-                }, () => {
+                }, err => {
                     var generatedPath = path.join(
                         PROJECT_DIR,
                         'src',
@@ -68,7 +68,37 @@ describe('Seed tests', function() {
                         seedName,
                         seedName + '.webgmex'
                     );
+                    assert(!err);
                     assert(exists(generatedPath));
+                    done();
+                });
+            });
+
+            it('should fail if seed file doesn\'t exist', function(done) {
+                var seedName = 'notRealSeed',
+                    seedmanager = new SeedManager(logger);
+
+                seedmanager.new({
+                    project: seedName,
+                    seedName: seedName,
+                    file: path.join(
+                        __dirname,
+                        '..',
+                        'node_modules',
+                        'webgme',
+                        'seeds',
+                        'NOT_REAL_FILE.webgmex'
+                    )
+                }, err => {
+                    var generatedPath = path.join(
+                        PROJECT_DIR,
+                        'src',
+                        'seeds',
+                        seedName,
+                        seedName + '.webgmex'
+                    );
+                    assert(!exists(generatedPath));
+                    assert(err.indexOf('file does not exist') > -1);
                     done();
                 });
             });

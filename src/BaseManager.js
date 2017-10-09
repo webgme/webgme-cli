@@ -35,7 +35,7 @@ BaseManager.prototype.start = function (options, callback) {
 };
 
 BaseManager.prototype._start = function (root, callback) {
-    var webgmePath = path.join(root, 'node_modules', 'webgme');
+    var webgmePath = path.join(root, 'node_modules', 'webgme-engine');
     npm.load({}, err => {
         if (err) {
             return callback(err);
@@ -132,7 +132,7 @@ BaseManager.prototype._createPkgJson = function(project, name) {
         toolJsonPath = path.join(__dirname, '..', 'package.json'),
         toolJson = require(toolJsonPath),
         pkgContent = {
-            webgmeVersion: toolJson.dependencies.webgme,
+            webgmeVersion: toolJson.dependencies['webgme-engine'],
             name: name
         },
         outputPkgJson = path.join(project, 'package.json'),

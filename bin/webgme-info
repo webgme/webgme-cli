@@ -33,7 +33,7 @@ var pkgJson = require(dirname + '/../package.json'),
 versions.cli = pkgJson.version;
 
 // cli tool's webgme
-pkgJson = require(dirname + '/../node_modules/webgme/package.json');
+pkgJson = require(dirname + '/../node_modules/webgme-engine/package.json');
 versions['cli-webgme'] = pkgJson.version;
 
 // webgme in given project

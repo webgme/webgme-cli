@@ -20,7 +20,7 @@ var _ = require('lodash'),
     ComponentManager = require('./ComponentManager'),
     PluginGenerator = require('./shim/PluginGenerator'),
     PluginHelpers = require('./shim/PluginHelpers'),
-    metadata = require('webgme/src/plugin/coreplugins/PluginGenerator/metadata.json'),
+    metadata = require('webgme-engine/src/plugin/coreplugins/PluginGenerator/metadata.json'),
     RAW_CONFIG = metadata.configStructure;
 
 var PluginManager = function(logger) {

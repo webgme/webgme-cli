@@ -38,13 +38,16 @@ SeedManager.prototype.new = function(args, callback) {
         if (!exists(sourceFile)) {
             var error = 'Seed file does not exist.';
             this._logger.error(error);
-            fse.rmdirSync(fileDir);
             return callback(error);
         }
 
         return fse.copy(sourceFile, filePath, err => {
             if (err) {
-                fse.rmdirSync(fileDir);
+                this._logger.error(err);
+                if (exists(fileDir)) {
+                    fse.rmdirSync(fileDir);
+                }
+                return callback(err);
             }
             this._saveSeed(name, filePath, callback);
         });
@@ -52,7 +55,7 @@ SeedManager.prototype.new = function(args, callback) {
     // This is lazily loaded because the load takes a couple seconds. This
     // causes a delay for calling 'new' but no other commands
     if (!this._exportProject) {
-        var exportCli = require('webgme/src/bin/export');
+        var exportCli = require('webgme-engine/src/bin/export');
         this._exportProject = function (parameters, callback) {
             var args = [
                 'node', 'export.js',
