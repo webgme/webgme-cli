@@ -38,13 +38,16 @@ SeedManager.prototype.new = function(args, callback) {
         if (!exists(sourceFile)) {
             var error = 'Seed file does not exist.';
             this._logger.error(error);
-            fse.rmdirSync(fileDir);
             return callback(error);
         }
 
         return fse.copy(sourceFile, filePath, err => {
             if (err) {
-                fse.rmdirSync(fileDir);
+                this._logger.error(err);
+                if (exists(fileDir)) {
+                    fse.rmdirSync(fileDir);
+                }
+                return callback(err);
             }
             this._saveSeed(name, filePath, callback);
         });
