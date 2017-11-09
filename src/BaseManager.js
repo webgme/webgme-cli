@@ -44,12 +44,14 @@ BaseManager.prototype._start = function (root, callback) {
         this._logger.write('Installing dependencies...');
         npm.install(err => {
             if (err) {
+                this._logger.error(`Could not install dependencies: ${err.message}`);
                 return callback(err);
             }
             if (!exists(webgmePath)) {
                 this._logger.write('Installing webgme...');
                 npm.install('webgme', err => {
                     if (err) {
+                        this._logger.error(`Could not install webgme dependency: ${err.message}`);
                         return callback(err);
                     }
                     npm.start();
