@@ -84,11 +84,11 @@ var testCliCall = function(args, test, done) {
     });
 
     webgmeBin.on('exit', function(code) {
-        assert.equal(code, 0, error);
-        assert.notEqual(response.length, 0);
         if (test) {
             test(response, error, done);
         } else {
+            assert.equal(code, 0, error);
+            assert.notEqual(response.length, 0);
             done();
         }
     });
@@ -107,6 +107,31 @@ describe('cli', function() {
         it('should run "webgme ' + cliCalls[i] + '"', 
             testCliCall.bind(this, cliCalls[i].split(' '), null));
     }
+
+    describe('start', function() {
+        var startProj = path.join(TMP_DIR, 'BaseStartProj');
+        before(function(done) {
+            utils.getCleanProject(startProj, done);
+        });
+
+        it('should throw error if deps cannot be installed', function(done) {
+            let pkgJsonPath = path.join(startProj, 'package.json');
+            let pkgJson = JSON.parse(fs.readFileSync(pkgJsonPath, 'utf8'));
+            let badPkgName = 'asdfffffffffff';
+
+            pkgJson.dependencies[badPkgName] = '=12345.0.1.3';
+            fs.writeFileSync(pkgJsonPath, JSON.stringify(pkgJson, null, 2));
+
+            // Add a garbage dependency to the package.json
+            let testFn = (res, err, done) => {
+                console.log('output is', res);
+                assert.notEqual(res.indexOf('404'), -1);
+                assert.notEqual(res.indexOf(badPkgName), -1);
+                done();
+            };
+            testCliCall(['start'], testFn, done);
+        });
+    });
 
     // Checking that 'webgme ls' lists all components
     describe('ls', function() {
