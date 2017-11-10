@@ -12,5 +12,9 @@ program
     .parse(process.argv);
 
 if (program.args.length === 0) {  // action will not be called
-    manager.start(program, nop);
+    manager.start(program, err => {
+        if (err) {
+            process.exit(1);
+        }
+    });
 }
