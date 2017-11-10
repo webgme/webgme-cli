@@ -119,13 +119,15 @@ describe('cli', function() {
             let pkgJson = JSON.parse(fs.readFileSync(pkgJsonPath, 'utf8'));
             let badPkgName = 'asdfffffffffff';
 
+            this.timeout(5000);
+
             // Add a garbage dependency to the package.json
             pkgJson.dependencies[badPkgName] = '=12345.0.1.3';
             fs.writeFileSync(pkgJsonPath, JSON.stringify(pkgJson, null, 2));
 
             // Make sure that there are some logs about the error
             let testFn = (res, err, done) => {
-                assert.notEqual(res.indexOf('404'), -1);
+                assert.notEqual(res.indexOf('404'), -1, `Did not print 404 in "${res}"`);
                 assert.notEqual(res.indexOf(badPkgName), -1);
                 done();
             };
