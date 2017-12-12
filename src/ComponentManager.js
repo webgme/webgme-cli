@@ -44,7 +44,7 @@ ComponentManager.prototype._preprocess = function(next, args, callback) {
     if (rootPath === null) {
         var err = 'Could not find a project in current or any parent directories';
         this._logger.error(err);
-        return deferred.reject(err);
+        return Q.reject(err).nodeify(callback);
     }
     this._prepareWebGmeConfig();
     process.chdir(rootPath);
