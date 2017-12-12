@@ -14,6 +14,7 @@ var utils = require('./utils'),
     rm_rf = require('rimraf'),
     plural = require('plural'),
     fs = require('fs'),
+    Q = require('q'),
     path = require('path'),
     exists = require('exists-file'),
     childProcess = require('child_process'),
@@ -39,14 +40,20 @@ var ComponentManager = function(name, logger) {
 ComponentManager.prototype._preprocess = function(next, args, callback) {
     // Check for project directory
     var rootPath = utils.getRootPath();
+    var deferred = Q.defer();
     if (rootPath === null) {
         var err = 'Could not find a project in current or any parent directories';
         this._logger.error(err);
-        return callback(err);
+        return deferred.reject(err);
     }
     this._prepareWebGmeConfig();
     process.chdir(rootPath);
-    next(args, callback);
+    next(args, (err, result) => {
+        if (err) return deferred.reject(err);
+        return deferred.resolve(result);
+    });
+    return deferred.promise
+        .nodeify(callback);
 };
 
 /**
