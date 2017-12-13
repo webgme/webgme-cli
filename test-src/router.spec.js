@@ -237,7 +237,7 @@ describe('Router tests', function() {
                 var config = require(path.join(PROJECT_DIR, WebGMEConfig)),
                     mntPt = 'other/mount/point';
 
-                assert.notEqual(config.rest.components[mntPt], undefined);
+                assert.equal(config.rest[OTHER_ROUTER].mount, mntPt);
             });
 
             describe('rm dependency router', function() {
