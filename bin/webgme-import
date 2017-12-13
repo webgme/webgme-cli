@@ -1,11 +1,19 @@
 #!/usr/bin/env node
 
 'use strict';
+var descs = {
+    all: 'Import all components from another app'
+};
+var args = {
+    all: '<app>'
+};
 require('../lib/BinUtils')
     .createSubCommands(__dirname,
         '<name> <app>',
         'Import a new <%= name %> from another app',
         {
-            explicit: true
+            explicit: true,
+            descs: descs,
+            args: args
         }
     );

@@ -1,0 +1,15 @@
+#!/usr/bin/env node
+/*jshint node: true*/
+
+'use strict';
+var Command = require('commander').Command,
+    program = new Command(),
+    webgme = require('..');
+
+program.arguments('<project>')
+    .option('-p,--package-name [pkg-name]', 'Set installed package name (in package.json)')
+    .action(function(project) {
+        program.project = project;
+        webgme.all.import(project, program);
+    })
+    .parse(process.argv);

@@ -1,13 +1,18 @@
 /*globals define*/
 'use strict';
 
+const childProcess = require('child_process');
+const spawn = childProcess.exec;
+const Logger = require('./Logger');
+const logger = new Logger();
+const PROJECT_CONFIG = 'webgme-setup.json';
+
 var _ = require('lodash'),
     fs = require('fs'),
     path = require('path'),
     exists = require('exists-file'),
     assert = require('assert'),
-    R = require('ramda'),
-    PROJECT_CONFIG = 'webgme-setup.json';
+    R = require('ramda');
 
 var getRootPath = function(startPath) {
     // Walk back from current path until you find a webgme-setup.json file
@@ -377,6 +382,29 @@ var normalizePath = function(dirs) {
     return dirs;
 };
 
+const installProject = function(projectName, isDev, callback) {
+    let projectRoot = getRootPath();
+    let cmd = isDev ?
+        `npm install ${projectName} --save-dev`:
+        `npm install ${projectName} --save`;
+    let job = spawn(cmd, {cwd: projectRoot});
+
+    logger.info(cmd);
+    logger.writeStream(job.stdout);
+    logger.errorStream(job.stderr);
+
+    job.on('close', code => {
+        logger.info(`npm exited with: ${code}`);
+        if (code === 0) {  // Success!
+            return callback(null);
+        } else {
+            let err = `Could not find project (${projectName})!`;
+            logger.error(err);
+            return callback(err);
+        }
+    });
+};
+
 module.exports = {
     PROJECT_CONFIG: PROJECT_CONFIG,
     saveConfig: saveConfig,
@@ -391,5 +419,6 @@ module.exports = {
     loadPaths: loadPaths,
     getPackageName: getPackageName,
     normalize: normalizePath,
+    installProject: installProject,
     mkdir: createDir
 };
