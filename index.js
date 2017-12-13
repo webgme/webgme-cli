@@ -21,8 +21,9 @@ var webgme = {};
 // Add 'all' option
 webgme.all = {};
 webgme.all.import = function(projectName, opts, callback) {
-    var opts = opts || {};
-    var rootPath;
+    let rootPath;
+
+    opts = opts || {};
     return Q()
         .then(() => {  // ensure in a webgme app dir. Move to the root.
             rootPath = utils.getRootPath();
@@ -33,7 +34,6 @@ webgme.all.import = function(projectName, opts, callback) {
         })
         .then(() => {  // install the project
             let deferred = Q.defer();
-            console.log('about to install components');
             utils.installProject(projectName, false, (err, config) => {
                 if (err) return deferred.reject(err);
                 deferred.resolve(config);
@@ -41,8 +41,9 @@ webgme.all.import = function(projectName, opts, callback) {
             return deferred.promise;
         })
         .then(() => {  // read in the webgme-cli config for the given project
-            let pkgProject = opts.packageName || utils.getPackageName(projectName);
-            let configPath = utils.getConfigPath(pkgProject.toLowerCase());
+            projectName = opts.packageName || utils.getPackageName(projectName);
+            projectName = projectName.toLowerCase();
+            let configPath = utils.getConfigPath(projectName);
             let config = require(configPath);
             return config;
         })
