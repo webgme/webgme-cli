@@ -61,14 +61,31 @@ describe('Router tests', function() {
             var cliConfig = require(`${PROJECT_DIR}/${CONFIG_NAME}`),
                 cliMountPt = cliConfig.components.routers[ROUTER_NAME].mount;
             
-            console.log('router:', cliConfig.components.routers[ROUTER_NAME]);
             assert.equal(cliMountPt, mountPt);
         });
 
-        it('should update the webgme config', function() {
-            var gmeConfig = require(`${PROJECT_DIR}/config/config.webgme.js`);
-            
-            assert.notEqual(gmeConfig.rest.components[mountPt], undefined);
+        describe('webgme config', function() {
+            let routerConfig;
+            before(() => {
+                let gmeConfig = require(`${PROJECT_DIR}/config/config.webgme.js`);
+                routerConfig = gmeConfig.rest[ROUTER_NAME];
+            });
+
+            it('should update the webgme config', function() {
+                assert.notEqual(routerConfig, undefined);
+            });
+
+            it('should set src to .js file', function() {
+                assert(routerConfig.src.includes('.js'));
+            });
+
+            it('should set src to existing file', function() {
+                assert(exists(routerConfig.src));
+            });
+
+            it('should set mount point', function() {
+                assert.equal(routerConfig.mount, mountPt);
+            });
         });
     });
 
@@ -220,7 +237,7 @@ describe('Router tests', function() {
                 var config = require(path.join(PROJECT_DIR, WebGMEConfig)),
                     mntPt = 'other/mount/point';
 
-                assert.notEqual(config.rest.components[mntPt], undefined);
+                assert.equal(config.rest[OTHER_ROUTER].mount, mntPt);
             });
 
             describe('rm dependency router', function() {

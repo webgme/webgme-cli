@@ -40,8 +40,14 @@ var config = require('webgme/config/config.default'),
 
 <%= printConfigPaths('visualization.panelPaths', visualizers.map(dirname)) %>
 
-<%= routers.map(function(r) {
-    return 'config.rest.components[\'' + r[0] + '\'] = __dirname + \'/../' + r[1] + '\';';
+<%= routers.map(function(router) {
+    return [
+        'config.rest[\'' + router.name + '\'] = {',
+        '  src: __dirname + \'/../' + router.srcFile + '\',',
+        '  mount: \'' + router.mount + '\',',
+        '  options: {}',
+        '};'
+    ].join('\n');
 }).join('\n') %>
 
 // Visualizer descriptors

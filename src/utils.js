@@ -126,11 +126,10 @@ var updateWebGMEConfig = function(startPath) {
     content.routers = [];
     Object.keys(config).forEach(type => {
         Object.keys(config[type].routers || {}).forEach(name => {
-            var router = config[type].routers[name],
-                src = router.src || router.path;
-
-            src = src.replace(/\/$/, '');
-            content.routers.push([router.mount, `${src}/${name}.js`]);
+            let router = config[type].routers[name];
+            router.name = name;
+            router.srcFile = `${router.src}/${name}.js`;
+            content.routers.push(router);
         });
     });
 
