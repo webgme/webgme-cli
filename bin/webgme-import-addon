@@ -13,6 +13,7 @@ var manager = new AddonManager();
 program.arguments('<name> <project>')
     .option('-d,--dev', 'Import component for dev use only')
     .option('-n,--package-name [pkg-name]', 'Set installed package name (in package.json)')
+    .option('-s,--skip-install', 'Import addon from existing dependency')
     .action(function(name, project) {
         program.name = name;
         program.project = project;
