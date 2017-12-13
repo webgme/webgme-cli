@@ -11,6 +11,7 @@ var manager = new SeedManager();
 program.arguments('<name> <project>')
     .option('-d,--dev', 'Import component for dev use only')
     .option('-p,--package-name [pkg-name]', 'Set installed package name (in package.json)')
+    .option('-s,--skip-install', 'Import seed from existing dependency')
     .action(function(name, project) {
         program.name = name;
         program.project = project;

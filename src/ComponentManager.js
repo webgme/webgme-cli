@@ -123,8 +123,7 @@ ComponentManager.prototype.rm = function(args, callback) {
 };
 
 ComponentManager.prototype.import = function(args, callback) {
-    var self = this,
-        project,
+    var project,
         componentName,
         pkgPath,
         pkgContent,
@@ -134,13 +133,12 @@ ComponentManager.prototype.import = function(args, callback) {
         job;
 
     if (!(args.name && args.project)) {
-        return this._logger.error(`Usage: webgme import ${this._name} [${this._name}] [project]`);
+        let err = new Error('missing required "name" or "project"');
+        this._logger.error(err.message);
+        return callback(err);
     }
     componentName = args.name;
     project = args.project;
-    cmd = args.dev ?
-        `npm install ${project} --save-dev`:
-        `npm install ${project} --save`;
 
     // Add the project to the package.json
     var pkgProject = args.packageName || utils.getPackageName(project);
@@ -148,40 +146,57 @@ ComponentManager.prototype.import = function(args, callback) {
 
     // Add the component to the webgme config component paths
     // FIXME: Call this without --save then later save it
-    job = spawn(cmd, {cwd: projectRoot});
+    if (args.skipInstall) {
+        this._addComponentFromProject(componentName, pkgProject, callback);
+    } else {
+        this._installProject(project, args.dev, (err, result) => {
+            this._addComponentFromProject(componentName, pkgProject, callback);
+        });
+    }
+};
+
+ComponentManager.prototype._addComponentFromProject = function(name, project, callback) {
+    let info = {
+        name: name,
+        pkg: project
+    };
+
+    return this._getJsonForConfig(info, (err, configObject) => {
+        if (err) {
+            this._logger.error(err);
+            return callback(err);
+        }
+
+        var config = utils.getConfig();
+        config.dependencies[this._group][name] = configObject;
+        utils.saveConfig(config);
+
+        // Update the webgme config file from
+        // the cli's config
+        utils.updateWebGMEConfig();
+        configObject.id = name;
+        return callback(null, configObject);
+    });
+};
+
+ComponentManager.prototype._installProject = function(projectName, isDev, callback) {
+    var projectRoot = utils.getRootPath();
+    var cmd = isDev ?
+        `npm install ${projectName} --save-dev`:
+        `npm install ${projectName} --save`;
+    var job = spawn(cmd, {cwd: projectRoot});
 
     this._logger.info(cmd);
     this._logger.writeStream(job.stdout);
     this._logger.errorStream(job.stderr);
 
-    job.on('close', function(code) {
-        var err,
-            info = {
-                name: componentName,
-                pkg: pkgProject
-            };
-        self._logger.info('npm exited with: '+code);
+    job.on('close', code => {
+        this._logger.info(`npm exited with: ${code}`);
         if (code === 0) {  // Success!
-            self._getJsonForConfig(info, function(err, configObject) {
-                if (err) {
-                    self._logger.error(err);
-                    return callback(err);
-                }
-
-                var config = utils.getConfig();
-                config.dependencies[self._group][componentName] = configObject;
-                utils.saveConfig(config);
-
-                // Update the webgme config file from 
-                // the cli's config
-                utils.updateWebGMEConfig();
-                configObject.id = componentName;
-                return callback(null, configObject);
-            });
-
+            return callback(null);
         } else {
-            err = 'Could not find project (' + project + ') !';
-            self._logger.error(err);
+            let err = `Could not find project (${project})!`;
+            this._logger.error(err);
             return callback(err);
         }
     });
