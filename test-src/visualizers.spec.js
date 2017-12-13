@@ -200,7 +200,7 @@ describe('Viz tests', function() {
 
             it('should not list vizs in wrong directory ', function(done) {
                 process.chdir(__dirname);
-                manager.ls({}, function(err) {
+                manager.ls().catch(err => {
                     assert(err);
                     process.chdir(PROJECT_DIR);
                     done();
