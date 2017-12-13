@@ -17,8 +17,6 @@ var utils = require('./utils'),
     Q = require('q'),
     path = require('path'),
     exists = require('exists-file'),
-    childProcess = require('child_process'),
-    spawn = childProcess.exec,
     Logger = require(__dirname + '/Logger');
 
 var ComponentManager = function(name, logger) {
@@ -149,7 +147,7 @@ ComponentManager.prototype.import = function(args, callback) {
     if (args.skipInstall) {
         this._addComponentFromProject(componentName, pkgProject, callback);
     } else {
-        this._installProject(project, args.dev, (err, result) => {
+        utils.installProject(project, args.dev, (err, result) => {
             this._addComponentFromProject(componentName, pkgProject, callback);
         });
     }
@@ -176,29 +174,6 @@ ComponentManager.prototype._addComponentFromProject = function(name, project, ca
         utils.updateWebGMEConfig();
         configObject.id = name;
         return callback(null, configObject);
-    });
-};
-
-ComponentManager.prototype._installProject = function(projectName, isDev, callback) {
-    let projectRoot = utils.getRootPath();
-    let cmd = isDev ?
-        `npm install ${projectName} --save-dev`:
-        `npm install ${projectName} --save`;
-    let job = spawn(cmd, {cwd: projectRoot});
-
-    this._logger.info(cmd);
-    this._logger.writeStream(job.stdout);
-    this._logger.errorStream(job.stderr);
-
-    job.on('close', code => {
-        this._logger.info(`npm exited with: ${code}`);
-        if (code === 0) {  // Success!
-            return callback(null);
-        } else {
-            let err = `Could not find project (${projectName})!`;
-            this._logger.error(err);
-            return callback(err);
-        }
     });
 };
 
