@@ -20,6 +20,7 @@ var descs = {
         mount: '<router> <endpoint>',
         init: '[name]',
         info: undefined,
+        refresh: undefined,
         start: undefined
     };
 
