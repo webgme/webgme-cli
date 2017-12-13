@@ -180,11 +180,11 @@ ComponentManager.prototype._addComponentFromProject = function(name, project, ca
 };
 
 ComponentManager.prototype._installProject = function(projectName, isDev, callback) {
-    var projectRoot = utils.getRootPath();
-    var cmd = isDev ?
+    let projectRoot = utils.getRootPath();
+    let cmd = isDev ?
         `npm install ${projectName} --save-dev`:
         `npm install ${projectName} --save`;
-    var job = spawn(cmd, {cwd: projectRoot});
+    let job = spawn(cmd, {cwd: projectRoot});
 
     this._logger.info(cmd);
     this._logger.writeStream(job.stdout);
@@ -195,7 +195,7 @@ ComponentManager.prototype._installProject = function(projectName, isDev, callba
         if (code === 0) {  // Success!
             return callback(null);
         } else {
-            let err = `Could not find project (${project})!`;
+            let err = `Could not find project (${projectName})!`;
             this._logger.error(err);
             return callback(err);
         }
