@@ -1,6 +1,4 @@
 // app.js
-'use strict';
-
 var gmeConfig = require('./config'),
     webgme = require('webgme'),
     myServer;

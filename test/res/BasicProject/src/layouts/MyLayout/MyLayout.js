@@ -1,9 +1,17 @@
 /*globals define, WebGMEGlobal, $ */
-'use strict';
-
-define(['lib/jquery/' + (DEBUG ? 'jquery.layout' : 'jquery.layout.min'), 'js/logger', 'text!./templates/MyLayout.html', 'text!./MyLayoutConfig.json'], function (_jQueryLayout, Logger, defaultLayoutTemplate, LayoutConfigJSON) {
+define([
+    'lib/jquery/' + (DEBUG ? 'jquery.layout' : 'jquery.layout.min'),
+    'js/logger',
+    'text!./templates/MyLayout.html',
+    'text!./MyLayoutConfig.json'
+], function(
+    _jQueryLayout,
+    Logger,
+    defaultLayoutTemplate,
+    LayoutConfigJSON
+) {
     'use strict';
-
+    
     var CONFIG = JSON.parse(LayoutConfigJSON),
         SPACING_OPEN_TOUCH = 10,
         SPACING_CLOSED_TOUCH = 10,
@@ -13,10 +21,11 @@ define(['lib/jquery/' + (DEBUG ? 'jquery.layout' : 'jquery.layout.min'), 'js/log
         SPACING_CLOSED = WebGMEGlobal.SUPPORTS_TOUCH ? SPACING_CLOSED_TOUCH : SPACING_CLOSED_DESKTOP,
         SIDE_PANEL_WIDTH = 202;
 
-    var MyLayout = function MyLayout(params) {
-        this._logger = params && params.logger || Logger.create('gme:Layouts:MyLayout', WebGMEGlobal.gmeConfig.client.log);
+    var MyLayout = function(params) {
+        this._logger = (params && params.logger) || Logger.create('gme:Layouts:MyLayout',
+            WebGMEGlobal.gmeConfig.client.log);
         this.panels = CONFIG.panels;
-        this._template = params && params.template || defaultLayoutTemplate;
+        this._template = (params && params.template) || defaultLayoutTemplate;
 
         this._body = null;
         this._panelToContainer = {};
@@ -27,7 +36,7 @@ define(['lib/jquery/' + (DEBUG ? 'jquery.layout' : 'jquery.layout.min'), 'js/log
      *
      * @return {undefined}
      */
-    MyLayout.prototype.init = function () {
+    MyLayout.prototype.init = function() {
         var self = this;
 
         this._body = $('body');
@@ -54,7 +63,7 @@ define(['lib/jquery/' + (DEBUG ? 'jquery.layout' : 'jquery.layout.min'), 'js/log
                 resizable: false,
                 slidable: false,
                 spacing_open: 0, //jshint ignore: line
-                size: 27 //has to match footer CSS settings (height + border)
+                size: 27        //has to match footer CSS settings (height + border)
             },
             east: {
                 size: SIDE_PANEL_WIDTH,
@@ -63,12 +72,12 @@ define(['lib/jquery/' + (DEBUG ? 'jquery.layout' : 'jquery.layout.min'), 'js/log
                 slidable: false,
                 spacing_open: SPACING_OPEN, //jshint ignore: line
                 spacing_closed: SPACING_CLOSED, //jshint ignore: line
-                onresize: function onresize() /*paneName, paneElement, paneState, paneOptions, layoutName*/{
+                onresize: function (/*paneName, paneElement, paneState, paneOptions, layoutName*/) {
                     self._onToolboxResize();
                 }
             },
             center: {
-                onresize: function onresize() /*paneName, paneElement, paneState, paneOptions, layoutName*/{
+                onresize: function (/*paneName, paneElement, paneState, paneOptions, layoutName*/) {
                     self._onCenterResize();
                 }
             }
@@ -83,7 +92,7 @@ define(['lib/jquery/' + (DEBUG ? 'jquery.layout' : 'jquery.layout.min'), 'js/log
      * @param {String} container
      * @return {undefined}
      */
-    MyLayout.prototype.addToContainer = function (panel, container) {
+    MyLayout.prototype.addToContainer = function(panel, container) {
         if (container === 'header') {
             this._headerPanel.append(panel.$pEl);
         } else if (container === 'footer') {
@@ -106,7 +115,7 @@ define(['lib/jquery/' + (DEBUG ? 'jquery.layout' : 'jquery.layout.min'), 'js/log
      * @param {Panel} panel
      * @return {undefined}
      */
-    MyLayout.prototype.remove = function (panel) {
+    MyLayout.prototype.remove = function(panel) {
         if (this._toolbox === panel) {
             this._toolboxPanel.empty();
         } else if (this._canvas === panel) {
@@ -119,7 +128,7 @@ define(['lib/jquery/' + (DEBUG ? 'jquery.layout' : 'jquery.layout.min'), 'js/log
      *
      * @return {undefined}
      */
-    MyLayout.prototype.destroy = function () {
+    MyLayout.prototype.destroy = function() {
         this._body.empty();
     };
 
@@ -127,13 +136,13 @@ define(['lib/jquery/' + (DEBUG ? 'jquery.layout' : 'jquery.layout.min'), 'js/log
     //
     // These are internally called and used by the example to provide a responsive
     // UI (even if it is simply scaling linearly here)
-    MyLayout.prototype._onCenterResize = function () {
+    MyLayout.prototype._onCenterResize = function() {
         if (this._canvas) {
             this._canvas.setSize(this._centerPanel.width(), this._centerPanel.height());
         }
     };
 
-    MyLayout.prototype._onToolboxResize = function () {
+    MyLayout.prototype._onToolboxResize = function() {
         if (this._toolbox) {
             this._toolbox.setSize(this._toolboxPanel.width(), this._toolboxPanel.height());
         }

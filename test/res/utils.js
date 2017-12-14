@@ -7,8 +7,9 @@ var fse = require('fs-extra'),
     esprima = require('esprima'),
     path = require('path');
 
-var getCleanProject = function getCleanProject(projectDir, source, done) {
-    var after, BaseProject;
+var getCleanProject = function(projectDir, source, done) {
+    var after,
+        BaseProject;
 
     if (!done) {
         done = source;
@@ -16,13 +17,13 @@ var getCleanProject = function getCleanProject(projectDir, source, done) {
     }
 
     BaseProject = path.join(__dirname, source);
-    after = function () {
+    after = function() {
         process.chdir(projectDir);
         done();
     };
 
     if (fse.existsSync(projectDir)) {
-        rm_rf(projectDir, function () {
+        rm_rf(projectDir, function() {
             fse.copy(BaseProject, projectDir, after);
         });
     } else {
@@ -30,7 +31,7 @@ var getCleanProject = function getCleanProject(projectDir, source, done) {
     }
 };
 
-var isValidJs = function isValidJs(text) {
+var isValidJs = function(text) {
     try {
         esprima.parse(text);
         return true;
@@ -40,7 +41,7 @@ var isValidJs = function isValidJs(text) {
 };
 
 // Clear the require cache so the next load is correct
-var requireReload = function requireReload() {
+var requireReload = function() {
     var dep;
     for (var i = arguments.length; i--;) {
         dep = require.resolve(arguments[i]);
@@ -48,7 +49,7 @@ var requireReload = function requireReload() {
     }
 };
 
-var hasBasePath = function hasBasePath(basePaths, tgtPath) {
+var hasBasePath = function(basePaths, tgtPath) {
     for (var i = basePaths.length; i--;) {
         if (path.resolve(basePaths[i]) === tgtPath) {
             return true;

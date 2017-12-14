@@ -1,6 +1,4 @@
 /*globals describe,it,before,after*/
-'use strict';
-
 var BaseManager = require('../lib/BaseManager'),
     Logger = require('../lib/Logger'),
     fs = require('fs'),
@@ -8,8 +6,8 @@ var BaseManager = require('../lib/BaseManager'),
     assert = require('assert'),
     _ = require('lodash'),
     rm_rf = require('rimraf'),
-    utils = require(__dirname + '/res/utils'),
-    nop = function nop() {};
+    utils = require(__dirname+'/res/utils'),
+    nop = function(){};
 
 var logger = new Logger(),
     emitter = logger._emitter,
@@ -22,18 +20,18 @@ var PROJECT_DIR,
     TMP_DIR = path.join(__dirname, '..', 'test-tmp'),
     TMP_PROJECT_DIR;
 
-describe('BaseManager', function () {
+describe('BaseManager', function() {
     'use strict';
 
-    before(function (done) {
+    before(function(done) {
         if (!fs.existsSync(TMP_DIR)) {
-            fs.mkdir(TMP_DIR, function () {
+            fs.mkdir(TMP_DIR, function() {
                 process.chdir(TMP_DIR);
                 done();
             });
         } else {
-            rm_rf(TMP_DIR, function () {
-                fs.mkdir(TMP_DIR, function () {
+            rm_rf(TMP_DIR, function() {
+                fs.mkdir(TMP_DIR, function() {
                     process.chdir(TMP_DIR);
                     done();
                 });
@@ -42,62 +40,65 @@ describe('BaseManager', function () {
     });
 
     // Creating a new item from boilerplate
-    describe('basic commands', function () {
+    describe('basic commands', function() {
         PROJECT_DIR = path.join(TMP_DIR, 'BaseManagerInitProject');
-        before(function (done) {
+        before(function(done) {
             utils.getCleanProject(PROJECT_DIR, done);
         });
 
-        describe('init', function () {
+        describe('init', function() {
             var appName = 'Init.Project',
                 initProject = path.join(TMP_DIR, appName);
 
-            before(function (done) {
+            before(function(done) {
                 process.chdir(TMP_DIR);
-                manager.init({ name: initProject }, function (err) {
+                manager.init({name: initProject}, function(err) {
                     process.chdir(initProject);
                     assert(!err, 'init failed: ' + err);
                     done(err);
                 });
             });
 
-            it('should create a new directory with project name', function () {
+            it('should create a new directory with project name', function() {
                 assert(fs.existsSync(initProject));
             });
 
-            it('should use the project name in the mongodb uri', function () {
+            it('should use the project name in the mongodb uri', function() {
                 var configPath = path.join(initProject, 'config', 'config.webgme.js'),
                     config = require(configPath);
                 assert.equal(appName.toLowerCase().replace(/\./g, '_'), config.mongo.uri.split('/').pop());
             });
 
-            it('should create (valid) globals test fixture', function () {
+            it('should create (valid) globals test fixture', function() {
                 var fixturePath = path.join(initProject, 'test', 'globals.js');
                 assert(fs.existsSync(fixturePath));
             });
 
-            it('should create a src and test dirs', function () {
-                var res = ['src', 'test'].map(function (dir) {
-                    return path.join(initProject, dir);
-                }).map(fs.existsSync).forEach(assert);
+            it('should create a src and test dirs', function() {
+                var res = ['src', 'test']
+                    .map(function(dir) {
+                        return path.join(initProject, dir);
+                    })
+                    .map(fs.existsSync)
+                    .forEach(assert);
             });
 
-            it('should create a ' + SETUP_CONFIG + ' file in project root', function () {
+            it(`should create a ${SETUP_CONFIG} file in project root`, function() {
                 assert(fs.existsSync(path.join(initProject, SETUP_CONFIG)));
             });
 
-            it('should initialize an npm project', function () {
+            it('should initialize an npm project', function() {
                 var packageJSON = path.join(initProject, 'package.json');
                 assert(fs.existsSync(packageJSON));
             });
 
-            it('should name the npm project appropriately', function () {
+            it('should name the npm project appropriately', function() {
                 var packageJSON = path.join(initProject, 'package.json');
                 var pkg = require(packageJSON);
                 assert.equal(pkg.name, 'Init.Project'.toLowerCase());
             });
 
-            it('should add the webgme as a peer dependency', function () {
+            it('should add the webgme as a peer dependency', function() {
                 var packageJSON = path.join(initProject, 'package.json'),
                     deps = require(packageJSON).peerDependencies;
 
@@ -105,7 +106,7 @@ describe('BaseManager', function () {
             });
 
             // issue 51
-            it('should use the same major version of webgme as the setup tool has for webgme-engine', function () {
+            it('should use the same major version of webgme as the setup tool has for webgme-engine', function() {
                 // Compare the package.json values
                 var packageJSON = path.join(initProject, 'package.json'),
                     toolJson = path.join(__dirname, '..', 'package.json'),
@@ -115,107 +116,117 @@ describe('BaseManager', function () {
                 assert.equal(deps.webgme, toolDeps['webgme-engine']);
             });
 
-            it('should create webgme app.js file', function () {
+            it('should create webgme app.js file', function() {
                 var app = path.join(initProject, 'app.js');
                 assert(fs.existsSync(app));
             });
 
             // issue 15
-            it('should pretty printed ' + SETUP_CONFIG, function () {
+            it(`should pretty printed ${SETUP_CONFIG}`, function() {
                 var config = path.join(initProject, SETUP_CONFIG),
                     content = fs.readFileSync(config, 'utf8');
                 // Check that it is printed on multiple lines
                 assert(content.split('\n').length > 3);
             });
 
-            describe('package json bin scripts', function () {
-                var cmds = ['apply', 'import', 'export', 'merge', 'plugin', 'pluginHook', 'users', 'clean_up', 'diff'],
+            describe('package json bin scripts', function() {
+                var cmds = [
+                        'apply',
+                        'import',
+                        'export',
+                        'merge',
+                        'plugin',
+                        'pluginHook',
+                        'users',
+                        'clean_up',
+                        'diff'
+                    ],
                     scripts;
 
-                before(function () {
+                before(() => {
                     var packageJson = path.join(initProject, 'package.json');
                     scripts = require(packageJson).scripts;
                 });
 
-                cmds.forEach(function (cmd) {
-                    it('should have command ' + cmd, function () {
+                cmds.forEach(cmd => {
+                    it(`should have command ${cmd}`, function() {
                         assert(scripts[cmd]);
                     });
                 });
             });
 
             // WebGME config
-            describe('WebGME config', function () {
+            describe('WebGME config', function() {
                 var CONFIG_DIR = path.join(initProject, 'config');
 
-                it('should create config directory', function () {
+                it('should create config directory', function() {
                     assert(fs.existsSync(CONFIG_DIR));
                 });
 
-                it('should create a webgme config file', function () {
+                it('should create a webgme config file', function() {
                     var config = path.join(CONFIG_DIR, WebGMEConfig);
                     assert(fs.existsSync(config));
                 });
 
-                it('should create editable (boilerplate) webgme config file', function () {
+                it('should create editable (boilerplate) webgme config file', function() {
                     var config = path.join(CONFIG_DIR, 'config.default.js');
                     assert(fs.existsSync(config));
                 });
             });
 
-            describe('gitignore', function () {
+            describe('gitignore', function() {
 
-                it('should create gitignore file if doesn\'t exist', function () {
+                it('should create gitignore file if doesn\'t exist', function() {
                     fs.statSync(path.join(initProject, '.gitignore'));
                 });
 
-                it('should create README file if doesn\'t exist', function () {
+                it('should create README file if doesn\'t exist', function() {
                     fs.statSync(path.join(initProject, 'README.md'));
                 });
 
-                it('should not create gitignore if it already exists', function (done) {
+                it('should not create gitignore if it already exists', function(done) {
                     var projectDir = path.join(TMP_DIR, 'InitNoGitIgnore'),
                         gitignorePath = path.join(projectDir, '.gitignore');
                     fs.mkdirSync(projectDir);
                     fs.writeFileSync(gitignorePath, 'text');
-                    manager.init({ name: projectDir }, function (err) {
+                    manager.init({name: projectDir}, (err) => {
                         assert.equal(fs.readFileSync(gitignorePath, 'utf8'), 'text');
                         done();
                     });
                 });
 
-                it('should contain blob-local-storage', function () {
+                it('should contain blob-local-storage', function() {
                     var content = fs.readFileSync(path.join(initProject, '.gitignore'), 'utf8');
                     assert.notEqual(content.indexOf('blob-local-storage'), -1);
                 });
             });
 
-            it('should fail f the dir exists', function () {
-                manager.init({ name: initProject }, function (err) {
+            it('should fail f the dir exists', function() {
+                manager.init({name: initProject}, function(err) {
                     assert(!!err);
                 });
             });
         });
 
-        describe('init w/o args', function () {
-
-            it('should create webgme project in current directory', function (done) {
+        describe('init w/o args', function() {
+            
+            it('should create webgme project in current directory', function(done) {
                 TMP_PROJECT_DIR = path.join(TMP_DIR, 'InitNoArgs');
                 fs.mkdirSync(TMP_PROJECT_DIR);
                 process.chdir(TMP_PROJECT_DIR);
-                manager.init({}, function () {
+                manager.init({}, function() {
                     var configPath = path.join(TMP_PROJECT_DIR, SETUP_CONFIG);
                     assert(fs.existsSync(configPath));
                     done();
                 });
             });
 
-            it('should fail if dir has ' + SETUP_CONFIG, function (done) {
+            it(`should fail if dir has ${SETUP_CONFIG}`, function(done) {
                 TMP_PROJECT_DIR = path.join(TMP_DIR, 'InitNoArgsFail');
                 fs.mkdirSync(TMP_PROJECT_DIR);
                 process.chdir(TMP_PROJECT_DIR);
                 fs.writeFileSync(path.join(TMP_PROJECT_DIR, SETUP_CONFIG), 'stuff');
-                manager.init({}, function (err) {
+                manager.init({}, function(err) {
                     var appPath = path.join(TMP_PROJECT_DIR, 'app.js');
                     assert(!fs.existsSync(appPath));
                     assert(!!err);
@@ -223,60 +234,62 @@ describe('BaseManager', function () {
                 });
             });
 
-            it('should succeed in existing project', function (done) {
+            it('should succeed in existing project', function(done) {
                 TMP_PROJECT_DIR = path.join(TMP_DIR, 'InitNoArgsSucceed');
                 fs.mkdirSync(TMP_PROJECT_DIR);
                 process.chdir(TMP_PROJECT_DIR);
                 fs.writeFileSync(path.join(TMP_PROJECT_DIR, 'temp'), 'stuff');
-                manager.init({}, function (err) {
+                manager.init({}, function(err) {
                     var configPath = path.join(TMP_PROJECT_DIR, SETUP_CONFIG);
                     assert(fs.existsSync(configPath));
                     assert(!err);
                     done();
                 });
             });
+
         });
 
-        describe('merging package.json', function () {
+        describe('merging package.json', function() {
             var pkgJsonPath,
                 oldPkgJson = {
-                merged: true,
-                devDependencies: {
-                    lodash: '1.1.1'
-                },
-                dependencies: {
-                    lodash: '1.1.1'
-                }
-            };
+                    merged: true,
+                    devDependencies: {
+                        lodash: '1.1.1'
+                    },
+                    dependencies: {
+                        lodash: '1.1.1'
+                    }
+                };
 
-            before(function (done) {
+            before(function(done) {
                 TMP_PROJECT_DIR = path.join(TMP_DIR, 'MergePackageJson');
                 pkgJsonPath = path.join(TMP_PROJECT_DIR, 'package.json');
 
                 fs.mkdirSync(TMP_PROJECT_DIR);
                 process.chdir(TMP_PROJECT_DIR);
-                fs.writeFileSync(pkgJsonPath, JSON.stringify(oldPkgJson));
+                fs.writeFileSync(pkgJsonPath,
+                    JSON.stringify(oldPkgJson));
 
                 manager.init({}, done);
             });
 
-            it('should merge package.json', function () {
+            it('should merge package.json', function() {
                 var pkgJson = require(pkgJsonPath);
                 assert(pkgJson.merged);
             });
 
-            it('should preserve dependencies', function () {
+            it('should preserve dependencies', function() {
                 var pkgJson = require(pkgJsonPath);
                 assert(pkgJson.dependencies.lodash, 'Overwrote the dependencies');
             });
 
-            it('should preserve devDependencies', function () {
+            it('should preserve devDependencies', function() {
                 var pkgJson = require(pkgJsonPath);
                 assert(pkgJson.devDependencies.lodash, 'Overwrote the devDependencies');
             });
         });
 
-        after(function (done) {
+        after(function(done) {
             if (fs.existsSync(PROJECT_DIR)) {
                 rm_rf(PROJECT_DIR, done);
             } else {

@@ -25,80 +25,89 @@ describe('RemoveFromPlugin', function () {
         ATTRIBUTE = 'testPlugin',
         commitHash;
 
-    var executePluginAndGetCore = function executePluginAndGetCore(context, callback) {
+    var executePluginAndGetCore = function(context, callback) {
         var manager = new PluginCliManager(null, logger, gmeConfig),
             pluginConfig = {
-            field: FIELD,
-            attribute: ATTRIBUTE
-        };
+                field: FIELD,
+                attribute: ATTRIBUTE
+            };
         manager.executePlugin(pluginName, pluginConfig, context, function (err, pluginResult) {
             expect(err).to.equal(null);
             expect(typeof pluginResult).to.equal('object');
             expect(pluginResult.success).to.equal(true);
 
-            context.core = new Core(project, { globConf: gmeConfig, logger: logger });
+            context.core = new Core(project, {globConf: gmeConfig, logger: logger});
 
-            context.project.getBranchHash(context.branchName).then(function (commitHash) {
-                context.commitHash = commitHash;
-                return Q.ninvoke(context.project, 'loadObject', commitHash);
-            }).then(function (commitObject) {
-                var rootDeferred = Q.defer();
-                logger.debug('commitObject loaded', { metadata: commitObject });
-                context.core.loadRoot(commitObject.root, function (err, rootNode) {
-                    if (err) {
-                        rootDeferred.reject(err);
-                    } else {
-                        logger.debug('rootNode loaded');
-                        rootDeferred.resolve(rootNode);
-                    }
-                });
+            context.project.getBranchHash(context.branchName)
+                .then(function (commitHash) {
+                    context.commitHash = commitHash;
+                    return Q.ninvoke(context.project, 'loadObject', commitHash);
+                })
+                .then(function (commitObject) {
+                    var rootDeferred = Q.defer();
+                    logger.debug('commitObject loaded', {metadata: commitObject});
+                    context.core.loadRoot(commitObject.root, function (err, rootNode) {
+                        if (err) {
+                            rootDeferred.reject(err);
+                        } else {
+                            logger.debug('rootNode loaded');
+                            rootDeferred.resolve(rootNode);
+                        }
+                    });
 
-                return rootDeferred.promise;
-            }).nodeify(callback);
+                    return rootDeferred.promise;
+                })
+                .nodeify(callback);
         });
     };
 
     before(function (done) {
         process.chdir(WEBGME_ROOT);
-        testFixture.clearDBAndGetGMEAuth(gmeConfig, projectName).then(function (gmeAuth_) {
-            gmeAuth = gmeAuth_;
-            // This uses in memory storage. Use testFixture.getMongoStorage to persist test to database.
-            storage = testFixture.getMemoryStorage(logger, gmeConfig, gmeAuth);
-            return storage.openDatabase();
-        }).then(function () {
-            var importParam = {
-                projectSeed: path.join(testFixture.MY_SEED_DIR, 'EmptyWithTestPlugin.webgmex'),
-                projectName: projectName,
-                branchName: 'master',
-                logger: logger,
-                gmeConfig: gmeConfig
-            };
+        testFixture.clearDBAndGetGMEAuth(gmeConfig, projectName)
+            .then(function (gmeAuth_) {
+                gmeAuth = gmeAuth_;
+                // This uses in memory storage. Use testFixture.getMongoStorage to persist test to database.
+                storage = testFixture.getMemoryStorage(logger, gmeConfig, gmeAuth);
+                return storage.openDatabase();
+            })
+            .then(function () {
+                var importParam = {
+                    projectSeed: path.join(testFixture.MY_SEED_DIR, 'EmptyWithTestPlugin.webgmex'),
+                    projectName: projectName,
+                    branchName: 'master',
+                    logger: logger,
+                    gmeConfig: gmeConfig
+                };
 
-            return testFixture.importProject(storage, importParam);
-        }).then(function (importResult) {
-            project = importResult.project;
-            commitHash = importResult.commitHash;
-            return project.createBranch('test', commitHash);
-        }).nodeify(done);
+                return testFixture.importProject(storage, importParam);
+            })
+            .then(function (importResult) {
+                project = importResult.project;
+                commitHash = importResult.commitHash;
+                return project.createBranch('test', commitHash);
+            })
+            .nodeify(done);
     });
 
     after(function (done) {
-        storage.closeDatabase().then(function () {
-            return gmeAuth.unload();
-        }).nodeify(done);
+        storage.closeDatabase()
+            .then(function () {
+                return gmeAuth.unload();
+            })
+            .nodeify(done);
     });
 
     it('should remove plugin from validPlugins', function (done) {
         var context = {
-            project: project,
-            commitHash: commitHash,
-            branchName: 'test',
-            activeNode: '/960660211',
-            core: null
-        };
+                project: project,
+                commitHash: commitHash,
+                branchName: 'test',
+                activeNode: '/960660211',
+                core: null
+            };
 
         executePluginAndGetCore(context, function (err, rootNode) {
-            // Check that 'testPlugin' has been added to 'validPlugins'
+            // Check that 'testPlugin' has been added to 'validPlugins' 
             // on the root node
             var attributes = context.core.getRegistry(rootNode, FIELD).split(' ');
             assert.equal(attributes.indexOf(ATTRIBUTE), -1);
@@ -108,12 +117,12 @@ describe('RemoveFromPlugin', function () {
 
     it('should not remove plugin to validPlugins if it does not exist', function (done) {
         var context = {
-            project: project,
-            commitHash: commitHash,
-            branchName: 'test',
-            activeNode: '/960660211',
-            core: null
-        },
+                project: project,
+                commitHash: commitHash,
+                branchName: 'test',
+                activeNode: '/960660211',
+                core: null
+            },
             attributes,
             count;
 
@@ -122,7 +131,7 @@ describe('RemoveFromPlugin', function () {
             count = attributes.length;
             assert.equal(attributes.indexOf(ATTRIBUTE), -1);
             executePluginAndGetCore(context, function (err, rootNode) {
-                // Check that 'testPlugin' has been added to 'validPlugins'
+                // Check that 'testPlugin' has been added to 'validPlugins' 
                 // on the root node
                 attributes = context.core.getRegistry(rootNode, FIELD).split(' ');
                 assert.equal(attributes.length, count);
@@ -130,4 +139,5 @@ describe('RemoveFromPlugin', function () {
             });
         });
     });
+
 });

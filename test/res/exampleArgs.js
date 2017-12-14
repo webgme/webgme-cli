@@ -1,8 +1,6 @@
-'use strict';
-
 module.exports = {
     pluginID: 'AnotherPlugin',
-    description: function description() {},
+    description: function() {},
     test: true,
     templateType: null
 };

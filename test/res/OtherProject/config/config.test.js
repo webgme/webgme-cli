@@ -3,8 +3,6 @@
  * @author lattmann / https://github.com/lattmann
  */
 
-'use strict';
-
 var config = require('./config.webgme');
 
 config.server.port = 9001;

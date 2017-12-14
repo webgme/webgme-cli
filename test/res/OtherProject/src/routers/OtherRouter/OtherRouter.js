@@ -49,21 +49,22 @@ function initialize(middlewareOpts) {
     // Use ensureAuthenticated if the routes require authentication. (Can be set explicitly for each route.)
     router.use('*', ensureAuthenticated);
 
-    router.get('/getExample', function (req, res /*, next*/) {
+    router.get('/getExample', function (req, res/*, next*/) {
         var userId = getUserId(req);
 
-        res.json({ userId: userId, message: 'get request was handled' });
+        res.json({userId: userId, message: 'get request was handled'});
     });
 
-    router.patch('/patchExample', function (req, res /*, next*/) {
+    router.patch('/patchExample', function (req, res/*, next*/) {
         res.sendStatus(200);
     });
 
-    router.post('/postExample', function (req, res /*, next*/) {
+
+    router.post('/postExample', function (req, res/*, next*/) {
         res.sendStatus(201);
     });
 
-    router['delete']('/deleteExample', function (req, res /*, next*/) {
+    router.delete('/deleteExample', function (req, res/*, next*/) {
         res.sendStatus(204);
     });
 
@@ -89,6 +90,7 @@ function start(callback) {
 function stop(callback) {
     callback();
 }
+
 
 module.exports = {
     initialize: initialize,
