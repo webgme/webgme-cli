@@ -1,5 +1,5 @@
 /*globals describe,it,before,beforeEach,after*/
-var PluginHelpers = require('../lib/shim/PluginHelpers'),
+var PluginHelpers = require('../src/shim/PluginHelpers'),
     assert = require('assert');
 
 var checkType = function(args, option) {

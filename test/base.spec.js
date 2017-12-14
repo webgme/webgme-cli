@@ -1,6 +1,6 @@
 /*globals describe,it,before,after*/
-var BaseManager = require('../lib/BaseManager'),
-    Logger = require('../lib/Logger'),
+var BaseManager = require('../src/BaseManager'),
+    Logger = require('../src/Logger'),
     fs = require('fs'),
     path = require('path'),
     assert = require('assert'),

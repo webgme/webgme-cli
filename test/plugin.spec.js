@@ -4,8 +4,8 @@ var path = require('path'),
     assert = require('assert'),
     nop = require('nop'),
     fse = require('fs-extra'),
-    Logger = require('../lib/Logger'),
-    PluginManager = require(__dirname+'/../lib/PluginManager'),
+    Logger = require('../src/Logger'),
+    PluginManager = require(__dirname+'/../src/PluginManager'),
     rm_rf = require('rimraf'),
     _ = require('lodash');
 
@@ -121,7 +121,6 @@ describe('Plugin tests', function() {
                     'Templates',
                     'Templates.js'
                 );
-                console.log('checking', templates);
                 assert(fse.existsSync(templates));
             });
         });

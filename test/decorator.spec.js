@@ -4,8 +4,8 @@ var path = require('path'),
     assert = require('assert'),
     nop = require('nop'),
     fse = require('fs-extra'),
-    Logger = require('../lib/Logger'),
-    DecoratorManager = require(__dirname+'/../lib/DecoratorManager'),
+    Logger = require('../src/Logger'),
+    DecoratorManager = require(__dirname+'/../src/DecoratorManager'),
     rm_rf = require('rimraf'),
     _ = require('lodash');
 

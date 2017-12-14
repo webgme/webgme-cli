@@ -5,9 +5,9 @@ var path = require('path'),
     exists = require('exists-file'),
     fs = require('fs'),
     rm_rf = require('rimraf'),
-    Logger = require('../lib/Logger'),
-    PluginManager = require('../lib/PluginManager'),
-    VizManager = require('../lib/VisualizerManager'),
+    Logger = require('../src/Logger'),
+    PluginManager = require('../src/PluginManager'),
+    VizManager = require('../src/VisualizerManager'),
     _ = require('lodash');
 
 var logger = new Logger(),

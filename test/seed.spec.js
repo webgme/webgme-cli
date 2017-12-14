@@ -1,6 +1,6 @@
 /*globals describe,it,before,beforeEach,after*/
-var SeedManager = require('../lib/SeedManager'),
-    Logger = require('../lib/Logger'),
+var SeedManager = require('../src/SeedManager'),
+    Logger = require('../src/Logger'),
     path = require('path'),
     assert = require('assert'),
     utils = require('./res/utils'),

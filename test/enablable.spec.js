@@ -4,8 +4,8 @@ var path = require('path'),
     fs = require('fs'),
     rm_rf = require('rimraf'),
     testUtils = require('./res/utils'),
-    utils = require('./../lib/utils'),
-    AddonManager = require(__dirname+'/../lib/AddonManager'),
+    utils = require('./../src/utils'),
+    AddonManager = require(__dirname+'/../src/AddonManager'),
     _ = require('lodash');
 
 var addonManager = new AddonManager(),
