@@ -1,18 +1,18 @@
 // cli usage for webgme-cli
 var Q = require('q');
-var utils = require('./lib/utils');
+var utils = require('./src/utils');
 var _ = require('lodash');
 
 var webgme = {};
 
 [
-    require('./lib/PluginManager'),
-    require('./lib/AddonManager'),
-    require('./lib/SeedManager'),
-    require('./lib/LayoutManager'),
-    require('./lib/DecoratorManager'),
-    require('./lib/RouterManager'),
-    require('./lib/VisualizerManager')
+    require('./src/PluginManager'),
+    require('./src/AddonManager'),
+    require('./src/SeedManager'),
+    require('./src/LayoutManager'),
+    require('./src/DecoratorManager'),
+    require('./src/RouterManager'),
+    require('./src/VisualizerManager')
 ].forEach(function(Component) {
     var component = new Component();
     webgme[component._name] = component;

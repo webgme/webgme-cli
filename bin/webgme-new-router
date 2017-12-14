@@ -4,8 +4,8 @@
 var Command = require('commander').Command,
     program = new Command(),
     nop = require('nop'),
-    utils = require('../lib/utils'),
-    RouterManager = require('../lib/RouterManager');
+    utils = require('../src/utils'),
+    RouterManager = require('../src/RouterManager');
 
 program.arguments('<restRouterName>')
     .action(function(restRouterName) {

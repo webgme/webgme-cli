@@ -4,9 +4,9 @@
 'use strict';
 var Command = require('commander').Command,
     program = new Command(),
-    utils = require('../lib/utils'),
+    utils = require('../src/utils'),
     nop = require('nop'),
-    RouterManager = require('../lib/RouterManager');
+    RouterManager = require('../src/RouterManager');
 
 var manager = new RouterManager();
 

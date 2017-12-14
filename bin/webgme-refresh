@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-var utils = require('../lib/utils');
+var utils = require('../src/utils');
 
 utils.updateWebGMEConfig();
 console.log('WebGME config has been updated!');

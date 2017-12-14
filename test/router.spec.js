@@ -5,8 +5,8 @@ var path = require('path'),
     exists = require('exists-file'),
     nop = require('nop'),
     fse = require('fs-extra'),
-    Logger = require('../lib/Logger'),
-    RouterManager = require(__dirname+'/../lib/RouterManager'),
+    Logger = require('../src/Logger'),
+    RouterManager = require(__dirname+'/../src/RouterManager'),
     rm_rf = require('rimraf'),
     _ = require('lodash');
 

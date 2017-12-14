@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
 'use strict';
-var utils = require('../lib/utils'),
+var utils = require('../src/utils'),
     nop = require('nop'),
-    PluginManager = require('../lib/PluginManager');
+    PluginManager = require('../src/PluginManager');
 
 var manager = new PluginManager();
 

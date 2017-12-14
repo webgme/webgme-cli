@@ -27,7 +27,7 @@ var descs = {
 program
     .version('v'+version)
 
-require('../lib/BinUtils')
+require('../src/BinUtils')
     .createSubCommands(
         __dirname,
         '<component>',

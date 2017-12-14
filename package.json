@@ -11,7 +11,6 @@
   },
   "scripts": {
     "test-win": "node node_modules/mocha/bin/mocha test/*.js",
-    "pretest-basic": "node bin/build.js test-src test",
     "test-basic": "mkdir test-tmp; node node_modules/mocha/bin/mocha test/*.js",
     "test": "npm run test-basic && node node_modules/mocha/bin/mocha test/plugins/{RemoveFrom,AddTo}Plugin.spec.js",
     "test-cover": "mkdir test-tmp; node node_modules/istanbul/lib/cli.js --hook-run-in-context cover node_modules/mocha/bin/_mocha -- -R spec test/*.js",
@@ -30,7 +29,6 @@
   },
   "homepage": "https://github.com/webgme/webgme-cli#readme",
   "dependencies": {
-    "babel": "^5.8.38",
     "change-case": "^2.3.0",
     "commander": "brollb/commander.js",
     "deep-readdir": "^0.2.0",

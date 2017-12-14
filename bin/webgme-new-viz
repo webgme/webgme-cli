@@ -2,7 +2,7 @@
 
 'use strict';
 var Command = require('commander').Command,
-    VisualizerManager = require('../lib/VisualizerManager'),
+    VisualizerManager = require('../src/VisualizerManager'),
     program = new Command(),
     nop = require('nop');
 

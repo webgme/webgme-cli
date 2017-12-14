@@ -4,8 +4,8 @@ var path = require('path'),
     assert = require('assert'),
     nop = require('nop'),
     fse = require('fs-extra'),
-    Logger = require('../lib/Logger'),
-    AddonManager = require(__dirname+'/../lib/AddonManager'),
+    Logger = require('../src/Logger'),
+    AddonManager = require(__dirname+'/../src/AddonManager'),
     rm_rf = require('rimraf'),
     _ = require('lodash');
 

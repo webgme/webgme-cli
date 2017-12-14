@@ -2,7 +2,7 @@
 
 'use strict';
 var Command = require('commander').Command,
-    BaseManager = require('../lib/BaseManager'),
+    BaseManager = require('../src/BaseManager'),
     manager = new BaseManager(),
     program = new Command(),
     nop = function() {};
