@@ -4,8 +4,8 @@
 var Command = require('commander').Command,
     program = new Command(),
     nop = require('nop'),
-    utils = require('../lib/utils'),
-    VisualizerManager = require('../lib/VisualizerManager'),
+    utils = require('../src/utils'),
+    VisualizerManager = require('../src/VisualizerManager'),
     manager = new VisualizerManager();
 
 program

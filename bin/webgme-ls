@@ -4,9 +4,9 @@
 var Command = require('commander').Command,
     path = require('path'),
     nop = require('nop'),
-    utils = require('../lib/utils'),
+    utils = require('../src/utils'),
     program = new Command(),
-    components = require('../lib/BinUtils').getSupportedSubCommands(__dirname);
+    components = require('../src/BinUtils').getSupportedSubCommands(__dirname);
 
 if (process.argv.length - 2) {  // arguments passed - forward to components and stuff
     for (var i = components.length; i--;) {
@@ -22,7 +22,7 @@ if (process.argv.length - 2) {  // arguments passed - forward to components and 
                 component.name.substring(1) + 'Manager';
         })
         .map(function(name) {
-            var srcPath = path.join(__dirname, '..', 'lib', name);
+            var srcPath = path.join(__dirname, '..', 'src', name);
             return new (require(srcPath));
         })
 

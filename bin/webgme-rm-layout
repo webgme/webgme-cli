@@ -4,8 +4,8 @@
 var Command = require('commander').Command,
     program = new Command(),
     nop = require('nop'),
-    utils = require('../lib/utils'),
-    LayoutManager = require('../lib/LayoutManager'),
+    utils = require('../src/utils'),
+    LayoutManager = require('../src/LayoutManager'),
     manager = new LayoutManager();
 
 program

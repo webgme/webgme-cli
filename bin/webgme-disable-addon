@@ -4,9 +4,9 @@
 'use strict';
 var Command = require('commander').Command,
     program = new Command(),
-    utils = require('../lib/utils'),
+    utils = require('../src/utils'),
     nop = require('nop'),
-    AddonManager = require('../lib/AddonManager');
+    AddonManager = require('../src/AddonManager');
 
 var manager = new AddonManager();
 

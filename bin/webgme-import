@@ -7,7 +7,7 @@ var descs = {
 var args = {
     all: '<app>'
 };
-require('../lib/BinUtils')
+require('../src/BinUtils')
     .createSubCommands(__dirname,
         '<name> <app>',
         'Import a new <%= name %> from another app',

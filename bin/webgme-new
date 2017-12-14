@@ -1,5 +1,5 @@
 #!/usr/bin/env node
 
 'use strict';
-require('../lib/BinUtils')
+require('../src/BinUtils')
     .createSubCommands(__dirname, '<name>', 'Create a new <%= name %>', {explicit: true});

@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
 'use strict';
-var utils = require('../lib/utils'),
+var utils = require('../src/utils'),
     nop = require('nop'),
-    VisualizerManager = require('../lib/VisualizerManager');
+    VisualizerManager = require('../src/VisualizerManager');
 
 var manager = new VisualizerManager();
 

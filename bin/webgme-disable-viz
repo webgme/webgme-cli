@@ -4,9 +4,9 @@
 'use strict';
 var Command = require('commander').Command,
     program = new Command(),
-    utils = require('../lib/utils'),
+    utils = require('../src/utils'),
     nop = require('nop'),
-    VisualizerManager = require('../lib/VisualizerManager');
+    VisualizerManager = require('../src/VisualizerManager');
 
 var manager = new VisualizerManager();
 

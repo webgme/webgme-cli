@@ -2,7 +2,7 @@
 
 'use strict';
 var Command = require('commander').Command,
-    DecoratorManager = require('../lib/DecoratorManager'),
+    DecoratorManager = require('../src/DecoratorManager'),
     program = new Command(),
     nop = require('nop');
 
