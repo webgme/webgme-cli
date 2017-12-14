@@ -1,0 +1,56 @@
+{
+  "components": {
+    "plugins": {
+      "MyPlugin": {
+        "src": "src/plugins/MyPlugin",
+        "test": "test/plugins/MyPlugin"
+      }
+    },
+    "seeds": {
+      "test": {
+        "src": "src/seeds/test"
+      }
+    },
+    "addons": {
+      "MyAddon": {
+        "srcDir": "src/addOns/MyAddon",
+        "src": "src/addOns/MyAddon/MyAddon.js"
+      }
+    },
+    "visualizers": {
+      "MyViz": {
+        "src": "panels/MyViz/MyVizPanel",
+        "title": "MyViz",
+        "panel": "src/visualizers/panels/MyViz",
+        "widget": "src/visualizers/widgets/MyViz"
+      }
+    },
+    "decorators": {},
+    "layouts": {
+      "MyLayout": {
+        "src": "src/layouts/MyLayout",
+        "enabled": false
+      },
+      "EnabledLayout": {
+        "src": "src/layouts/EnabledLayout",
+        "enabled": true
+      }
+    },
+    "routers": {
+      "MyRouter": {
+        "src": "src/routers/MyRouter",
+        "mount": "routers/MyRouter"
+      }
+    }
+  },
+  "dependencies": {
+    "plugins": {},
+    "seeds": {},
+    "addons": {},
+    "visualizers": {},
+    "decorators": {},
+    "addOns": {},
+    "layouts": {},
+    "routers": {}
+  }
+}

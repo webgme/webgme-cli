@@ -1,0 +1,65 @@
+{
+  "components": {
+    "plugins": {
+      "OtherPlugin": {
+        "src": "src/plugin/OtherPlugin",
+        "test": "test/plugin/OtherPlugin"
+      }
+    },
+    "addOns": {
+      "OtherAddOn": {
+        "src": "src/addOn/OtherAddOn"
+      }
+    },
+    "seeds": {
+      "OtherSeed": {
+        "src": "src/seed/OtherSeed"
+      }
+    },
+    "visualizers": {
+      "OtherViz": {
+        "src": "panels/OtherViz/OtherVizPanel",
+        "panel": "src/visualizers/panels/OtherViz",
+        "widget": "src/visualizers/widgets/OtherViz"
+      },
+      "Secondary": {
+        "src": "panels/Secondary/SecondaryPanel",
+        "title": "Secondary",
+        "panel": "src/visualizers/panels/Secondary",
+        "secondary": true,
+        "widget": "src/visualizers/widgets/Secondary"
+      }
+    },
+    "decorators": {
+      "OtherDecorator": {
+        "src": "src/decorators/OtherDecorator"
+      }
+    },
+    "addons": {
+      "OtherAddon": {
+        "src": "src/addons/OtherAddon"
+      }
+    },
+    "layouts": {
+      "OtherLayout": {
+        "src": "src/layouts/OtherLayout"
+      }
+    },
+    "routers": {
+      "OtherRouter": {
+        "src": "src/routers/OtherRouter",
+        "mount": "other/mount/point"
+      }
+    }
+  },
+  "dependencies": {
+    "plugins": {},
+    "addOns": {},
+    "seeds": {},
+    "visualizers": {},
+    "decorators": {},
+    "addons": {},
+    "layouts": {},
+    "routers": {}
+  }
+}
