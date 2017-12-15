@@ -319,6 +319,12 @@ describe('Plugin tests', function() {
                 assert.notEqual(paths.indexOf(otherProject.split(path.sep)[1]), -1);
             });
 
+            it('should add the project common requirejs path', function() {
+                const config = require(path.join(PROJECT_DIR, WebGMEConfig));
+                const otherAppName = path.basename(otherProject).toLowerCase();
+                assert(config.requirejsPaths[otherAppName])
+            });
+
             describe('rm dependency plugin', function() {
                 before(function(done) {
                     process.chdir(PROJECT_DIR);

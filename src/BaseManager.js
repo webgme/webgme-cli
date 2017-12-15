@@ -167,7 +167,7 @@ BaseManager.prototype._createPkgJson = function(project, name) {
 };
 
 BaseManager._createBasicFileStructure = function(project) {
-    var dirs = ['src', 'test'];
+    var dirs = ['src', 'test', path.join('src', 'common')];
 
     dirs.forEach(dir => {
         var absDir = path.join(project, dir);
@@ -194,6 +194,9 @@ BaseManager.prototype._createWebGMEFiles = function(project) {
     // Create .gitignore
     BaseManager._createGitIgnore(project);
 
+    // Create src/common README.md
+    BaseManager._createCommonReadme(project);
+
     // Create README.md
     BaseManager._createReadme(project);
 };
@@ -202,6 +205,19 @@ BaseManager._createReadme = function(project) {
     var boilerplatePath = path.join(__dirname, 'res', 'README.md.ejs'),
         readme = _.template(fs.readFileSync(boilerplatePath, 'utf8')),
         dstPath = path.join(project, 'README.md'),
+        content = {
+            name: path.basename(project)
+        };
+
+    if (!exists(dstPath)) {
+        fs.writeFileSync(dstPath, readme(content));
+    }
+};
+
+BaseManager._createCommonReadme = function(project) {
+    var boilerplatePath = path.join(__dirname, 'res', 'README.common.md.ejs'),
+        readme = _.template(fs.readFileSync(boilerplatePath, 'utf8')),
+        dstPath = path.join(project, 'src', 'common', 'README.md'),
         content = {
             name: path.basename(project)
         };
