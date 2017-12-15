@@ -201,7 +201,18 @@ describe('BaseManager', function() {
                 });
             });
 
-            it('should fail f the dir exists', function() {
+            describe('common files', function() {
+                it('should create src/common', function() {
+                    fs.statSync(path.join(initProject, 'src', 'common'));
+                });
+
+                it('should add src/common to requirejs paths', function() {
+                    let config = require(path.join(initProject, 'config', WebGMEConfig));
+                    assert.equal(config.requirejsPaths[appName.toLowerCase()], './src/common');
+                });
+            });
+
+            it('should fail if the dir exists', function() {
                 manager.init({name: initProject}, function(err) {
                     assert(!!err);
                 });

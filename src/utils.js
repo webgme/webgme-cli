@@ -99,6 +99,11 @@ var saveConfig = function(config) {
     fs.writeFileSync(path.join(root, PROJECT_CONFIG), configText);
 };
 
+var getAppName = function(startPath) {
+    const root = getRootPath(startPath);
+    return require(path.join(root, 'package.json')).name;
+};
+
 /**
  * Update the WebGME config based on the paths in the webgme-setup.json. 
  *
@@ -214,11 +219,11 @@ var getWebGMEConfigContent = function(startPath) {
 
 
     // Set the requirejsPaths to be an array of all dependency paths
-    paths.requirejsPaths = getRequireJSPaths(config);
+    paths.requirejsPaths = getRequireJSPaths(config, startPath);
     return paths;
 };
 
-var getRequireJSPaths = function(config) {
+var getRequireJSPaths = function(config, startPath) {
     var componentTypes = Object.keys(config.dependencies),
         components,
         paths = [],
@@ -277,9 +282,23 @@ var getRequireJSPaths = function(config) {
         }
     }
 
-    if (!paths.length) {
-        paths = null;
-    }
+    // Add common directories for all the dependent projects (and ourself)
+    let allProjects = componentTypes.map(type => {
+        let names = Object.keys(config.dependencies[type]);
+        return names.map(name => config.dependencies[type][name].project);
+    }).reduce((l1, l2) => l1.concat(l2), []);
+    let projects = _.uniq(allProjects);
+    projects.forEach(project => {
+        project = project.toLowerCase();
+        paths.push({
+            name: project,
+            path: `./node_modules/${project}/src/common`
+        });
+    });
+    paths.push({
+        name: getAppName(startPath),
+        path: './src/common'
+    });
 
     return paths;
 };
