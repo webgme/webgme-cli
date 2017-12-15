@@ -357,20 +357,21 @@ var getPackageName = function(npmPackage) {
 };
 
 var loadPaths = function(requirejs) {
+    const webgmeEngineRoot = path.dirname(require.resolve('webgme-engine'));
     requirejs.config({
         nodeRequire: require,
         baseUrl: __dirname,
         paths: {
-            text: __dirname+'/../node_modules/webgme-engine/src/common/lib/requirejs/text',
-            coreplugins: __dirname+'/../node_modules/webgme-engine/src/plugin/coreplugins',
-            plugin: __dirname + '/../node_modules/webgme-engine/src/plugin',
-            common: __dirname + '/../node_modules/webgme-engine/src/common',
+            text: `${webgmeEngineRoot}/src/common/lib/requirejs/text`,
+            coreplugins: `${webgmeEngineRoot}/src/plugin/coreplugins`,
+            plugin: `${webgmeEngineRoot}/src/plugin`,
+            common: `${webgmeEngineRoot}/src/common`,
 
-            'plugin/PluginGenerator/PluginGenerator': __dirname + '/../node_modules/webgme-engine/src/plugin/coreplugins/PluginGenerator/',
-            'plugin/AddOnGenerator/AddOnGenerator': __dirname + '/../node_modules/webgme-engine/src/plugin/coreplugins/AddOnGenerator/',
-            'plugin/DecoratorGenerator/DecoratorGenerator': __dirname + '/../node_modules/webgme-engine/src/plugin/coreplugins/DecoratorGenerator/',
-            'plugin/LayoutGenerator/LayoutGenerator': __dirname + '/../node_modules/webgme-engine/src/plugin/coreplugins/LayoutGenerator/',
-            'plugin/VisualizerGenerator/VisualizerGenerator': __dirname + '/../node_modules/webgme-engine/src/plugin/coreplugins/VisualizerGenerator/'
+            'plugin/PluginGenerator/PluginGenerator': `${webgmeEngineRoot}/src/plugin/coreplugins/PluginGenerator/`,
+            'plugin/AddOnGenerator/AddOnGenerator': `${webgmeEngineRoot}/src/plugin/coreplugins/AddOnGenerator/`,
+            'plugin/DecoratorGenerator/DecoratorGenerator': `${webgmeEngineRoot}/src/plugin/coreplugins/DecoratorGenerator/`,
+            'plugin/LayoutGenerator/LayoutGenerator': `${webgmeEngineRoot}/src/plugin/coreplugins/LayoutGenerator/`,
+            'plugin/VisualizerGenerator/VisualizerGenerator': `${webgmeEngineRoot}/src/plugin/coreplugins/VisualizerGenerator/`
         }
     });
 };
