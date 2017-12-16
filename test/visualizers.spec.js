@@ -66,7 +66,10 @@ describe('Viz tests', function() {
         before(function(done) {
             process.chdir(PROJECT_DIR);  // Start in different directory
             manager.new({visualizerID: NEW_VIZ}, function() {
-                utils.requireReload(path.join(VizBasePath, 'Visualizers.json'));
+                utils.requireReload(
+                    path.join(VizBasePath, 'Visualizers.json'),
+                    path.join(PROJECT_DIR, WebGMEConfig)
+                );
                 done();
             });
         });
@@ -76,8 +79,10 @@ describe('Viz tests', function() {
         });
 
         it('should add panelPaths', function() {
-            var config = require(path.join(PROJECT_DIR, WebGMEConfig));
-            assert.notEqual(config.visualization.panelPaths.indexOf('src/visualizers/panels'), -1);
+            const config = require(path.join(PROJECT_DIR, WebGMEConfig));
+            const localPanelPath = config.visualization.panelPaths
+                .find(panelPath => panelPath.includes('src/visualizers/panels'))
+            assert(localPanelPath);
         });
 
         it('should add panels and widgets to requirejsPaths', function() {
@@ -87,11 +92,12 @@ describe('Viz tests', function() {
         });
 
         it('should add Visualizers.json to config.webgme.js', function() {
-            var config = require(path.join(PROJECT_DIR, WebGMEConfig)),
-                index = config.visualization.visualizerDescriptors
-                    .indexOf('./src/visualizers/Visualizers.json');
+            console.log(fse.readFileSync(path.join(PROJECT_DIR, WebGMEConfig), 'utf8'));
+            const config = require(path.join(PROJECT_DIR, WebGMEConfig));
+            const localVisJson = config.visualization.visualizerDescriptors
+                .find(desc => desc.includes('./src/visualizers/Visualizers.json'));
 
-            assert.notEqual(index, -1);
+            assert(localVisJson);
         });
 
         it('should add the viz (relative) path to the Visualizers.json', function() {

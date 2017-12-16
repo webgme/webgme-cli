@@ -68,7 +68,7 @@ describe('Router tests', function() {
             let routerConfig;
             before(() => {
                 let gmeConfig = require(`${PROJECT_DIR}/config/config.webgme.js`);
-                routerConfig = gmeConfig.rest[ROUTER_NAME];
+                routerConfig = gmeConfig.rest.components[ROUTER_NAME];
             });
 
             it('should update the webgme config', function() {
@@ -234,10 +234,10 @@ describe('Router tests', function() {
             });
 
             it('should add the path to the webgme config', function() {
-                var config = require(path.join(PROJECT_DIR, WebGMEConfig)),
-                    mntPt = 'other/mount/point';
+                const config = require(path.join(PROJECT_DIR, WebGMEConfig));
+                const mntPt = 'other/mount/point';
 
-                assert.equal(config.rest[OTHER_ROUTER].mount, mntPt);
+                assert.equal(config.rest.components[OTHER_ROUTER].mount, mntPt);
             });
 
             describe('rm dependency router', function() {
