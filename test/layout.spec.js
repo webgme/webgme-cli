@@ -66,10 +66,11 @@ describe('Layout tests', function() {
         });
 
         it('should add the layout (relative) path to the config file', function() {
-            var config = require(path.join(PROJECT_DIR, WebGMEConfig));
-            // check that basePath has been added!
-            var relativeBase = LayoutBasePath.replace(PROJECT_DIR+path.sep, '');
-            assert.notEqual(config.visualization.layout.basePaths.indexOf(relativeBase), -1);
+            const config = require(path.join(PROJECT_DIR, WebGMEConfig));
+            const layoutPaths = config.visualization.layout.basePaths.map(dir => path.resolve(dir));
+            const layoutDir = path.resolve(LayoutBasePath);
+
+            assert(layoutPaths.includes(layoutDir));
         });
 
         it('should record the layout in webgme-setup.json', function() {
