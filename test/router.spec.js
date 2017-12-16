@@ -68,7 +68,7 @@ describe('Router tests', function() {
             let routerConfig;
             before(() => {
                 let gmeConfig = require(`${PROJECT_DIR}/config/config.webgme.js`);
-                routerConfig = gmeConfig.rest[ROUTER_NAME];
+                routerConfig = gmeConfig.rest.components[ROUTER_NAME];
             });
 
             it('should update the webgme config', function() {
