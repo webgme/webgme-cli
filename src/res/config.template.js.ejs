@@ -42,7 +42,7 @@ var config = require('webgme/config/config.default'),
 
 <%= routers.map(function(router) {
     return [
-        'config.rest[\'' + router.name + '\'] = {',
+        'config.rest.components[\'' + router.name + '\'] = {',
         '  src: __dirname + \'/../' + router.srcFile + '\',',
         '  mount: \'' + router.mount + '\',',
         '  options: {}',
