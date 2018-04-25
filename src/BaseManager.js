@@ -4,7 +4,7 @@
 var _ = require('lodash'),
     path = require('path'),
     fs = require('fs'),
-    npm = require('npm'),
+    pacote = require('pacote'),
     rm_rf = require('rimraf'),
     exists = require('exists-file'),
     R = require('ramda'),

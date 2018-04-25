@@ -139,18 +139,22 @@ ComponentManager.prototype.import = function(args, callback) {
     project = args.project;
 
     // Add the project to the package.json
-    var pkgProject = args.packageName || utils.getPackageName(project);
-    this._logger.info(`Adding ${componentName} from ${pkgProject}`);
+    const getPkgName = args.packageName ? Q(args.packageName) :
+        utils.getPackageName(project);
 
-    // Add the component to the webgme config component paths
-    // FIXME: Call this without --save then later save it
-    if (args.skipInstall) {
-        this._addComponentFromProject(componentName, pkgProject, callback);
-    } else {
-        utils.installProject(project, args.dev, (err, result) => {
+    return getPkgName.then(pkgProject => {
+        this._logger.info(`Adding ${componentName} from ${pkgProject}`);
+
+        // Add the component to the webgme config component paths
+        // FIXME: Call this without --save then later save it
+        if (args.skipInstall) {
             this._addComponentFromProject(componentName, pkgProject, callback);
-        });
-    }
+        } else {
+            utils.installProject(project, args.dev, (err, result) => {
+                this._addComponentFromProject(componentName, pkgProject, callback);
+            });
+        }
+    })
 };
 
 ComponentManager.prototype._addComponentFromProject = function(name, project, callback) {

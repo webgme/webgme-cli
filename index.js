@@ -40,8 +40,9 @@ webgme.all.import = function(projectName, opts, callback) {
             });
             return deferred.promise;
         })
-        .then(() => {  // read in the webgme-cli config for the given project
-            projectName = opts.packageName || utils.getPackageName(projectName);
+        .then(() => utils.getPackageName(projectName))
+        .then(projectName => {  // read in the webgme-cli config for the given project
+            projectName = opts.packageName || projectName;
             projectName = projectName.toLowerCase();
             let configPath = utils.getConfigPath(projectName);
             let config = require(configPath);

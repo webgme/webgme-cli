@@ -6,6 +6,7 @@ const spawn = childProcess.exec;
 const Logger = require('./Logger');
 const logger = new Logger();
 const PROJECT_CONFIG = 'webgme-setup.json';
+const pacote = require('pacote');
 
 var _ = require('lodash'),
     fs = require('fs'),
@@ -364,15 +365,10 @@ var getPathContaining = function(paths, item) {
  * @return {String} name
  */
 var getPackageName = function(npmPackage) {
-    // FIXME: It currently assumes everything is a github url. Should support
-    // hashes, packages, etc
-    // Ideally, we could use an npm feature to do this
-    if (npmPackage[0] === '.') {  // File path
-        return npmPackage.split(path.sep).pop();
-    }
-
-    // Github url: project/repo
-    return npmPackage.split('/').pop().replace(/#.*$/, '');
+    const options = {
+        cache: path.join(__dirname, '..', 'cache')
+    };
+    return pacote.manifest(npmPackage, options).then(pkg => pkg.name);
 };
 
 var loadPaths = function(requirejs) {
