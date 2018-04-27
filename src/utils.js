@@ -425,6 +425,11 @@ const installProject = function(projectName, isDev, callback) {
     });
 };
 
+const exec = function(cmd, opts) {
+    opts = opts || {};
+    // TODO
+};
+
 module.exports = {
     PROJECT_CONFIG: PROJECT_CONFIG,
     saveConfig: saveConfig,

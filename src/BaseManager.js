@@ -35,36 +35,49 @@ BaseManager.prototype.start = function (options, callback) {
 };
 
 BaseManager.prototype._start = function (root, callback) {
-    var webgmePath = path.join(root, 'node_modules', 'webgme-engine');
-    npm.load({}, err => {
-        if (err) {
+    const webgmePath = path.join(root, 'node_modules', 'webgme-engine');
+    // FIXME: call npm from the cli to avoid conflicts btwn npm versions
+    const projectRoot = getRootPath();
+    const cmd = isDev ?
+        `npm install ${projectName} --save-dev`:
+        `npm install ${projectName} --save`;
+    let job = spawn(cmd, {cwd: projectRoot});
+
+    logger.info(cmd);
+    logger.writeStream(job.stdout);
+    logger.errorStream(job.stderr);
+
+    job.on('close', code => {
+        logger.info(`npm exited with: ${code}`);
+        if (code === 0) {  // Success!
+            return callback(null);
+        } else {
+            let err = `Could not find project (${projectName})!`;
+            logger.error(err);
             return callback(err);
         }
+    });
 
-        this._logger.write('Installing dependencies...');
-        npm.install(err => {
-            if (err) {
-                this._logger.error(`Could not install dependencies: ${err.message}`);
-                return callback(err);
-            }
+    this._logger.write('Installing dependencies...');
+    return utils.exec(`npm install`)
+        .then(() => {
             if (!exists(webgmePath)) {
                 this._logger.write('Installing webgme...');
-                npm.install('webgme', err => {
-                    if (err) {
+                return utils.exec(`npm install webgme`)
+                    .then(callback)
+                    .catch(err => {
                         this._logger.error(`Could not install webgme dependency: ${err.message}`);
                         return callback(err);
-                    }
-                    npm.start();
-                    callback();
-                });
+                    });
             } else {
                 this._logger.write('Webgme already installed. Skipping explicit install...');
-                npm.start();
                 return callback();
             }
-
+        })
+        .catch(err => {
+            this._logger.error(`Could not install dependencies: ${err.message}`);
+            return callback(err);
         });
-    });
 };
 
 BaseManager.prototype.init = function (args, callback) {  // Create new project
