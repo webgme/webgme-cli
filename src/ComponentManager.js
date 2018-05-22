@@ -203,7 +203,8 @@ ComponentManager.prototype._getJsonForConfig = function(installInfo, callback) {
             componentPath = path.dirname(componentPath);
         }
 
-        componentPath = path.relative(utils.getRootPath(), componentPath);
+        componentPath = path.relative(utils.getRootPath(), componentPath)
+            .split(path.sep).join('/');
 
         return callback(null, {
             project: pkgProject,
