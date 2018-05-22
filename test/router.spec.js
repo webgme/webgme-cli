@@ -229,8 +229,15 @@ describe('Router tests', function() {
                     config = JSON.parse(configText),
                     mntPt = 'other/mount/point';
 
-                console.log(config.dependencies.routers);
                 assert.equal(config.dependencies.routers[OTHER_ROUTER].mount, mntPt);
+            });
+
+            it.only('should use correct src file', function() {
+                const config = require(path.join(PROJECT_DIR, WebGMEConfig));
+                const srcPath = config.rest.components[OTHER_ROUTER].src;
+                const errMsg = `Invalid router src path: ${srcPath}`;
+
+                assert(fse.existsSync(srcPath), errMsg);
             });
 
             it('should add the path to the webgme config', function() {
