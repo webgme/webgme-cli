@@ -138,7 +138,7 @@ var updateWebGMEConfig = function(startPath) {
         Object.keys(config[type].routers || {}).forEach(name => {
             let router = config[type].routers[name];
             router.name = name;
-            router.srcFile = `${router.src}/${name}.js`;
+            router.srcFile = `${router.path}/${name}.js`;
             content.routers.push(router);
         });
     });
