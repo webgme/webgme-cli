@@ -127,7 +127,8 @@ describe('cli', function() {
 
             // Make sure that there are some logs about the error
             let testFn = (res, err, done) => {
-                assert.notEqual(res.indexOf('404'), -1, `Did not print 404 in "${res}"`);
+                const notFoundRegex = /(404|Not found)/;
+                assert(notFoundRegex.test(res), `Did not print 404/Not found in "${res}"`);
                 assert.notEqual(res.indexOf(badPkgName), -1);
                 done();
             };
