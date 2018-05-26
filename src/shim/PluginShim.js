@@ -16,7 +16,7 @@ var PluginShim = function(plugin, logger, config) {
     // Load the PluginShim from the core plugins
     // Use it to create the boilerplate for the new plugin
     var blobClient = new BlobClient();
-    this.initialize(logger, blobClient);
+    this.initialize(logger, blobClient, config);
     this._currentConfig = config;
     this.logger = logger;
     this.configure({});
