@@ -1,0 +1,16 @@
+FROM node:<%-nodeRelease%>
+
+RUN mkdir /usr/app
+
+WORKDIR /usr/app
+
+# copy app source
+ADD . /usr/app/
+
+# Install webgme
+RUN npm install webgme
+
+# Install node-modules
+RUN npm install
+
+CMD ["npm", "start"]

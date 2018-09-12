@@ -1,0 +1,27 @@
+FROM node:<%-nodeRelease%>
+
+## Add additional dependencies here
+## For instance - if using python bindings uncomment the following lines:
+
+# RUN apt-get update
+# RUN apt-get install -y python3-pip python3-dev \
+#    && cd /usr/local/bin \
+#    && ln -s /usr/bin/python3 python \
+#    && pip3 install --upgrade pip
+#
+# RUN pip3 install webgme-bindings
+
+RUN mkdir /usr/app
+
+WORKDIR /usr/app
+
+# copy app source
+ADD . /usr/app/
+
+# Install webgme
+RUN npm install webgme
+
+# Install node-modules
+RUN npm install
+
+RUN cp /usr/app/node_modules/webgme-docker-worker-manager/dockerworker.js /usr/app/dockerworker.js

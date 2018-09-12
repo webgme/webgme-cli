@@ -11,6 +11,7 @@ var descs = {
         import: 'Import a WebGME component from another project',
         info: 'Get installation info',
         refresh: 'Regenerate WebGME configuration',
+        dockerize: 'Generate Dockerfiles and configuration for a dockerized deployment',
         ls: 'List all WebGME components',
         rm: 'Remove a WebGME component',
         new: 'Create a new WebGME component',
@@ -21,7 +22,8 @@ var descs = {
         init: '[name]',
         info: undefined,
         refresh: undefined,
-        start: undefined
+        start: undefined,
+        dockerize: undefined
     };
 
 program

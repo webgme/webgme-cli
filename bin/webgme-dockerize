@@ -1,0 +1,4 @@
+var utils = require('../src/utils');
+
+//utils.updateWebGMEConfig();
+console.log('WebGME config has been updated!');
