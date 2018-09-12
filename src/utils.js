@@ -104,6 +104,18 @@ var getAppName = function(startPath) {
     return require(path.join(root, 'package.json')).name;
 };
 
+var getPackageJSON = function(startPath) {
+    var root = getRootPath(startPath);
+
+    return JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf-8'));
+};
+
+var writePackageJSON = function(content, startPath) {
+    var root = getRootPath(startPath);
+
+    return fs.writeFileSync(path.join(root, 'package.json'), JSON.stringify(content, null, 2));
+};
+
 /**
  * Update the WebGME config based on the paths in the webgme-setup.json. 
  *
@@ -440,5 +452,7 @@ module.exports = {
     getPackageName: getPackageName,
     normalize: normalizePath,
     installProject: installProject,
-    mkdir: createDir
+    mkdir: createDir,
+    getPackageJSON: getPackageJSON,
+    writePackageJSON: writePackageJSON,
 };
