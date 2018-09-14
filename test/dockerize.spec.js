@@ -99,7 +99,7 @@ describe('DockerizeManager', function () {
             ].forEach((fName) => assert(exists(path.join(PROJECT_DIR, fName)), `Did not generate ${fName}`));
         });
 
-        it.only('should not overwrite existing files', function () {
+        it('should not overwrite existing files', function () {
             const fPath = path.join(PROJECT_DIR, 'Dockerfile');
             const dummyContent = 'Already here!';
             fs.writeFileSync(fPath, dummyContent);
@@ -107,7 +107,7 @@ describe('DockerizeManager', function () {
             assert(fs.readFileSync(fPath, 'utf-8') === dummyContent, 'Overwrote file!');
         });
 
-        it.only('should overwrite existing files', function () {
+        it('should overwrite existing files', function () {
             const fPath = path.join(PROJECT_DIR, 'Dockerfile');
             const dummyContent = 'Already here!';
             fs.writeFileSync(fPath, dummyContent);
