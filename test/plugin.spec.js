@@ -98,8 +98,7 @@ describe('Plugin tests', function() {
             before(function(done) {
                 process.chdir(PROJECT_DIR);  // Start in different directory
                 manager.new({
-                    pluginID: secondPluginName,
-                    templateType: 'Python'
+                    pluginID: secondPluginName
                 }, done);
             });
 
@@ -111,19 +110,6 @@ describe('Plugin tests', function() {
                     .forEach(function(pluginPath) {
                         assert(fse.existsSync(pluginPath));
                     });
-            });
-
-            it('should run "combine_templates"', function() {
-                var templates;
-                templates = path.join(
-                    PROJECT_DIR,
-                    'src',
-                    'plugins',
-                    secondPluginName,
-                    'Templates',
-                    'Templates.js'
-                );
-                assert(fse.existsSync(templates));
             });
         });
 
@@ -378,11 +364,11 @@ describe('Plugin tests', function() {
         });
     });
 
-    // after(function(done) {
-    //     if (fse.existsSync(PROJECT_DIR)) {
-    //         rm_rf(PROJECT_DIR, done);
-    //     } else {
-    //         done();
-    //     }
-    // });
+    after(function(done) {
+        if (fse.existsSync(PROJECT_DIR)) {
+            rm_rf(PROJECT_DIR, done);
+        } else {
+            done();
+        }
+    });
 });
