@@ -96,6 +96,7 @@ describe('DockerizeManager', function () {
                 'DockerfileNginx',
                 './config/config.dockerprod.js',
                 'docker-compose-prod.yml',
+                'nginx.conf',
             ].forEach((fName) => assert(exists(path.join(PROJECT_DIR, fName)), `Did not generate ${fName}`));
         });
 

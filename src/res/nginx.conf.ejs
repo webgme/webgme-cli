@@ -20,10 +20,10 @@ http {
         server_name my-webgme-server.org;
         listen 443 ssl;
 
-        # Allow larger than 1M files to be served..
+        # Allow larger than 1M files to be upload from browser, increase as needed ..
         client_max_body_size 10M;
 
-        # These need to be obtained
+        # These need to generated (ideally associated with a domain name).
         ssl_certificate      /ssl_certs/fullchain.pem;
         ssl_certificate_key  /ssl_certs/privkey.pem;
         ssl_protocols       TLSv1 TLSv1.1 TLSv1.2;

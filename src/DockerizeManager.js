@@ -21,7 +21,8 @@ const OUT_FILES = {
     PRODUCTION: [
         './config/config.dockerprod.js',
         './DockerfileNginx',
-        './docker-compose-prod.yml'
+        './docker-compose-prod.yml',
+        './nginx.conf'
     ],
 };
 
@@ -70,7 +71,7 @@ DockerizeManager.prototype.dockerize = function (args) {
                 template: tPath,
                 existed: existed,
             });
-        } else {
+        } else if (!(args.production && OUT_FILES.DEFAULT.indexOf(fPath) > -1)) {
             this._logger.write(`warn: ${fPath} already existed, use --forceUpdate to overwrite`);
         }
     });
@@ -92,9 +93,17 @@ DockerizeManager.prototype.dockerize = function (args) {
 
     if (!packageJSON.dependencies['webgme-docker-worker-manager']) {
         packageJSON.dependencies['webgme-docker-worker-manager'] = "latest";
+        this._logger.write(`"webgme-docker-worker-manager" added as dependency in package.json`);
     }
 
     utils.writePackageJSON(packageJSON);
+    this._logger.write('\n With docker-compose installed launch with:');
+    this._logger.write('$ docker-compose up -d');
+
+    if (args.production) {
+        this._logger.write('To run in production mode you need to add certificates, token keys etc. ' +
+            'Make sure to read through docker-compose-prod.yml and modify nginx.conf as needed.');
+    }
 };
 
 module.exports = DockerizeManager;
