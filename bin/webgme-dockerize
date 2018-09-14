@@ -14,5 +14,5 @@ program
     .parse(process.argv);
 
 if (program.args.length === 0) {  // action will not be called
-    manager.dockerize({});
+    manager.dockerize(program);
 }
