@@ -1,9 +1,12 @@
+const NODE_RELEASE = 'carbon'; // Node release used in Dockerfiles
+
 var utils = require('./utils'),
     rm_rf = require('rimraf'),
     plural = require('plural'),
     fs = require('fs'),
     Q = require('q'),
     path = require('path'),
+    ejs = require('ejs'),
     exists = require('exists-file'),
     Logger = require(__dirname + '/Logger');
 
@@ -52,29 +55,46 @@ DockerizeManager.prototype.dockerize = function (args) {
     }
 
     outfiles.forEach((fPath) => {
-        if (args.forceUpdate || !exists(fPath)) {
+        const existed = exists(fPath);
+        if (args.forceUpdate || !existed) {
             let tPath = fPath + '.ejs';
 
-            if (tPath.indexOf('./config/')) {
+            if (tPath.indexOf('./config/') === 0) {
                 tPath = tPath.replace('./config/', './');
             }
 
-            tPath.replace('.', path.join(__dirname, 'res'));
+            tPath = tPath.replace('.', path.join(__dirname, 'res'));
 
             tempToFileInfo.push({
                 outPath: fPath,
-                template: tPath
+                template: tPath,
+                existed: existed,
             });
+        } else {
+            this._logger.write(`warn: ${fPath} already existed, use --forceUpdate to overwrite`);
         }
     });
 
-    console.log(JSON.stringify(tempToFileInfo, null, 2));
-    return;
+    // console.log(JSON.stringify(tempToFileInfo, null, 2));
+    const appName = path.basename(process.cwd());
+    tempToFileInfo.forEach((info) => {
+        const rendered = ejs.render(fs.readFileSync(info.template, 'utf-8'), {
+            appName: appName,
+            nodeRelease: NODE_RELEASE,
+        });
+
+        fs.writeFileSync(info.outPath, rendered);
+
+        this._logger.write(`${info.existed ? 'Updated' : 'Created'} ${info.outPath}`);
+    });
+
     const packageJSON = utils.getPackageJSON();
 
     if (!packageJSON.dependencies['webgme-docker-worker-manager']) {
         packageJSON.dependencies['webgme-docker-worker-manager'] = "latest";
     }
+
+    utils.writePackageJSON(packageJSON);
 };
 
 module.exports = DockerizeManager;
