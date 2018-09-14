@@ -1,9 +1,11 @@
 /*globals it,describe,before,after*/
 var path = require('path'),
     utils = require('./res/utils'),
+    srcUtils = require('../src/utils'),
     assert = require('assert'),
     nop = require('nop'),
     fse = require('fs-extra'),
+    exists = require('exists-file'),
     Logger = require('../src/Logger'),
     PluginManager = require(__dirname+'/../src/PluginManager'),
     rm_rf = require('rimraf'),
@@ -126,23 +128,45 @@ describe('Plugin tests', function() {
         });
 
         describe('options', function() {
-            var NoTestPlugin = 'NoTestForMe';
+            var pyPlugin = 'PythonPlugin';
             before(function(done) {
                 process.chdir(PROJECT_DIR);  // Start in different directory
-                manager.new({pluginID: NoTestPlugin,
-                             test: false,
-                             pluginName: 'MyNewPlugin'}, done);
+                manager.new({
+                    pluginID: pyPlugin,
+                    language: 'Python'
+                }, done);
             });
 
-            it('should not create test file', function() {
-                var testPath = path.join(PROJECT_DIR, 'test', 'plugins', NoTestPlugin, NoTestPlugin+'.js');
-                assert(!fse.existsSync(testPath), 'Created test file');
+            it('should generate python entry point', function() {
+                var runPluginPath = path.join(PROJECT_DIR, 'src', 'plugins', pyPlugin, 'run_plugin.py');
+
+                assert(exists(runPluginPath), 'No python entry point!');
             });
 
-            it('should have the new name in the source file', function() {
-                var srcPath = path.join(PROJECT_DIR, 'src', 'plugins', NoTestPlugin, NoTestPlugin+'.js'),
-                    content = fse.readFileSync(srcPath, 'utf8');
-                assert(content.indexOf('MyNewPlugin') > -1, 'Does not have the name in the source');
+            it('should update the package.json with webgme-bindings dependency', function() {
+                var packageJSON = srcUtils.getPackageJSON(PROJECT_DIR);
+
+                assert(typeof packageJSON.dependencies['webgme-bindings'] === 'string', 'Did not update package.json');
+            });
+
+            it('new python should not overwrite modified webgme-bindings version', function (done) {
+                var packageJSON = srcUtils.getPackageJSON(PROJECT_DIR);
+                packageJSON.dependencies['webgme-bindings'] = '^1.0.1';
+                srcUtils.writePackageJSON(packageJSON, PROJECT_DIR);
+                manager.new({
+                    pluginID: 'anOtherPython',
+                    language: 'Python'
+                }, function (err) {
+                    try {
+                        assert(!err, err && err.message);
+                        const newPackageJSON = srcUtils.getPackageJSON(PROJECT_DIR);
+                        assert(packageJSON.dependencies['webgme-bindings'] === '^1.0.1',
+                            'version overridden in package: ' + packageJSON.dependencies['webgme-bindings']);
+                        done();
+                    } catch (e) {
+                        done(e);
+                    }
+                });
             });
         });
 
@@ -354,11 +378,11 @@ describe('Plugin tests', function() {
         });
     });
 
-    after(function(done) {
-        if (fse.existsSync(PROJECT_DIR)) {
-            rm_rf(PROJECT_DIR, done);
-        } else {
-            done();
-        }
-    });
+    // after(function(done) {
+    //     if (fse.existsSync(PROJECT_DIR)) {
+    //         rm_rf(PROJECT_DIR, done);
+    //     } else {
+    //         done();
+    //     }
+    // });
 });
