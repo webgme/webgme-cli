@@ -85,7 +85,24 @@ PluginManager.prototype.new = function(options, callback) {
         this._register(config.pluginID, pluginConfig);
         this._logger.write('Created new plugin at '+paths.src);
         // If templates were generated, run `combine_templates`
-        this._combineTemplates(paths.src, callback);
+        this._combineTemplates(paths.src, function (err) {
+            if (err) {
+                callback(err);
+            } else {
+                if (options.language && options.language.toLowerCase() !== 'javascript') {
+                    var packageJSON = utils.getPackageJSON();
+
+                    if (!packageJSON.dependencies['webgme-bindings']) {
+                        packageJSON.dependencies['webgme-bindings'] = "latest";
+                        utils.writePackageJSON(packageJSON);
+                    }
+
+                    self._logger.write('Added webgme-bindings to dependencies - do npm install');
+                }
+
+                callback(null);
+            }
+        });
     });
 };
 
