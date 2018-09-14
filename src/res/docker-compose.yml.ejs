@@ -1,3 +1,9 @@
+# This file is associated with config/config.docker.js
+#
+# On windows, make sure to set the env var COMPOSE_CONVERT_WINDOWS_PATHS=1 before running
+# C:\..\> set COMPOSE_CONVERT_WINDOWS_PATHS=1
+# C:\..\> docker-compose -p <%-appName%> up -d
+#
 # Run these commands with cwd where this file is.
 # To build and launch for the first time:
 #   $ docker-compose -p <%-appName%> up -d
@@ -11,7 +17,7 @@ networks:
   database:
     driver: bridge
   workers:
-    internal: true # plugin workers cannot access the host network (nor database)
+    internal: true # plugin workers cannot access the host network
     driver: bridge
 services:
   webgme-server:
@@ -21,23 +27,17 @@ services:
       - mongo
     environment:
       - NODE_ENV=docker
-    volumes:
-    # The webgme server spawns plugin-workers and need to be able to act as a docker-host.
-      - /var/run/docker.sock:/var/run/docker.sock
-    ## Uncomment/edit to read token_keys from outside and persist blob-storage on host
-    #   - ~/token_keys:/token_keys
-    #   - ~/blob-local-storage:/blob-local-storage
     networks:
       - database
       - workers
+    volumes:
+      # The webgme server spawns plugin-workers and need to be able to act as a docker-host.
+      - /var/run/docker.sock:/var/run/docker.sock
     ports:
-    # Change the LHS to map to other port on host
-      - 8080:8888
+      # Change LHS to map to different port on the host.
+      - 8888:8888
   mongo:
     image: mongo
-    ## Uncomment/modify s.t. database files are persisted on the host!
-    # volumes:
-    #   - ~/db:/data/db
     ## Uncomment to expose mongo-port on host
     # ports:
     #   - 27017:27017

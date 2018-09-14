@@ -1,20 +1,8 @@
-const config = require('./config.default');
+const config = require('./config.webgme');
 const validateConfig = require('webgme/config/validator');
 
 config.mongo.uri = 'mongodb://mongo:27017/<%-appName%>';
 config.server.port = 8888;
-
-//// To use authentication uncomment this section
-// config.authentication.enable = true;
-//// Generate these on the host and edit the mounted volumes for webgme in the docker-compose.yml
-//// https://github.com/webgme/tutorials/tree/master/_session6_auth#1-key-generation
-// config.authentication.jwt.privateKey = '/token_keys/private_key';
-// config.authentication.jwt.publicKey = '/token_keys/public_key';
-//// If using adminAccount go to localhost:8888/profile/ and login as admin and create a new admin with your password.
-// config.authentication.adminAccount = 'admin:admin';
-
-//// Persisting blob files outside the container: uncomment and edit mounted volumes for webgme in docker-compose.yml
-// config.blob.fsDir = '/blob-local-storage';
 
 // This setup enables workers to run on the server inside isolated docker containers.
 // Go to https://github.com/webgme/docker-worker-manager for more info on parameters etc.
