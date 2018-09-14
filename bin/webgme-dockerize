@@ -1,4 +1,18 @@
-var utils = require('../src/utils');
+var Command = require('commander').Command,
+    program = new Command(),
+    DockerizeManager = require('../src/DockerizeManager'),
+    manager = new DockerizeManager();
 
-//utils.updateWebGMEConfig();
-console.log('WebGME config has been updated!');
+program
+    .option('-p, --production',
+        'If set will include templates for a proxy and authentication')
+    .option('-f, --force-update',
+        'If set will overwrite any existing files')
+    .action(function() {
+        manager.dockerize(program);
+    })
+    .parse(process.argv);
+
+if (program.args.length === 0) {  // action will not be called
+    manager.dockerize({});
+}

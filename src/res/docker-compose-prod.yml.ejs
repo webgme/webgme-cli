@@ -1,0 +1,82 @@
+# This file is associated with config/config.docker.js, config/config.dockerdeploy.js and nginx.conf
+
+####################################################################################
+## This setup uses four different type of images
+## - webgme server
+## - mongodb - for model storage
+## - plugin-worker - server side webgme plugins run as transient containers
+## - nginx - outward facing web server with support for secure ssl connections
+##           you need obtain ssl-certificates for the secure connection to work.
+##
+#####################################################################################
+
+# Run these commands with cwd where this file is.
+# To build and launch for the first time:
+#   $ docker-compose -f docker-compose-prod.yml -p <%-appName%> up -d
+# Note: -p, --project-name NAME     Specify an alternate project name (default: directory name)
+# To rebuild and launch add --build:
+#   $ docker-compose -f docker-compose-prod.yml -p <%-appName%> up -d --build
+# To stop containers:
+#  $ docker-compose -f docker-compose-deploy.yml stop
+version: '3'
+networks:
+  frontend:
+    driver: bridge
+  database:
+    driver: bridge
+  workers:
+    internal: true # plugin workers cannot access the host network (nor database)
+    driver: bridge
+services:
+  webgme-server:
+    build:
+      context: .
+    depends_on:
+      - mongo
+    environment:
+      - NODE_ENV=dockerprod
+    volumes:
+    # The webgme server spawns plugin-workers and need to be able to act as a docker-host.
+      - /var/run/docker.sock:/var/run/docker.sock
+    # Edit to match directories read token_keys from outside and persist blob-storage on host
+      - ~/token_keys:/token_keys
+    # Location where blob-storage on host will be written on host
+      - ~/blob-local-storage:/blob-local-storage
+    networks:
+      - frontend
+      - database
+      - workers
+  mongo:
+    image: mongo
+    # This is where the database files are persisted on the host
+    volumes:
+      - ~/db:/data/db
+    ## Uncomment to expose mongo-port on host
+    # ports:
+    #   - 27017:27017
+    networks:
+      - database
+  plugin-worker:
+    build:
+      context: .
+      dockerfile: DockerfilePluginWorker
+    depends_on:
+      - webgme-server
+    networks:
+      - workers
+    environment:
+      - NODE_ENV=dockerprod
+    command: ["cat", "/dev/null"] # A no-op command so the image is built.
+  web:
+    build:
+      context: .
+      dockerfile: DockerfileNginx
+    depends_on:
+      - webgme-server
+    networks:
+      - frontend
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ~/ssl_certs:/ssl_certs

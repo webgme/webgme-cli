@@ -1,0 +1,28 @@
+// Note that this files adds to the config from config.docker.js
+
+const config = require('./config.docker');
+const validateConfig = require('webgme/config/validator');
+
+config.authentication.enable = true;
+
+// Generate these on the host and edit the mounted volumes for webgme in the docker-compose.yml
+// https://github.com/webgme/tutorials/tree/master/_session6_auth#1-key-generation
+config.authentication.jwt.privateKey = '/token_keys/private_key';
+config.authentication.jwt.publicKey = '/token_keys/public_key';
+
+// Persisting blob files outside the container: uncomment and edit mounted volumes for webgme in docker-compose.yml
+config.blob.fsDir = '/blob-local-storage';
+
+
+// If using adminAccount go to localhost:8888/profile/ and login as admin and create a new admin with your password.
+config.authentication.adminAccount = 'admin:admin';
+
+// Here follow some of the default settings for https://github.com/webgme/webgme/tree/master/config#authentication
+config.authentication.allowGuests = true;
+config.authentication.guestAccount = 'guest';
+config.authentication.allowUserRegistration = true;
+config.authentication.registeredUsersCanCreate = true;
+config.authentication.inferredUsersCanCreate = false;
+
+validateConfig(config);
+module.exports = config;
