@@ -10,9 +10,7 @@ var testFixture = require('../res/globals'),
 describe('RemoveFromPlugin', function () {
     var Q = require('q'),
         WEBGME_ROOT = path.join(__dirname, '..', '..', 'node_modules', 'webgme'),
-        gmeConfig = testFixture.getGmeConfig(),
         expect = testFixture.expect,
-        logger = testFixture.logger.fork('RemoveFromPlugin'),
         PluginCliManager = testFixture.WebGME.PluginCliManager,
         projectName = 'testProject',
         pluginName = 'RemoveFromPlugin',
@@ -23,7 +21,9 @@ describe('RemoveFromPlugin', function () {
         storage,
         FIELD = 'validPlugins',
         ATTRIBUTE = 'testPlugin',
-        commitHash;
+        commitHash,
+        gmeConfig,
+        logger;
 
     var executePluginAndGetCore = function(context, callback) {
         var manager = new PluginCliManager(null, logger, gmeConfig),
@@ -63,6 +63,8 @@ describe('RemoveFromPlugin', function () {
 
     before(function (done) {
         process.chdir(WEBGME_ROOT);
+        gmeConfig = testFixture.getGmeConfig();
+        logger = testFixture.logger.fork('RemoveFromPlugin');
         testFixture.clearDBAndGetGMEAuth(gmeConfig, projectName)
             .then(function (gmeAuth_) {
                 gmeAuth = gmeAuth_;
