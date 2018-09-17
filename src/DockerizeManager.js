@@ -31,22 +31,8 @@ function DockerizeManager(logger) {
 }
 
 
-DockerizeManager.prototype._go_to_root_dir = function() {
-    // Check for project directory
-    var rootPath = utils.getRootPath();
-    var deferred = Q.defer();
-
-    if (rootPath === null) {
-        var err = 'Could not find a project in current or any parent directories';
-        this._logger.error(err);
-        throw new Error(err);
-    }
-
-    process.chdir(rootPath);
-};
-
 DockerizeManager.prototype.dockerize = function (args) {
-    this._go_to_root_dir();
+    utils.changeToRootDir();
 
     const tempToFileInfo = [];
     let outfiles = OUT_FILES.DEFAULT;
