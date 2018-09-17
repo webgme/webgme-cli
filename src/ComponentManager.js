@@ -44,7 +44,7 @@ ComponentManager.prototype._preprocess = function(next, args, callback) {
         deferred = Q.defer();
     } catch (e) {
         this._logger.error(e);
-        return Q.reject(e).nodeify(callback);
+        return Q.reject(e.message).nodeify(callback);
     }
 
     next(args, (err, result) => {
