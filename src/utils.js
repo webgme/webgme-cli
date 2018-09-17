@@ -41,6 +41,18 @@ var isProjectRoot = function(abspath) {
     }).length > 0;
 };
 
+var changeToRootDir = function(startPath) {
+    // Check for project directory
+    var rootPath = getRootPath(startPath);
+
+    if (rootPath === null) {
+        var err = 'Could not find a project in current or any parent directories';
+        throw new Error(err);
+    }
+
+    process.chdir(rootPath);
+};
+
 /**
  * Save file and create directories as needed.
  *
@@ -455,4 +467,5 @@ module.exports = {
     mkdir: createDir,
     getPackageJSON: getPackageJSON,
     writePackageJSON: writePackageJSON,
+    changeToRootDir: changeToRootDir,
 };
