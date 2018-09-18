@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 var Command = require('commander').Command,
     program = new Command(),
     DockerizeManager = require('../src/DockerizeManager'),
