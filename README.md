@@ -16,9 +16,9 @@ A "component" in webgme is general term for one of the following:
 - layout
 
 # Quick Start
-It is recommended to use  for installing NodeJS (required for webgme-cli).
+If this is your first time using webgme and webgme-cli the steps at [Getting Started section](https://webgme.readthedocs.io/en/latest/) are slightly more detailed.
 ## Installing webgme-cli
-First, install NodeJS using [nvm](https://github.com/creationix/nvm). Then install NodeJS 8:
+First, install NodeJS using [nvm](https://github.com/creationix/nvm). Then install NodeJS >= 8:
 ```
 nvm install 8
 ```
