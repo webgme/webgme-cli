@@ -4,7 +4,7 @@
 [![Stories in Ready](https://badge.waffle.io/webgme/webgme-cli.png?label=ready&title=Ready)](https://waffle.io/webgme/webgme-cli)
 
 # WebGME CLI
-The WebGME cli is a tool for managing WebGME apps. Specifically, it provides a command line interface for creating, removing, installing from other WebGME apps, (etc) for various WebGME components (currently addons and plugins are supported).
+The WebGME cli is a tool for managing WebGME apps. Specifically, it provides a command line interface for creating, removing, installing from other WebGME apps, (etc) for various WebGME components.
 
 To view a listing of components and applications that have been published on npmjs and are openly and freely available check out [the list of extensions at webgme.org](https://webgme.org/?tab=extensions).
 
