@@ -121,6 +121,12 @@ describe('BaseManager', function() {
                 assert(fs.existsSync(app));
             });
 
+            it('should create src/visualizers/Visualizers.json', function() {
+                var vizJSON = require(path.join(initProject, 'src/visualizers/Visualizers.json'));
+
+                assert(vizJSON && vizJSON instanceof Array && vizJSON.length === 0);
+            });
+
             // issue 15
             it(`should pretty printed ${SETUP_CONFIG}`, function() {
                 var config = path.join(initProject, SETUP_CONFIG),
@@ -220,7 +226,7 @@ describe('BaseManager', function() {
         });
 
         describe('init w/o args', function() {
-            
+
             it('should create webgme project in current directory', function(done) {
                 TMP_PROJECT_DIR = path.join(TMP_DIR, 'InitNoArgs');
                 fs.mkdirSync(TMP_PROJECT_DIR);
