@@ -129,7 +129,7 @@ var writePackageJSON = function(content, startPath) {
 };
 
 /**
- * Update the WebGME config based on the paths in the webgme-setup.json. 
+ * Update the WebGME config based on the paths in the webgme-setup.json.
  *
  * @return {undefined}
  */
@@ -172,7 +172,7 @@ var updateWebGMEConfig = function(startPath) {
 };
 
 /**
- * Get the paths from a config (sub) object such as "components" or 
+ * Get the paths from a config (sub) object such as "components" or
  * "dependencies"
  *
  * Input example: {
@@ -337,13 +337,13 @@ var getRequireJSPaths = function(config, startPath) {
 var hasVisualizers = function(config) {
     return ['components', 'dependencies']
         .reduce(function(prev, type) {
-            return prev || (config[type].visualizers && 
+            return prev || (config[type].visualizers &&
                 Object.keys(config[type].visualizers).length > 0);
         }, false);
 };
 
 var getConfigPath = function(project) {
-    return path.join(getRootPath(), 'node_modules', 
+    return path.join(getRootPath(), 'node_modules',
         project, PROJECT_CONFIG);
 };
 
@@ -375,7 +375,7 @@ var getGMEConfigPath = function(project) {
  */
 var getPathContaining = function(paths, item) {
     var validPaths = paths.filter(function(p) {
-        return exists(p) && fs.readdirSync(p).indexOf(item) + 
+        return exists(p) && fs.readdirSync(p).indexOf(item) +
             fs.readdirSync(p).indexOf(item+'.js') !== -2;
     });
     return validPaths.length ? validPaths[0] : null;
@@ -448,6 +448,8 @@ const installProject = function(projectName, isDev, callback) {
         }
     });
 };
+
+
 
 module.exports = {
     PROJECT_CONFIG: PROJECT_CONFIG,

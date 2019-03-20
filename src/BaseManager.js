@@ -167,12 +167,15 @@ BaseManager.prototype._createPkgJson = function(project, name) {
 };
 
 BaseManager._createBasicFileStructure = function(project) {
-    var dirs = ['src', 'test', path.join('src', 'common')];
+    var vizDir = path.join('src', 'visualizers'),
+        dirs = ['src', 'test', path.join('src', 'common'), vizDir];
 
     dirs.forEach(dir => {
         var absDir = path.join(project, dir);
         fs.mkdirSync(absDir);
     });
+
+    fs.writeFileSync(path.join(project, vizDir, 'Visualizers.json'), '[]');
 };
 
 BaseManager.prototype._createWebGMEFiles = function(project) {

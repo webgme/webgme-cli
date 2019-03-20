@@ -7,7 +7,10 @@
 var env = process.env.NODE_ENV || 'default',
     configFilename = __dirname + '/config.' + env + '.js',
     config = require(configFilename),
-    validateConfig = require('webgme/config/validator');
+    validateConfig = require('webgme/config/validator'),
+    overrideFromEnv = require('webgme/config/overridefromenv');
 
-validateConfig(configFilename);
+overrideFromEnv(config);
+
+validateConfig(config);
 module.exports = config;
