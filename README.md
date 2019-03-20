@@ -6,7 +6,7 @@
 # WebGME CLI
 The WebGME cli is a tool for managing WebGME apps. Specifically, it provides a command line interface for creating, removing, installing from other WebGME apps, (etc) for various WebGME components.
 
-To view a listing of components and applications that have been published on npmjs and are openly and freely available check out [the list of extensions at webgme.org](https://webgme.org/?tab=extensions).
+To view a listing of components and applications that have been published on [npmjs](https://www.npmjs.com/) and are openly and freely available check out [the list of extensions at webgme.org](https://webgme.org/?tab=extensions).
 
 A "component" in webgme is general term for one of the following:
 - [plugin](https://github.com/webgme/webgme/wiki/GME-Plugins)
@@ -65,6 +65,20 @@ webgme import plugin <plugin> <project>
 ```
 
 where `<project>` is either `<github user>/<github repo>` or the npm project name.
+
+## Dependency overview
+If you're new to nodejs/npm, npm is the package manager that comes bundled with any nodejs installation.
+The full documentation can be found [here](https://docs.npmjs.com/), some areas of interest are:
+
+- [global npm packages](https://docs.npmjs.com/downloading-and-installing-packages-globally)
+- [dependencies](https://docs.npmjs.com/files/package.json#dependencies)
+- [devDependencies](https://docs.npmjs.com/files/package.json#devdependencies)
+- [peerDependencies](https://docs.npmjs.com/files/package.json#peerdependencies)
+
+The diagram below gives an overview of how different webgme packages are related.
+All of these are published on [npmjs.com](https://www.npmjs.com/).
+
+ ![webgme-packagse](images/webgme-packages.svg "An overview of who depends on whom")
 
 # FAQ
 
