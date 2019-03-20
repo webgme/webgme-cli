@@ -6,6 +6,8 @@
 # WebGME CLI
 The WebGME cli is a tool for managing WebGME apps. Specifically, it provides a command line interface for creating, removing, installing from other WebGME apps, (etc) for various WebGME components (currently addons and plugins are supported).
 
+To view a listing of components and applications that have been published on npmjs and are openly and freely available check out [the list of extensions at webgme.org](https://webgme.org/?tab=extensions).
+
 A "component" in webgme is general term for one of the following:
 - [plugin](https://github.com/webgme/webgme/wiki/GME-Plugins)
 - [decorator](https://github.com/webgme/webgme/wiki/GME-Decorators)
