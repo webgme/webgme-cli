@@ -1,6 +1,6 @@
 {
   "name": "webgme-cli",
-  "version": "2.8.2",
+  "version": "2.8.3",
   "description": "Command line interface for managing WebGME apps",
   "main": "index.js",
   "bin": {
