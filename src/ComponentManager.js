@@ -244,25 +244,30 @@ ComponentManager.prototype._getPathFromCliConfig = function(installInfo) {
 };
 
 ComponentManager.prototype._getPathFromGME = function(installInfo) {
-    var pkgProject = installInfo.pkg,
-        gmeConfigPath = utils.getGMEConfigPath(pkgProject.toLowerCase()),
-        name = installInfo.name,
-        componentPath,
-        otherConfig;
-
-    if (exists(gmeConfigPath)) {
-        otherConfig = require(gmeConfigPath);
-        componentPath = utils.getPathContaining(otherConfig[this._webgmeName].basePaths.map(
-        function(p) {
+    const pkgProject = installInfo.pkg;
+    const {name} = installInfo;
+    const gmeConfigPath = utils.getGMEConfigPath(pkgProject.toLowerCase());
+    const configEntry = this._getGMEConfigEntry(gmeConfigPath);
+    if (configEntry && configEntry.basePaths) {
+        const absBasePaths = configEntry.basePaths.map(p => {
             if (!path.isAbsolute(p)) {
                 return path.join(path.dirname(gmeConfigPath), p);
             }
             return p;
-        }
-        ), name);
+        });
+        const componentPath = utils.getPathContaining(absBasePaths, name);
         return componentPath !== null ? 
             path.join(componentPath, name) : null;
     }
+    return null;
+};
+
+ComponentManager.prototype._getGMEConfigEntry = function(gmeConfigPath) {
+    if (exists(gmeConfigPath)) {
+        const otherConfig = require(gmeConfigPath);
+        return otherConfig[this._webgmeName];
+    }
+
     return null;
 };
 
