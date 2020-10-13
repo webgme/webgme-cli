@@ -213,8 +213,10 @@ var getWebGMEConfigContent = function(startPath) {
 
     // Merge the arrays for each componentType
     Object.keys(configGroupPaths[0]).forEach(function(type) {
-        const configPaths = configGroupPaths
-            .flatMap(group => unique(group[type]));
+        const configPaths = _.flatMap(
+            configGroupPaths,
+            group => unique(group[type])
+        );
 
         paths[type] = configPaths.map(p => p.replace(/\\/g, '/'));  // Convert to use '/' for path separator
     });
