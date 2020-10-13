@@ -11,7 +11,6 @@
 
 'use strict';
 var _ = require('lodash'),
-    R = require('ramda'),
     path = require('path'),
     exists = require('exists-file'),
     rm_rf = require('rimraf'),

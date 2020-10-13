@@ -2,7 +2,6 @@
 'use strict';
 
 var _ = require('lodash'),
-    R = require('ramda'),
     utils = require('../utils'),
     PluginShim = require('./PluginShim'),
     requirejs = require('requirejs'),
@@ -32,7 +31,7 @@ DecoratorGenerator.prototype.main = function(callback) {
         }
 
         // Fix any file names
-        R.values(self.blobClient.artifacts).forEach(function(artifact) {
+        Object.values(self.blobClient.artifacts).forEach(function(artifact) {
             artifact.files.forEach(fixFilePath);
             artifact.files.forEach(function(file) {
                 self.logger.info('Saving file at '+file.name);

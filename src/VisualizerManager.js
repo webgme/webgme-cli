@@ -10,7 +10,6 @@
 
 'use strict';
 var _ = require('lodash'),
-    R = require('ramda'),
     path = require('path'),
     rm_rf = require('rimraf'),
     fs = require('fs'),
@@ -50,9 +49,9 @@ VisualizerManager.prototype.new = function(options, callback) {
         }
 
         // Get the src, test paths
-        var paths = R.mapObjIndexed(function(empty, type) {
-            return `src/visualizers/${type}s/${id}`;
-        }, {widget: null, panel: null});
+        const paths = _.fromPairs(
+            ['widget', 'panel'].map(type => [type, `src/visualizers/${type}s/${id}`])
+        );
 
         // Store the visualizer info in the webgme-setup.json file
 

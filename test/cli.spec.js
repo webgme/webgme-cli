@@ -6,7 +6,6 @@ const {version} = require('../package.json');
 var spawn = require('child_process').spawn,
     path = require('path'),
     fs = require('fs'),
-    R = require('ramda'),
     assert = require('assert'),
     utils = require(__dirname+'/res/utils'),
     binPath = path.join(__dirname, '..', 'bin', 'webgme'),
@@ -148,10 +147,7 @@ describe('cli', function() {
             var testFn = function(res, err, done) {
                 var contents = ['plugin', 'seed'];
                 assert.equal(res.indexOf('Usage'), -1);
-                contents.forEach(R.pipe(
-                    res.indexOf.bind(res),
-                    assert.notEqual.bind(assert, -1)
-                ));
+                contents.forEach(content => assert(res.includes(content)));
                 done();
             };
             testCliCall(['ls'], testFn, done);

@@ -4,9 +4,7 @@
 var TEST_FIXTURE_DIR = '../../globals',
     BlobClient = require('./blobClient'),
     _ = require('lodash'),
-    path = require('path'),
     utils = require('../utils'),
-    R = require('ramda'),
     requirejs = require('requirejs');
 
 utils.loadPaths(requirejs);
@@ -23,8 +21,7 @@ var PluginShim = function(plugin, logger, config) {
     this.META = {};
 };
 
-_.extend(PluginShim.prototype, 
-    PluginBase.prototype);
+_.extend(PluginShim.prototype, PluginBase.prototype);
 
 PluginShim.prototype.initialize = function(logger, blob) {
     this.blobClient = blob;

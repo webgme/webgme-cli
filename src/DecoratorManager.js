@@ -10,7 +10,6 @@
 
 'use strict';
 var _ = require('lodash'),
-    R = require('ramda'),
     path = require('path'),
     exists = require('exists-file'),
     rm_rf = require('rimraf'),
@@ -66,9 +65,9 @@ DecoratorManager.prototype.new = function(options, callback) {
         }
 
         // Get the src, test paths
-        var setupConfig = R.mapObjIndexed(function(empty, type) {
-            return `${type}/decorators/${name}Decorator`;
-        }, {src: null});
+        const setupConfig = {
+            src: `src/decorators/${name}Decorator`
+        };
 
         // Store the decorator info in the webgme-setup.json file
 

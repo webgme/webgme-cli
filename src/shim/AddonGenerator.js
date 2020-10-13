@@ -3,7 +3,6 @@
 
 var TEST_FIXTURE_DIR = '../../globals',
     _ = require('lodash'),
-    R = require('ramda'),
     path = require('path'),
     utils = require('../utils'),
     PluginShim = require('./PluginShim'),
@@ -36,7 +35,7 @@ AddonGenerator.prototype.main = function(callback) {
         }
 
         // Fix any file names
-        R.values(self.blobClient.artifacts).forEach(function(artifact) {
+        Object.values(self.blobClient.artifacts).forEach(function(artifact) {
             artifact.files.forEach(fixFilePath);
             artifact.files.forEach(function(file) {
                 self.logger.info('Saving file at '+file.name);

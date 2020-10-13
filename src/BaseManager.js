@@ -6,7 +6,6 @@ var _ = require('lodash'),
     fs = require('fs'),
     rm_rf = require('rimraf'),
     exists = require('exists-file'),
-    R = require('ramda'),
     mkdir = require('mkdirp'),
     Logger = require('./Logger'),
     utils = require('./utils'),
@@ -180,8 +179,8 @@ BaseManager.prototype._createWebGMEFiles = function(project) {
     // Config files
     fs.mkdirSync(configDir);
     fs.readdirSync(path.join(__dirname, 'res', 'config'))
-        .map(R.pipe(R.nthArg(0), path.join.bind(path, 'config')))  // Add 'config/' for each
-        .forEach(BaseManager._copyFileToProject.bind(null, project, ''));
+        .map(filename => path.join('config', filename))
+        .forEach(path => BaseManager._copyFileToProject(project, '', path));
 
     // Create app.js
     BaseManager._copyFileToProject(project, '', 'app.js');

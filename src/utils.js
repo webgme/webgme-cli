@@ -11,8 +11,7 @@ var _ = require('lodash'),
     fs = require('fs'),
     path = require('path'),
     exists = require('exists-file'),
-    assert = require('assert'),
-    R = require('ramda');
+    assert = require('assert');
 
 var getRootPath = function(startPath) {
     // Walk back from current path until you find a webgme-setup.json file
@@ -188,11 +187,10 @@ var updateWebGMEConfig = function(startPath) {
  * @return {String[]}
  */
 var getPathsFromConfigGroup = function(config) {
-    return R.mapObj(function(componentType) {  // ie, plugin/seed/etc OBJECT
-        return R.values(componentType).map(function(component) {
-            return component.src || component.path;
-        });
-    }, config);
+    return Object.values(config).map(componentType =>  // ie, plugin/seed/etc OBJECT
+        Object.values(componentType)
+            .map(component => component.src || component.path)
+    );
 };
 
 var unique = function(array) {
@@ -204,8 +202,7 @@ var unique = function(array) {
 };
 
 var getWebGMEConfigContent = function(startPath) {
-    var arrays,
-        config = getConfig(startPath),
+    var config = getConfig(startPath),
         paths = {},
         categories = ['components', 'dependencies'],
         configGroupPaths = categories
@@ -216,13 +213,10 @@ var getWebGMEConfigContent = function(startPath) {
 
     // Merge the arrays for each componentType
     Object.keys(configGroupPaths[0]).forEach(function(type) {
-        arrays = configGroupPaths.map(function(group) {
-            // Remove duplicates
-            return unique(group[type]);
-        });
+        const configPaths = configGroupPaths
+            .flatMap(group => unique(group[type]));
 
-        paths[type] = arrays.reduce(R.concat)  // Merge all paths
-            .map(R.replace.bind(R, /\\/g, '/'));  // Convert to use '/' for path separator
+        paths[type] = configPaths.map(p => p.replace(/\\/g, '/'));  // Convert to use '/' for path separator
     });
 
     // Update visualizers to use the 'panel' entry (if applicable)
