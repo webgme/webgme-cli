@@ -10,7 +10,6 @@
 
 'use strict';
 var _ = require('lodash'),
-    R = require('ramda'),
     path = require('path'),
     exists = require('exists-file'),
     rm_rf = require('rimraf'),
@@ -73,9 +72,9 @@ PluginManager.prototype.new = function(options, callback) {
         }
 
         // Get the src, test paths
-        var paths = R.mapObjIndexed(function(empty, type) {
-            return `${type}/plugins/${config.pluginID}`;
-        }, {src: null, test: null});
+        const paths = _.fromPairs(
+            ['src', 'test'].map(type => [type, `${type}/plugins/${config.pluginID}`])
+        );
 
         // Store the plugin info in the webgme-setup.json file
         var pluginConfig = {

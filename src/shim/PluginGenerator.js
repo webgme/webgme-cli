@@ -3,7 +3,6 @@
 
 var TEST_FIXTURE_DIR = '../../globals',
     _ = require('lodash'),
-    R = require('ramda'),
     path = require('path'),
     utils = require('../utils'),
     PluginShim = require('./PluginShim'),
@@ -26,31 +25,28 @@ var fixFilePath = function(file) {
 
 // Make the src/plugins test/plugins directories as needed
 PluginGenerator.prototype.main = function(callback) {
-    var self = this;
-    WebGMEPluginGenerator.prototype.main.call(this, function(e, result) {
+    WebGMEPluginGenerator.prototype.main.call(this, (e, result) => {
         if (e) {
-            self.logger.error(e);
+            this.logger.error(e);
             return callback(e);
         }
 
         // Fix any file names
-        R.values(self.blobClient.artifacts).forEach(function(artifact) {
+        Object.values(this.blobClient.artifacts).forEach(artifact => {
             artifact.files.forEach(fixFilePath);
             // Fix the require path for the unit test
-            var test = artifact.files.filter(function(file) {
-                return file.name.indexOf('test') === 0;
-            })[0];
+            const test = artifact.files
+                .find(file => file.name.startsWith('test'));
             if (test) {  // If they are generating test file
-                self.fixFixturePath(test);
+                this.fixFixturePath(test);
             }
 
-            artifact.files.forEach(function(file) {
-                self.logger.info('Saving file at '+file.name);
-            });
+            artifact.files
+                .forEach(file => this.logger.info(`Saving file at ${file.name}`));
         });
 
         // Save all BlobClient Artifacts to the fs
-        utils.saveFilesFromBlobClient(self.blobClient);
+        utils.saveFilesFromBlobClient(this.blobClient);
         callback();
     });
 };

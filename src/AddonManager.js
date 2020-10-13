@@ -10,7 +10,6 @@
 
 'use strict';
 var _ = require('lodash'),
-    R = require('ramda'),
     path = require('path'),
     rm_rf = require('rimraf'),
     fs = require('fs'),
@@ -72,9 +71,7 @@ AddonManager.prototype.new = function(options, callback) {
         }
 
         // Get the src, test paths
-        var setupConfig = R.mapObjIndexed(function(empty, type) {
-            return `${type}/addons/${name}`;
-        }, {src: null});
+        const setupConfig = {src: `src/addons/${name}`};
 
         // Store the addon info in the webgme-setup.json file
 

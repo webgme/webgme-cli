@@ -10,7 +10,6 @@
 
 'use strict';
 var _ = require('lodash'),
-    R = require('ramda'),
     path = require('path'),
     rm_rf = require('rimraf'),
     fs = require('fs'),
@@ -44,9 +43,9 @@ LayoutManager.prototype.new = function(options, callback) {
         }
 
         // Get the src, test paths
-        var layoutConfig = R.mapObjIndexed(function(empty, type) {
-            return `${type}/layouts/${options.layoutID}`;
-        }, {src: null});
+        const layoutConfig = {
+            src: `src/layouts/${options.layoutID}`
+        };
 
         // Store the layout info in the webgme-setup.json file
         self._register(options.layoutID, layoutConfig);

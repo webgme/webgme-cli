@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-var Command = require('commander').Command,
-    program = new Command(),
-    version = require('../package.json').version;
+const Command = require('commander').Command;
+const program = new Command();
+const {version} = require('../package.json');
 
 /* * * * * * * * * * Components * * * * * * * * * */
 var descs = {
