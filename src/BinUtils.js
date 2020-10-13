@@ -82,6 +82,7 @@ var createSubCommands = function(dir, defArgs, descTs, opts) {
     program = createCommands(_.values(componentNames), defArgs, descTs, opts);
 
     if (!componentNames[component]) {
+        const showVersion = process.argv.includes('--version') || process.argv.includes('-V');
         var config = utils.getConfig();
         if (inferrable && config) {  // Try to infer the component. Assume name is provided
             var name = process.argv[2],
@@ -100,7 +101,7 @@ var createSubCommands = function(dir, defArgs, descTs, opts) {
             } 
 
             process.argv.splice(2, 0, rAlias[component] || component || '--help');
-        } else if (process.argv.indexOf('--version') === -1) {
+        } else if (!showVersion) {
             // Show the help message
             process.argv = [
                 process.argv[0],

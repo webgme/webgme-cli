@@ -2,6 +2,7 @@
 // Testing the command line interfaces for the commands
 'use strict';
 
+const {version} = require('../package.json');
 var spawn = require('child_process').spawn,
     path = require('path'),
     fs = require('fs'),
@@ -184,6 +185,24 @@ describe('cli', function() {
                 done();
             };
             testCliCall(['new', 'plugin', 'testName', '--language', 'daf'], testFn, done);
+        });
+    });
+
+    describe('version info', function() {
+        it('should show version on --version', done => {
+            var testFn = function(res, err, done) {
+                assert(res.includes(version));
+                done();
+            };
+            testCliCall(['--version'], testFn, done);
+        });
+
+        it('should show version on -V', done => {
+            var testFn = function(res, err, done) {
+                assert(res.includes(version));
+                done();
+            };
+            testCliCall(['--version'], testFn, done);
         });
     });
 
