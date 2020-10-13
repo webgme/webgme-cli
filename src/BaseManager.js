@@ -4,20 +4,19 @@
 var _ = require('lodash'),
     path = require('path'),
     fs = require('fs'),
-    npm = require('npm'),
     rm_rf = require('rimraf'),
     exists = require('exists-file'),
-    R = require('ramda'),
     mkdir = require('mkdirp'),
     Logger = require('./Logger'),
     utils = require('./utils'),
     PROJECT_CONFIG = 'webgme-setup.json';
+const {spawn} = require('child_process');
 
 var BaseManager = function(logger) {
     this._logger = logger || new Logger();
 };
 
-BaseManager.prototype.start = function (options, callback) {
+BaseManager.prototype.start = async function (options, callback) {
     var root = utils.getRootPath();
 
     if (!root) {
@@ -30,41 +29,36 @@ BaseManager.prototype.start = function (options, callback) {
         this._logger.write('Removing installed modules');
         rm_rf(path.join(root, 'node_modules'), this._start.bind(this, root, callback));
     } else {
-        this._start(root, callback);
+        try {
+            await this._start(root);
+            callback();
+        } catch (err) {
+            callback(err);
+            throw err;
+        }
     }
 };
 
-BaseManager.prototype._start = function (root, callback) {
-    var webgmePath = path.join(root, 'node_modules', 'webgme-engine');
-    npm.load({}, err => {
-        if (err) {
-            return callback(err);
-        }
+BaseManager.prototype._start = async function (root) {
+    this._logger.write('Installing dependencies...');
+    await this.spawn('npm', ['install']);
 
-        this._logger.write('Installing dependencies...');
-        npm.install(err => {
-            if (err) {
-                this._logger.error(`Could not install dependencies: ${err.message}`);
-                return callback(err);
-            }
-            if (!exists(webgmePath)) {
-                this._logger.write('Installing webgme...');
-                npm.install('webgme', err => {
-                    if (err) {
-                        this._logger.error(`Could not install webgme dependency: ${err.message}`);
-                        return callback(err);
-                    }
-                    npm.start();
-                    callback();
-                });
-            } else {
-                this._logger.write('Webgme already installed. Skipping explicit install...');
-                npm.start();
-                return callback();
-            }
+    const webgmePath = path.join(root, 'node_modules', 'webgme-engine');
+    if (!exists(webgmePath)) {
+        this._logger.write('Installing webgme...');
+        await this.spawn('npm', ['install', 'webgme']);
+    }
 
-        });
-    });
+    await this.spawn('npm', ['start']);
+};
+
+BaseManager.prototype.spawn = async function (cmd, args) {
+    const job = spawn(cmd, args);
+    job.stdout.pipe(process.stdout);
+    job.stderr.pipe(process.stderr);
+    await new Promise((resolve, reject) =>
+        job.on('close', code => code ? reject(code) : resolve())
+    );
 };
 
 BaseManager.prototype.init = function (args, callback) {  // Create new project
