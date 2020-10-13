@@ -7,35 +7,53 @@ var Command = require('commander').Command,
     utils = require('../src/utils'),
     PluginManager = require('../src/PluginManager');
 
+const options = PluginManager.prototype._getOptions()
+    .filter(opt => opt.name !== '--plugin-id');
+
 program.arguments('<pluginID>')
     .action(function(pluginID) {
         if (typeof program.templateType !== 'string') {  // invalid
             program.templateType = null;
         }
         program.pluginID = pluginID;
-        var manager = new PluginManager();
+        validateOptions(program, options);
+        const manager = new PluginManager();
         manager.new(program, nop);
     });
 
-// Get the config
-var options = PluginManager.prototype._getOptions()
-    .filter(function(opt) {  // Remove the id
-        return opt.name !== '--plugin-id';
-    }),
-    args,
-    regex;
-
-for (var i = options.length; i--;) {
-    args = [options[i].name, options[i].desc];
+for (let i = options.length; i--;) {
+    const args = [options[i].name, options[i].desc];
     if (options[i].type !== 'boolean') {
         args[0] += ' <value>';
     }
 
     if (options[i].items) {
-        regex = new RegExp('^(' + options[i].items.join('|') + ')$');
+        const regex = new RegExp('^(' + options[i].items.join('|') + ')$');
         args.push(regex);
     }
-    program.option.apply(program, args);
+    program.option(...args);
 }
 
 program.parse(process.argv);
+
+function validateOptions(program, options) {
+    const failedRegexOptions = options
+        .filter(option => {
+            const isEnum = option.items;
+            if (isEnum) {
+                const name = parseOptionName(option.name);
+                return program[name] === true;
+            }
+        });
+
+    if (failedRegexOptions.length) {
+        const [firstFailure] = failedRegexOptions;
+        const displayOpts = firstFailure.items.join(', ');
+        console.log(`Invalid value for ${firstFailure.name}. Expected one of ${displayOpts}`)
+        process.exit(1);
+    }
+}
+
+function parseOptionName(cliOpt) {
+    return cliOpt.replace(/^--/, '').replace(/\s+.*/, '');
+}

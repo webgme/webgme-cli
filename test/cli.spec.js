@@ -177,6 +177,16 @@ describe('cli', function() {
         });
     });
 
+    describe('invalid option', function() {
+        it('should print error message', function(done) {
+            var testFn = function(res, err, done) {
+                assert.notEqual(res.indexOf('Invalid value'), -1);
+                done();
+            };
+            testCliCall(['new', 'plugin', 'testName', '--language', 'daf'], testFn, done);
+        });
+    });
+
     describe('--package-name option on import', function() {
         var binDir = path.join(__dirname, '..', 'bin'),
             files = fs.readdirSync(binDir),
