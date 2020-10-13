@@ -123,14 +123,14 @@ describe('cli', function() {
             this.timeout(5000);
 
             // Add a garbage dependency to the package.json
-            pkgJson.dependencies[badPkgName] = '=12345.0.1.3';
+            pkgJson.dependencies[badPkgName] = '=0.1.3';
             fs.writeFileSync(pkgJsonPath, JSON.stringify(pkgJson, null, 2));
 
             // Make sure that there are some logs about the error
-            let testFn = (res, err, done) => {
+            let testFn = (res, stderr, done) => {
                 const notFoundRegex = /(404|Not found)/;
-                assert(notFoundRegex.test(res), `Did not print 404/Not found in "${res}"`);
-                assert.notEqual(res.indexOf(badPkgName), -1);
+                assert(notFoundRegex.test(stderr), `Did not print 404/Not found in "${res}"`);
+                assert(stderr.includes(badPkgName));
                 done();
             };
             testCliCall(['start'], testFn, done);
