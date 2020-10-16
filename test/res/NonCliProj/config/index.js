@@ -1,17 +1,18 @@
-'use strict';
+"use strict";
 
-var config = require('webgme/config/config.default'),
-    validateConfig = require('webgme/config/validator');
+var config = require("webgme/config/config.default"),
+  validateConfig = require("webgme/config/validator");
 
 // Add/overwrite any additional settings here
 // config.server.port = 8080;
 // config.mongo.uri = mongodb://127.0.0.1:27017/webgme_my_app;
-config.plugin.basePaths.push('plugins');
-config.seedProjects.basePaths.push('./seeds');
+config.plugin.basePaths.push("plugins");
+config.seedProjects.basePaths.push("./seeds");
 config.addOn.enable = true;
 config.addOn.basePaths.push("addOn");
 
-config.rest.components['mount/point'] = __dirname + '/../routers/OtherRouter.js';
+config.rest.components["mount/point"] =
+  __dirname + "/../routers/OtherRouter.js";
 
 validateConfig(config);
 module.exports = config;

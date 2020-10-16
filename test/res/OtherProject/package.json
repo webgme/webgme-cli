@@ -3,8 +3,7 @@
   "scripts": {
     "start": "node app.js"
   },
-  "dependencies": {
-  },
+  "dependencies": {},
   "version": "1.0.0",
   "main": "app.js",
   "directories": {

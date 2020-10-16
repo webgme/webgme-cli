@@ -24,15 +24,9 @@
           }
         },
         "children": {
-          "minItems": [
-            -1
-          ],
-          "maxItems": [
-            -1
-          ],
-          "items": [
-            "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045"
-          ]
+          "minItems": [-1],
+          "maxItems": [-1],
+          "items": ["cd891e7b-e2ea-e929-f6cd-9faf4f1fc045"]
         }
       },
       "parent": null,
