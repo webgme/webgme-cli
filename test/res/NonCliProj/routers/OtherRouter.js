@@ -10,11 +10,11 @@
  * will expose, e.g. GET <host>/path/subPath/getExample, when running the server.
  */
 
-'use strict';
+"use strict";
 
 // http://expressjs.com/en/guide/routing.html
-var express = require('express'),
-    router = express.Router();
+var express = require("express"),
+  router = express.Router();
 
 /**
  * Called when the server is created but before it starts to listening to incoming requests.
@@ -31,48 +31,47 @@ var express = require('express'),
  * @param {object} middlewareOpts.workerManager - Spawns and keeps track of "worker" sub-processes.
  */
 function initialize(middlewareOpts) {
-    var logger = middlewareOpts.logger.fork('ExampleRestRouter'),
-        ensureAuthenticated = middlewareOpts.ensureAuthenticated,
-        getUserId = middlewareOpts.getUserId;
+  var logger = middlewareOpts.logger.fork("ExampleRestRouter"),
+    ensureAuthenticated = middlewareOpts.ensureAuthenticated,
+    getUserId = middlewareOpts.getUserId;
 
-    logger.debug('initializing ...');
+  logger.debug("initializing ...");
 
-    // Ensure authenticated can be used only after this rule.
-    router.use('*', function (req, res, next) {
-        // TODO: set all headers, check rate limit, etc.
+  // Ensure authenticated can be used only after this rule.
+  router.use("*", function (req, res, next) {
+    // TODO: set all headers, check rate limit, etc.
 
-        // This header ensures that any failures with authentication won't redirect.
-        res.setHeader('X-WebGME-Media-Type', 'webgme.v1');
-        next();
-    });
+    // This header ensures that any failures with authentication won't redirect.
+    res.setHeader("X-WebGME-Media-Type", "webgme.v1");
+    next();
+  });
 
-    // Use ensureAuthenticated if the routes require authentication. (Can be set explicitly for each route.)
-    router.use('*', ensureAuthenticated);
+  // Use ensureAuthenticated if the routes require authentication. (Can be set explicitly for each route.)
+  router.use("*", ensureAuthenticated);
 
-    router.get('/getExample', function (req, res/*, next*/) {
-        var userId = getUserId(req);
+  router.get("/getExample", function (req, res /*, next*/) {
+    var userId = getUserId(req);
 
-        res.json({userId: userId, message: 'get request was handled'});
-    });
+    res.json({ userId: userId, message: "get request was handled" });
+  });
 
-    router.patch('/patchExample', function (req, res/*, next*/) {
-        res.sendStatus(200);
-    });
+  router.patch("/patchExample", function (req, res /*, next*/) {
+    res.sendStatus(200);
+  });
 
+  router.post("/postExample", function (req, res /*, next*/) {
+    res.sendStatus(201);
+  });
 
-    router.post('/postExample', function (req, res/*, next*/) {
-        res.sendStatus(201);
-    });
+  router.delete("/deleteExample", function (req, res /*, next*/) {
+    res.sendStatus(204);
+  });
 
-    router.delete('/deleteExample', function (req, res/*, next*/) {
-        res.sendStatus(204);
-    });
+  router.get("/error", function (req, res, next) {
+    next(new Error("error example"));
+  });
 
-    router.get('/error', function (req, res, next) {
-        next(new Error('error example'));
-    });
-
-    logger.debug('ready');
+  logger.debug("ready");
 }
 
 /**
@@ -80,7 +79,7 @@ function initialize(middlewareOpts) {
  * @param {function} callback
  */
 function start(callback) {
-    callback();
+  callback();
 }
 
 /**
@@ -88,13 +87,12 @@ function start(callback) {
  * @param {function} callback
  */
 function stop(callback) {
-    callback();
+  callback();
 }
 
-
 module.exports = {
-    initialize: initialize,
-    router: router,
-    start: start,
-    stop: stop
+  initialize: initialize,
+  router: router,
+  start: start,
+  stop: stop,
 };

@@ -1,36 +1,36 @@
-'use strict';
+"use strict";
 
-var changeCase = require('change-case');
+var changeCase = require("change-case");
 
 var getConfigValue = {
-    boolean: function(config) {
-        var nondefault = !config.value ? '' : 'no-';
-        var desc = config.description || config.displayName;
-        if (config.value) {
-            desc = 'Don\'t '+changeCase.lowerCaseFirst(desc);
-        }
-        return {
-            name: '--'+nondefault+changeCase.paramCase(config.name),
-            type: 'boolean',
-            desc: desc
-        };
-    },
-
-    string: function(config) {
-        return {
-            name: '--'+changeCase.paramCase(config.name),
-            type: 'string',
-            items: config.valueItems,
-            desc: config.description
-        };
+  boolean: function (config) {
+    var nondefault = !config.value ? "" : "no-";
+    var desc = config.description || config.displayName;
+    if (config.value) {
+      desc = "Don't " + changeCase.lowerCaseFirst(desc);
     }
+    return {
+      name: "--" + nondefault + changeCase.paramCase(config.name),
+      type: "boolean",
+      desc: desc,
+    };
+  },
+
+  string: function (config) {
+    return {
+      name: "--" + changeCase.paramCase(config.name),
+      type: "string",
+      items: config.valueItems,
+      desc: config.description,
+    };
+  },
 };
 
 var getConfigNameFromFlag = {
-    string: function(config) {
-        var rawFlag = getConfigValue.string(config).name;
-        return rawFlag.replace(/^-[-]?/, '');
-    }
+  string: function (config) {
+    var rawFlag = getConfigValue.string(config).name;
+    return rawFlag.replace(/^-[-]?/, "");
+  },
 };
 
 /**
@@ -41,29 +41,29 @@ var getConfigNameFromFlag = {
  * @param configStructure
  * @return {Object} config
  */
-var getConfig = function(rawConfig, args) {
-    // Determine the commandline flag from the raw config
-    var config = {},
-        flag,
-        type;
+var getConfig = function (rawConfig, args) {
+  // Determine the commandline flag from the raw config
+  var config = {},
+    flag,
+    type;
 
-    for (var i = rawConfig.length; i--;) {
-        // Retrieve values from plugin generator's config
-        type = rawConfig[i].valueType;
-        flag = rawConfig[i].name;
+  for (var i = rawConfig.length; i--; ) {
+    // Retrieve values from plugin generator's config
+    type = rawConfig[i].valueType;
+    flag = rawConfig[i].name;
 
-        // Set default
-        config[rawConfig[i].name] = rawConfig[i].value;
+    // Set default
+    config[rawConfig[i].name] = rawConfig[i].value;
 
-        // Update if necessary
-        if (args.hasOwnProperty(flag) && typeof args[flag] !== 'function') {
-            config[rawConfig[i].name] = args[flag];
-        }
+    // Update if necessary
+    if (args.hasOwnProperty(flag) && typeof args[flag] !== "function") {
+      config[rawConfig[i].name] = args[flag];
     }
-    return config;
+  }
+  return config;
 };
 
 module.exports = {
-    getConfig: getConfig,
-    getConfigValue: getConfigValue
+  getConfig: getConfig,
+  getConfigValue: getConfigValue,
 };

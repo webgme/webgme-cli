@@ -1,16 +1,15 @@
 **Environment:**
 
-***webgme-cli version (`webgme -v`):***
+**_webgme-cli version (`webgme -v`):_**
 
-***Operating system and kernel: (`cat /etc/os-release`, `uname -r` preferred)***
+**_Operating system and kernel: (`cat /etc/os-release`, `uname -r` preferred)_**
 
-***NodeJS version (`node -v`):***
+**_NodeJS version (`node -v`):_**
 
-***npm version (`npm -v`):***
+**_npm version (`npm -v`):_**
 
 **Description:**
 
 **Steps to Reproduce:**
 
 **Results:**
-

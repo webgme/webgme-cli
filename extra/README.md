@@ -1,4 +1,5 @@
 # Argument Completion for Bash/Zsh
+
 Enable argument completion for the webgme-setup-tool by executing the following in your bash session:
 
 ```
@@ -17,7 +18,7 @@ or for zsh
 echo ". $(pwd)/extra/webgme.completion.bash" >> ~/.zshrc
 ```
 
-The completion script can be updated at any time by running 
+The completion script can be updated at any time by running
 
 ```
 npm run build-completion

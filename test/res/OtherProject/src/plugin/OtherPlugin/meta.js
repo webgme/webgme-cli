@@ -3,7 +3,6 @@
  */
 
 define([], function () {
-    'use strict';
-    return {
-    };
+  "use strict";
+  return {};
 });
