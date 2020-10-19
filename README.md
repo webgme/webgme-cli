@@ -4,11 +4,13 @@
 [![Stories in Ready](https://badge.waffle.io/webgme/webgme-cli.png?label=ready&title=Ready)](https://waffle.io/webgme/webgme-cli)
 
 # WebGME CLI
+
 The WebGME cli is a tool for managing WebGME apps. Specifically, it provides a command line interface for creating, removing, installing from other WebGME apps, (etc) for various WebGME components.
 
 To view a listing of components and applications that have been published on [npmjs](https://www.npmjs.com/) and are openly and freely available check out [the list of extensions at webgme.org](https://webgme.org/?tab=extensions).
 
 A "component" in webgme is general term for one of the following:
+
 - [plugin](https://github.com/webgme/webgme/wiki/GME-Plugins)
 - [decorator](https://github.com/webgme/webgme/wiki/GME-Decorators)
 - [visualizer](https://github.com/webgme/webgme/wiki/GME-Visualizers)
@@ -18,12 +20,17 @@ A "component" in webgme is general term for one of the following:
 - layout
 
 # Quick Start
+
 If this is your first time using webgme and webgme-cli the steps at [Getting Started section](https://webgme.readthedocs.io/en/latest/) are slightly more detailed.
+
 ## Installing webgme-cli
+
 First, install NodeJS using [nvm](https://github.com/creationix/nvm). Then install NodeJS >= 8:
+
 ```
 nvm install 8
 ```
+
 Now, install webgme-cli using `npm`:
 
 ```
@@ -31,6 +38,7 @@ npm install -g webgme-cli
 ```
 
 ## Setting up a WebGME app
+
 Create a new WebGME app:
 
 ```
@@ -47,7 +55,9 @@ webgme start
 Now, open a browser and navigate to `http://localhost:8888` to get started!
 
 ## Creating custom WebGME components
+
 Additional useful commands include
+
 ```
 webgme new plugin MyNewPlugin
 webgme new addon MyNewAddOn
@@ -67,6 +77,7 @@ webgme import plugin <plugin> <project>
 where `<project>` is either `<github user>/<github repo>` or the npm project name.
 
 ## Dependency overview
+
 If you're new to nodejs/npm, npm is the package manager that comes bundled with any nodejs installation.
 The full documentation can be found [here](https://docs.npmjs.com/), some areas of interest are:
 
@@ -78,10 +89,10 @@ The full documentation can be found [here](https://docs.npmjs.com/), some areas 
 The diagram below gives an overview of how different webgme packages are related.
 All of these are published on [npmjs.com](https://www.npmjs.com/).
 
- ![webgme-packagse](images/webgme-packages.svg "An overview of who depends on whom")
+![webgme-packagse](images/webgme-packages.svg "An overview of who depends on whom")
 
 # FAQ
 
-+ __Tried loading "coreplugins/XXXXGenerator/XXXXGenerator" at xxxxx/src/../node_modules/webgme/src/plugin/coreplugins/...__
+- **Tried loading "coreplugins/XXXXGenerator/XXXXGenerator" at xxxxx/src/../node_modules/webgme/src/plugin/coreplugins/...**
 
-    + This usually happens after updating a clone of the webgme-cli and is caused by an outdated version of the webgme. That is, this happens when the webgme-cli has been updated to support a feature that isn't supported in the currently installed webgme dependency. Running `npm update` from the project root should fix it.
+  - This usually happens after updating a clone of the webgme-cli and is caused by an outdated version of the webgme. That is, this happens when the webgme-cli has been updated to support a feature that isn't supported in the currently installed webgme dependency. Running `npm update` from the project root should fix it.

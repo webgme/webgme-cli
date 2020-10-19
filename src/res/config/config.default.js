@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
-var config = require('./config.webgme'),
-    validateConfig = require('webgme/config/validator');
+var config = require("./config.webgme"),
+  validateConfig = require("webgme/config/validator");
 
 // Add/overwrite any additional settings here
 // config.server.port = 8080;
