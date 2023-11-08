@@ -21,7 +21,11 @@ program
         program.project = project;
         manager.new(program, function(err) {
             // Seed generation has a bug where it needs to be killed manually :/
-            process.exit(!!err);
+            if (err) {
+                process.exit(1);
+            } else {
+                process.exit();
+            }
         });
     })
     .parse(process.argv);
